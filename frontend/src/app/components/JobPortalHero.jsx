@@ -36,7 +36,7 @@ const JobPortalHero = () => {
   };
 
   return (
-    <div className="relative h-[80vh] w-full overflow-hidden">
+    <div className="relative h-[50vh] w-full overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center" 
         style={{
@@ -57,10 +57,19 @@ const JobPortalHero = () => {
         </p>
 
         <div className="w-full max-w-4xl bg-white backdrop-blur-sm rounded-lg shadow-xl">
-          <div className="flex flex-col md:flex-row ">
+          <div className="flex flex-col  rounded-md md:flex-row ">
+
+
+            <div className="relative flex-1">
+
+              <input type="text" placeholder="Job Title or Company" className="pl-5 w-full py-4  focus:outline-none focus:none " />
+
+            </div>
+
+
             <div className="relative flex-1">
               <button
-                className="w-full flex items-center justify-between bg-white p-4 border border-gray-300 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full flex items-center justify-between bg-white p-4 border border-gray-300 focus:outline-none focus:none"
                 onClick={() => setLocationDropdown(!locationDropdown)}
                 aria-label="Select Location"
               >
@@ -75,7 +84,7 @@ const JobPortalHero = () => {
                   {locations.map((location) => (
                     <button
                       key={location}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:outline-none "
                       onClick={() => {
                         setSelectedLocation(location);
                         setLocationDropdown(false);
@@ -90,7 +99,7 @@ const JobPortalHero = () => {
 
             <div className="relative flex-1">
               <button
-                className="w-full flex items-center justify-between bg-white p-4 rounded-r-y-lg  border border-gray-300 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full flex items-center justify-between bg-white p-4 rounded-r-y-lg  border border-gray-300 focus:outline-none "
                 onClick={() => setCategoryDropdown(!categoryDropdown)}
                 aria-label="Select Category"
               >
@@ -119,7 +128,7 @@ const JobPortalHero = () => {
             </div>
 
             <button
-              className="flex-none bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="flex-none rounded-r-lg bg-blue-600 hover:bg-blue-700 text-white px-8 py-4  font-medium transition-colors duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               onClick={handleSearch}
               aria-label="Search Jobs"
             >
