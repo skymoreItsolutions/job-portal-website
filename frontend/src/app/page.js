@@ -13,7 +13,7 @@ export default function Home() {
    <JobPortalHero/>
 
    <AboutSection/>
-     <Browsercategory/>
+     {/* <Browsercategory/> */}
     </>
   
   );
