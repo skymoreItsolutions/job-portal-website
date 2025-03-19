@@ -9,12 +9,15 @@ import { IoLocation, IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoFilterSharp } from "react-icons/io5";
 
+import data from "../jobdata";
+
 import {
   FaInstagramSquare,
   FaFacebookSquare,
   FaTwitterSquare,
   FaLinkedin,
 } from "react-icons/fa";
+import JobCard from "./JobCard";
 
 export default function Jobs() {
   const jobDetailsList = [
@@ -112,31 +115,10 @@ export default function Jobs() {
   ];
 
 
-  const jobListings = [
-  { title: "Internal Integration Planner", company: "Bauch, Schuppe and Schulist Co", src: "/img/jobs/joblogo.png" },
-  { title: "Software Development Engineer", company: "Tech Innovations Ltd.", src: "/img/jobs/joblogo.png" },
-  { title: "Marketing Strategist", company: "Growth Solutions Inc.", src: "/img/jobs/joblogo.png" },
-  { title: "UI/UX Designer", company: "Pixel Perfect Studios", src: "/img/jobs/joblogo.png" },
-  { title: "Senior Data Analyst", company: "Data Insights Corp.", src: "/img/jobs/joblogo.png" },
-  { title: "Project Manager", company: "Agile Project Solutions", src: "/img/jobs/joblogo.png" },
-  { title: "Cloud Solutions Architect", company: "SkyTech Cloud Services", src: "/img/jobs/joblogo.png" },
-  { title: "Financial Advisor", company: "WealthWise Consultancy", src: "/img/jobs/joblogo.png" },
-  { title: "HR Business Partner", company: "People First HR", src: "/img/jobs/joblogo.png" },
-  { title: "Cyber Security Engineer", company: "SecureNet Technologies", src: "/img/jobs/joblogo.png" },
-  { title: "Network Administrator", company: "FastConnect Networks", src: "/img/jobs/joblogo.png" },
-  { title: "Customer Support Manager", company: "ClientCare Solutions", src: "/img/jobs/joblogo.png" },
-  { title: "E-commerce Specialist", company: "ShopEase Online", src: "/img/jobs/joblogo.png" },
-  { title: "Legal Consultant", company: "Lex Partners LLP", src: "/img/jobs/joblogo.png" },
-  { title: "Product Owner", company: "InnovateX Technologies", src: "/img/jobs/joblogo.png" },
-  { title: "AI & Machine Learning Engineer", company: "DeepMind Systems", src: "/img/jobs/joblogo.png" },
-  { title: "DevOps Engineer", company: "CodeFlow Solutions", src: "/img/jobs/joblogo.png" },
-  { title: "Social Media Manager", company: "TrendBoost Marketing", src: "/img/jobs/joblogo.png" },
-  { title: "Content Marketing Specialist", company: "Creative Content Agency", src: "/img/jobs/joblogo.png" },
-  { title: "Operations Coordinator", company: "BizOps Management", src: "/img/jobs/joblogo.png" },
-];
+
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto ">
       <div className="banner  h-[25vh] lg:h-[40vh] bg-black flex items-center justify-center text-white">
         <h1 className="font-bold text-3xl lg:text-5xl">Jobs</h1>
       </div>
@@ -150,10 +132,10 @@ export default function Jobs() {
         </button>
       </div>
 
-      <div className="mt-4 lg:mt-10 px-5  md:px-12 xl:px-32 container mx-auto  ">
+      <div className="mt-4 lg:mt-14 px-5  md:px-12 xl:px-32 container mx-auto  ">
         <div className="grid lg:grid-cols-3 gap-y-16 lg:gap-y-0 lg:gap-x-16">
           <div className="lg:col-span-1 ">
-            <div className="bg-[#EBF5F4] rounded-2xl space-y-4 lg:space-y-5  sticky top-0 py-8 lg:py-4  px-3 lg:px-5">
+            <div className="bg-[#EBF5F4] rounded-2xl sticky top-0 py-8 lg:py-4  px-3 lg:px-5 space-y-4 lg:space-y-5  ">
               <div>
                 <h6 className="font-semibold  text-lg">Search by job titile</h6>
                 <label className="bg-white mt-3 relative w-full flex items-center py-2 px-12  rounded-2xl shadow-sm">
@@ -182,17 +164,17 @@ export default function Jobs() {
                 <div className="space-y-2 mt-3">
                   {jobCategories
                     .slice(0, jobcategoreLength)
-                    .map(({ id, label }) => (
-                      <label key={id} className="flex justify-between">
+                    .map((elm,indx)=> (
+                      <label key={indx} className="flex justify-between">
                         <div className="flex  items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                           />
-                          <span className="text-gray-700">{label}</span>
+                          <span className="text-gray-700">{elm.label}</span>
                         </div>
                         <div className="flex">
-                          <span className="text-gray-500">({id})</span>
+                          <span className="text-gray-500">({elm.id})</span>
                         </div>
                       </label>
                     ))}
@@ -209,17 +191,17 @@ export default function Jobs() {
               <div>
                 <h6 className="font-semibold  text-lg"> Job Type</h6>
                 <div className="space-y-2 mt-3">
-                  {JobTypes.slice().map(({ id, label }) => (
-                    <label key={id} className="flex justify-between">
+                  {JobTypes.slice().map((elm,indx) => (
+                    <label key={indx} className="flex justify-between">
                       <div className="flex  items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span className="text-gray-700">{label}</span>
+                        <span className="text-gray-700">{elm.label}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-gray-500">({id})</span>
+                        <span className="text-gray-500">{elm.id}</span>
                       </div>
                     </label>
                   ))}
@@ -230,17 +212,17 @@ export default function Jobs() {
                 <div>
                   <h6 className="font-semibold  text-lg"> Experience Level</h6>
                   <div className="space-y-2 mt-3">
-                    {ExperienceLevel.map(({ id, label }) => (
-                      <label key={id} className="flex justify-between">
+                    {ExperienceLevel.map((elm,indx) => (
+                      <label key={indx} className="flex justify-between">
                         <div className="flex  items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                           />
-                          <span className="text-gray-700">{label}</span>
+                          <span className="text-gray-700">{elm.label}</span>
                         </div>
                         <div className="flex">
-                          <span className="text-gray-500">({id})</span>
+                          <span className="text-gray-500">{elm.id}</span>
                         </div>
                       </label>
                     ))}
@@ -250,17 +232,17 @@ export default function Jobs() {
               <div>
                 <h6 className="font-semibold  text-lg"> Date Posted</h6>
                 <div className="space-y-2 mt-3">
-                  {datePosted.map(({ id, label }) => (
-                    <label key={id} className="flex justify-between">
+                  {datePosted.map((elm,indx) => (
+                    <label key={indx} className="flex justify-between">
                       <div className="flex  items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span className="text-gray-700">{label}</span>
+                        <span className="text-gray-700">{elm.label}</span>
                       </div>
                       <div className="flex">
-                        <span className="text-gray-500">({id})</span>
+                        <span className="text-gray-500">{elm.id}</span>
                       </div>
                     </label>
                   ))}
@@ -287,8 +269,8 @@ export default function Jobs() {
               <div>
                 <h6 className="font-semibold  text-lg"> Tags</h6>
                 <div className=" space-y-2 mt-3 grid grid-cols-3 gap-4">
-                  {tags.map(({ id, name }) => (
-                    <h5 key={id} className="bg-[#3096881e] text-[#309689] rounded-2xl text-center p-1">{name}</h5>
+                  {tags.map((elm,idnx) => (
+                    <h5 key={idnx} className="bg-[#3096881e] text-[#309689] rounded-2xl text-center p-1">{elm.name}</h5>
                   ))}
                 </div>
               </div>
@@ -312,48 +294,8 @@ export default function Jobs() {
               </div>
 
               <div className="mt-5 lg:mt-10 grid grid-cols-1 gap-y-5">
-                {jobListings.map((elm, indx) => (
-                  <div key={indx} className="mt-5 lg:mt-10 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#309689] bg-[#3096891A] text-base px-2 rounded-2xl">
-                        10 min ago
-                      </span>
-                      <button>
-                        <CiBookmarkPlus />
-                      </button>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-x-2 lg:items-center">
-                      <img
-                        src="/img/jobs/joblogo.png"
-                        alt="job-logo"
-                        className="w-5 h-5 lg:h-8 lg:w-8"
-                      />
-                      <div>
-                        <h5 className="font-semibold text-lg lg:text-xl">
-                          {elm.title}
-                        </h5>
-                        <p className="text-base">
-                         {elm.company}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex  flex-col gap-y-5 lg:gap-y-0 md:flex-row justify-between">
-                      <div className="grid grid-cols-1 gap-y-5 lg:gap-y-0 md:flex  items-center gap-x-4 text-black">
-                        {jobDetailsList.map((elm, indx) => (
-                          <div
-                            key={indx}
-                            className="flex items-center text-sm gap-x-2"
-                          >
-                            <span className="text-[#309689]">{elm.icon}</span>
-                            <span className="text-[#6C757D]">{elm.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <button className="px-4 py-2 rounded bg-[#309689] text-base text-white">
-                        Job Details
-                      </button>
-                    </div>
-                  </div>
+                {data.map((elm, indx) => (
+                 <JobCard key={indx} jobcard={elm}/>
                 ))}
               </div>
 
