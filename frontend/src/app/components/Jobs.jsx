@@ -20,24 +20,6 @@ import {
 import JobCard from "./JobCard";
 
 export default function Jobs() {
-  const jobDetailsList = [
-    {
-      name: "Media",
-      icon: <FaRegNewspaper />,
-    },
-    {
-      name: "Full Time",
-      icon: <MdWork />,
-    },
-    {
-      name: "280000-320000",
-      icon: <FaDollarSign />,
-    },
-    {
-      name: "Los Angeles, USA",
-      icon: <FaMapMarkerAlt />,
-    },
-  ];
 
   const topCompanies = [
     {
@@ -114,6 +96,8 @@ export default function Jobs() {
     { id: "7", name: "Construction" },
   ];
 
+  
+  
 
 
 

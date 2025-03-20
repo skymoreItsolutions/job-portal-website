@@ -1,5 +1,7 @@
+"use client"
 import React from "react";
 import { CiBookmarkPlus } from "react-icons/ci";
+import data from "../jobdata";
 import {
   FaDollarSign,
   FaFacebook,
@@ -26,7 +28,7 @@ import {
 } from "react-icons/fa";
 import JobCard from "./JobCard";
 
-export default function JobDetails() {
+export default function JobDetails({slug,slugProdcut}) {
   const jobDetailsList = [
     {
       name: "Media",
@@ -46,7 +48,7 @@ export default function JobDetails() {
     },
   ];
 
-  const tags = [
+  const tagss = [
     { id: "1", name: "Full-time" },
     { id: "2", name: "E-commerce" },
     { id: "3", name: "New York" },
@@ -54,45 +56,52 @@ export default function JobDetails() {
     { id: "5", name: "Location" },
   ];
 
-  const relatedjobs = [
-    {
-      
-      title: "Internal Integration Planner", company: "Bauch, Schuppe and Schulist Co", img: "/img/jobs/joblogo.png"
-    },
-    {
-      title: "Software Development Engineer",
-      company: "Tech Innovations Ltd.",
-      img: "/img/jobs/joblogo.png",
-    },
-    {
-      title: "Marketing Strategist",
-      company: "Growth Solutions Inc.",
-      img: "/img/jobs/joblogo.png",
-    },
-  ];
+ 
 
-  const jobDetails = [
-    { icon: FaBriefcase, label: "Job Type", value: "Full-time" },
-    {
-      icon: FaUserTie,
-      label: "Job Title",
-      value: "Corporate Solutions Executive",
-    },
-    { icon: FaClock, label: "Experience", value: "5 years" },
-    { icon: FaGraduationCap, label: "Degree", value: "Master’s" },
-    {
-      icon: FaMoneyBillWave,
-      label: "Offered Salary",
-      value: "$4,000 - $420,000",
-    },
-    { icon: FaMapMarkerAlt, label: "Location", value: "New York, USA" },
-  ];
+
 
   const MainJob=[ {
       
     title: "Internal Integration Planner", company: "Bauch, Schuppe and Schulist Co", img: "/img/jobs/joblogo.png"
   },]
 
+
+  console.log(slug,"slug check")
+
+  const {  
+    title = "",     
+    company = "",     
+    logo = "",     
+    salary = "",     
+    jobType = "",     
+    location = "",     
+    industry = "",     
+    Description = [],     
+    Responsibilities = [],  
+    skills = [],  
+    tags = [] 
+  } = slugProdcut || {}; 
+
+  const jobDetails = [
+    { icon: FaBriefcase, label: "Job Type", value: jobType },
+    {
+      icon: FaUserTie,
+      label: "Job Title",
+      value: title,
+    },
+    { icon: FaClock, label: "Experience", value: "5 years" },
+    { icon: FaGraduationCap, label: "Degree", value: "Master’s" },
+    {
+      icon: FaMoneyBillWave,
+      label: "Offered Salary",
+      value: salary,
+    },
+    { icon: FaMapMarkerAlt, label: "Location", value: location },
+  ];
+
+
+  const relatedjobs=data.filter((elm)=>elm.jobType==jobType)
+  
   return (
     <div className="container mx-auto">
       <div className="banner  h-[25vh] lg:h-[40vh] bg-black flex items-center justify-center text-white">
@@ -101,8 +110,8 @@ export default function JobDetails() {
 
       <div className=" px-5 md:px-12 xl:px-32">
         <div className="mt-5 lg:mt-10 space-y-4">
-          {MainJob.map((elm,indx)=>         <JobCard  key={indx} jobcard={elm}/>
-          )}
+        <JobCard   jobcard={slugProdcut}/>
+        
         </div>
 
         <div className=" grid grid-cols-1 lg:grid-cols-3 gap-x-8  mt-4 lg:mt-12">
@@ -114,26 +123,12 @@ export default function JobDetails() {
                     Job Description
                   </h5>
                   <div className="space-y-2 text-base">
-                    <p className="text-justify">
-                      Nunc sed a nisl purus. Nibh dis faucibus proin lacus
-                      tristique. Sit congue non vitae odio sit erat in. Felis eu
-                      ultrices a sed massa. Commodo fringilla sed tempor risus
-                      laoreet ultricies ipsum. Habitasse morbi faucibus in
-                      iaculis lectus. Nisi enim feugiat enim volutpat. Sem quis
-                      viverra viverra odio mauris nunc.
-                    </p>
-                    <p className="text-justify">
-                      {" "}
-                      Et nunc ut tempus duis nisl sed massa. Ornare varius
-                      faucibus nisi vitae vitae cras ornare. Cras facilisis
-                      dignissim augue lorem amet adipiscing cursus fames mauris.
-                      Tortor amet porta proin in. Orci imperdiet nisi dignissim
-                      pellentesque morbi vitae. Quisque tincidunt metus lectus
-                      porta eget blandit euismod sem nunc. Tortor gravida amet
-                      amet sapien mauris massa.Tortor varius nam maecenas duis
-                      blandit elit sit sit. Ante mauris morbi diam habitant
-                      donec.
-                    </p>
+                    {Description.map((elm,indx)=>(  
+                      <p className="text-justify">
+                        {elm}
+                    </p>      
+                    ))}
+                 
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -142,59 +137,17 @@ export default function JobDetails() {
                   </h5>
                   <div className="space-y-2">
                     <ul className="text-base space-y-4">
-                      <li className="flex items-baseline gap-x-2">
+                    {Responsibilities.map((elm,indx)=>(
+                      <li key={indx} className="flex items-baseline gap-x-2">
                         <FaCheck />
 
                         <p>
-                          Et nunc ut tempus duis nisl sed massa. Ornare varius
-                          faucibus nisi vitae vitae cras ornare. Cras facilisis
-                          dignissim augu
+                          {elm}
                         </p>
                       </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Cras facilisis dignissim augue lorem amet adipiscing
-                          cursus fames mauris. Tortor amet porta proin in
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Ornare varius faucibus nisi vitae vitae cras ornare.
-                          Cras facilisis dignissim augue lorem amet adipiscing
-                          cursus fames
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitae. Quisque tincidunt
-                          metus lectus porta{" "}
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitae. Quisque tincidunt
-                          metus lectus porta{" "}
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitae. Quisque tincidunt
-                          metus lectus porta{" "}
-                        </p>
-                      </li>
+                    ))}
+                    
+                      
                     </ul>
                   </div>
                 </div>
@@ -204,57 +157,29 @@ export default function JobDetails() {
                   </h5>
                   <div className="space-y-2">
                     <ul className="text-base space-y-4">
-                      <li className="flex items-baseline gap-x-2">
+                      {skills.map((elm,indx)=>(
+                        <li key={indx} className="flex items-baseline gap-x-2">
                         <FaCheck />
 
                         <p>
-                          Et nunc ut tempus duis nisl sed massa. Ornare varius
-                          faucibus nisi vitae vitae cras ornare.
+                          {elm}
                         </p>
                       </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Ornare varius faucibus nisi vitae vitae cras ornare
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitaes
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitae
-                        </p>
-                      </li>
-                      <li className="flex items-baseline gap-x-2">
-                        <FaCheck />
-
-                        <p>
-                          Tortor amet porta proin in. Orci imperdiet nisi
-                          dignissim pellentesque morbi vitae
-                        </p>
-                      </li>
+                      ))}
+                     
+                    
                     </ul>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <h5 className="font-semibold text-xl lg:text-2xl ">Tags:</h5>
                   <div className=" space-y-2 mt-3 flex flex-wrap gap-4">
-                    {tags.map(({ id, name }) => (
+                    {tags.map((elm,indx) => (
                       <h5
-                        key={id}
+                        key={indx}
                         className="bg-[#3096881e] text-[#309689] rounded-2xl text-center py-1 px-4 lg:px-6"
                       >
-                        {name}
+                        {elm}
                       </h5>
                     ))}
                   </div>

@@ -1,30 +1,35 @@
 import Link from "next/link";
 import React from "react";
 import { CiBookmarkPlus } from "react-icons/ci";
-import { FaDollarSign, FaMapMarkerAlt, FaRegNewspaper } from "react-icons/fa";
-import { MdWork } from "react-icons/md";
+import { FaDollarSign, FaMapMarkerAlt,  } from "react-icons/fa";
+import { IoBagOutline } from "react-icons/io5";
+
+
+import { IoTimeOutline } from "react-icons/io5";
 
 export default function JobCard({ jobcard }) {
-  const { title, company, img } = jobcard;
+  const { title, company, img ,jobType,salary,location,industry} = jobcard;
 
   const jobDetailsList = [
     {
-      name: "Media",
-      icon: <FaRegNewspaper />,
+      name: industry,
+      icon: <IoBagOutline/>,
     },
     {
-      name: "Full Time",
-      icon: <MdWork />,
+      name: jobType,
+      icon: <IoTimeOutline/>,
     },
     {
-      name: "280000-320000",
+      name: salary,
       icon: <FaDollarSign />,
     },
     {
-      name: "Los Angeles, USA",
+      name: location,
       icon: <FaMapMarkerAlt />,
     },
   ];
+
+
   return (
     <>
       <div className="mt-5 lg:mt-10  space-y-4">
@@ -46,13 +51,13 @@ export default function JobCard({ jobcard }) {
         <div className="flex  flex-col gap-y-5 lg:gap-y-0 md:flex-row justify-between">
           <div className="grid grid-cols-1 gap-y-5 lg:gap-y-0 md:flex  items-center gap-x-4 text-black">
             {jobDetailsList.map((elm, indx) => (
-              <div key={indx} className="flex items-center text-sm gap-x-2">
+              <div key={indx} className="flex items-center text-base gap-x-2">
                 <span className="text-[#309689]">{elm.icon}</span>
                 <span className="text-[#6C757D]">{elm.name}</span>
               </div>
             ))}
           </div>
-          <Link href={`/job-detail/${title.split(" ").join("-")}`} className="px-4  lg:px-16 py-2 rounded bg-[#309689] text-base text-white">
+          <Link href={`/job-detail/${title.split(" ").join("-").toLowerCase()}`} className="px-4  lg:px-16 py-2 rounded bg-[#309689] text-base text-white">
             Apply Job
           </Link>
         </div>
