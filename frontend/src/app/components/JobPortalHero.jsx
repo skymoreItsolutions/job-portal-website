@@ -36,7 +36,7 @@ const JobPortalHero = () => {
   };
 
   return (
-    <div className="relative h-[50vh] w-full overflow-hidden">
+    <div className="relative h-[450px] w-full ">
       <div 
         className="absolute inset-0 bg-cover bg-center" 
         style={{
@@ -46,7 +46,7 @@ const JobPortalHero = () => {
         <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="relative h-full py-10 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl md:text-5xl font-bold text-white text-center mb-4" 
             aria-label="Find Your Dream Job Today!">
           Find Your Dream Job Today!
@@ -80,7 +80,7 @@ const JobPortalHero = () => {
               </button>
               
               {locationDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white shadow-lg z-10 max-h-60 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 z-10 bg-white shadow-lg z-10 max-h-60 overflow-y-auto">
                   {locations.map((location) => (
                     <button
                       key={location}

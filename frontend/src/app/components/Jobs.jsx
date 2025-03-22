@@ -102,7 +102,7 @@ export default function Jobs() {
 
 
   return (
-    <div className="container mx-auto ">
+    <div className="mx-auto ">
       <div className="banner  h-[25vh] lg:h-[40vh] bg-black flex items-center justify-center text-white">
         <h1 className="font-bold text-3xl lg:text-5xl">Jobs</h1>
       </div>
@@ -116,7 +116,7 @@ export default function Jobs() {
         </button>
       </div>
 
-      <div className="mt-4 lg:mt-14 px-5  md:px-12 xl:px-32 container mx-auto  ">
+      <div className="mt-4 lg:mt-14 px-5  md:px-12 xl:px-32 mx-auto  ">
         <div className="grid lg:grid-cols-3 gap-y-16 lg:gap-y-0 lg:gap-x-16">
           <div className="lg:col-span-1 ">
             <div className="bg-[#EBF5F4] rounded-2xl sticky top-0 py-8 lg:py-4  px-3 lg:px-5 space-y-4 lg:space-y-5  ">
@@ -300,7 +300,7 @@ export default function Jobs() {
         </div>
       </div>
 
-      <div className="top-company bg-[#EBF5F4] container mx-auto mt-5 lg:mt-16 py-8 lg:py-16 px-5 md:px-12 xl:px-32 mb-8 lg:mb-16">
+      <div className="top-company bg-[#EBF5F4] mx-auto mt-5 lg:mt-16 py-8 lg:py-16 px-5 md:px-12 xl:px-32 mb-8 lg:mb-16">
         <div className="text-center">
           <h5 className="text-3xl lg:text-4xl font-bold">Top compnay</h5>
           <p>

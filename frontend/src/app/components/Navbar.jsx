@@ -11,8 +11,8 @@ export default function Navbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className="bg-white p-4 shadow-md sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className="bg-white p-4 shadow-md sticky top-0 z-50 px-[8%] ">
+        <div className="mx-auto flex justify-between items-center">
           <div className="text-black text-2xl font-bold">
             <Link href="/">MyCompany</Link>
           </div>
@@ -91,7 +91,7 @@ export default function Navbar() {
             /> 
 
             <p className='text-slate-400 my-4'>
-            By continuing, you agree to the Apna’s Terms of service and Privacy Policy
+            By continuing, you agree  service and Privacy Policy
             </p>
    
             <div className="flex justify-end space-x-2">

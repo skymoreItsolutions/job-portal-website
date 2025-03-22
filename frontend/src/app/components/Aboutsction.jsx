@@ -6,7 +6,7 @@ const AboutSection = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="mx-auto px-4 py-16">
       <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="w-full md:w-1/2 relative">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl">

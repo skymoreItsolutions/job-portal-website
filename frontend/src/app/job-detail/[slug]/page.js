@@ -9,19 +9,18 @@ export const metadata = {
 
   export async function generateStaticParams() {
     return data.map((job) => ({
-      slug: job.title.split(" ",join("-")).toLowerCase(),
+      slug: job.title.split(" ").join("-").toLowerCase(), // ✅ Correct syntax
     }));
-  }  
-
+  }
  
-export async function generateMetadata({params:{slug}}) {
-  const slugProdcut=data.find((elm)=>elm.title.split(" ").join("-").toLowerCase()==slug)
+// export async function generateMetadata({params:{slug}}) {
+//   const slugProdcut=data.find((elm)=>elm.title.split(" ").join("-").toLowerCase()==slug)
 
-  return {
-    title:slugProdcut.title,
-    description: job.description[0], 
-  };
-}
+//   return {
+//     title:slugProdcut.title,
+//     description: job.description[0], 
+//   };
+// }
 
 
 export default function page({params:{slug}}) {

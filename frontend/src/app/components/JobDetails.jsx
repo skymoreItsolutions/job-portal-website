@@ -103,7 +103,7 @@ export default function JobDetails({slug,slugProdcut}) {
   const relatedjobs=data.filter((elm)=>elm.jobType==jobType)
   
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <div className="banner  h-[25vh] lg:h-[40vh] bg-black flex items-center justify-center text-white">
         <h1 className="font-bold text-3xl lg:text-5xl">Job Details</h1>
       </div>
