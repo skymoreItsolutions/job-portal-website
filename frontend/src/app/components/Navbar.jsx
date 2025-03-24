@@ -22,12 +22,13 @@ export default function Navbar() {
             <Link href="/about" className="text-black hover:text-gray-600">About</Link>
             <Link href="/jobs" className="text-black hover:text-gray-600">Jobs</Link>
             <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
-            <button
+            <Link
+              href="/employer-login"
               onClick={() => { setLoginType('Employer'); setShowModal(true); }}
               className="text-black cursor-pointer font-semibold border-2 border-green-500 px-3 py-1 rounded"
             >
               Employer Login
-            </button>
+            </Link>
             <button
               onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
               className="text-white cursor-pointer font-semibold  bg-green-500  px-3 py-1 rounded "
