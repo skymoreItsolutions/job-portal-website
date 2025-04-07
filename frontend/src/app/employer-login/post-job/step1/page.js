@@ -4,6 +4,8 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { HiQuestionMarkCircle, HiTemplate } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa6";
+import { BiCurrentLocation } from "react-icons/bi";
+import { FaCheck } from "react-icons/fa";
 
 export default function Page() {
   const steps = [
@@ -16,6 +18,177 @@ export default function Page() {
 
   const [activeStep, setActiveStep] = useState(1);
 
+  const companies = [
+    "Google",
+    "Microsoft",
+    "Amazon",
+    "Facebook",
+    "Apple",
+    "Netflix",
+    "Tesla",
+  ];
+  const [company, setCompany] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredCompanies = companies.filter((item) =>
+    item.toLowerCase().includes(company.toLowerCase())
+  );
+
+  const handleSelect = (name) => {
+    setCompany(name);
+    setShowDropdown(false);
+  };
+
+  const handleClear = () => {
+    setCompany("");
+    setShowDropdown(false);
+  };
+
+  const jobTitles = [
+    "Software Engineer",
+    "Accountant",
+    "HR Manager",
+    "Sales Executive",
+    "Marketing Manager",
+    "Data Analyst",
+    "Graphic Designer",
+    "Product Manager",
+  ];
+
+  const [jobInput, setJobInput] = useState("");
+  const [showJobDropdown, setShowJobDropdown] = useState(false);
+
+  const filteredJobs = jobTitles.filter((job) =>
+    job.toLowerCase().includes(jobInput.toLowerCase())
+  );
+
+  const handleJobSelect = (job) => {
+    setJobInput(job);
+    setShowJobDropdown(false);
+  };
+
+  const jobCategories = [
+    "Accountant",
+    "Software Engineer",
+    "Sales Executive",
+    "Graphic Designer",
+    "HR Manager",
+    "Marketing Specialist",
+    "Customer Support",
+  ];
+
+  const [jobCategoryInput, setJobCategoryInput] = useState("");
+  const [showJobCategoryDropdown, setShowJobCategoryDropdown] = useState(false);
+
+  const filteredJobCategories = jobCategories.filter((job) =>
+    job.toLowerCase().includes(jobCategoryInput.toLowerCase())
+  );
+
+  const handleJobCategorySelect = (job) => {
+    setJobCategoryInput(job);
+    setShowJobCategoryDropdown(false);
+  };
+
+  const [selectedJobType, setSelectedJobType] = useState("");
+  const [selectedTimeType, setSelectedTimeType] = useState("");
+
+  const [locationInput, setLocationInput] = useState("");
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+
+  const locationSuggestions = [
+    "Koramangala",
+    "Indiranagar",
+    "Whitefield",
+    "HSR Layout",
+    "Electronic City",
+    "Jayanagar",
+    "Marathahalli",
+  ];
+
+  const filteredLocations = locationSuggestions.filter((loc) =>
+    loc.toLowerCase().includes(locationInput.toLowerCase())
+  );
+
+  const handleLocationSelect = (loc) => {
+    setLocationInput(loc);
+    setShowLocationDropdown(false);
+  };
+
+  const clearInput = () => {
+    setLocationInput("");
+    setShowLocationDropdown(false);
+  };
+
+  const [cityInput, setCityInput] = useState("");
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+
+  const citySuggestions = [
+    "Bangalore",
+    "Delhi",
+    "Mumbai",
+    "Chennai",
+    "Hyderabad",
+    "Pune",
+    "Kolkata",
+  ];
+
+  const filteredCities = citySuggestions.filter((city) =>
+    city.toLowerCase().includes(cityInput.toLowerCase())
+  );
+
+  const handleCitySelect = (city) => {
+    setCityInput(city);
+    setShowCityDropdown(false);
+  };
+
+  const clearCityInput = () => {
+    setCityInput("");
+    setShowCityDropdown(false);
+  };
+
+  const [selectedSalaryType, setSelectedSalaryType] = useState("");
+
+  const [selectedBenefits, setSelectedBenefits] = useState([]);
+
+  const toggleBenefit = (benefit) => {
+    setSelectedBenefits((prev) =>
+      prev.includes(benefit)
+        ? prev.filter((item) => item !== benefit)
+        : [...prev, benefit]
+    );
+  };
+
+  const benefits = [
+    "Flexible Working Hours",
+    "Weekly Payout",
+    "Overtime Pay",
+    "Joining Bonus",
+    "Annual Bonus",
+    "PF",
+    "Travel Allowance (TA)",
+    "Petrol Allowance",
+    "Mobile Allowance",
+    "Internet Allowance",
+    "Laptop",
+    "Health Insurance",
+    "ESI (ESIC)",
+    "Food/Meals",
+    "Accommodation",
+  ];
+
+  const [addPerk, setaddPerk] = useState(false);
+
+  const [joiningFees, setJoiningFees] = useState(false);
+
+  const [feeFor, setfeesFor] = useState("");
+
+  const chargeTimingArray = [
+    { label: "Before the interview", value: "Before Interview", tag: "Popular" },
+    { label: "After job confirmation", value: "After Job Confirmation", tag: "Popular" },
+    { label: "Deducted from salary", value: "From Salary", tag: "Popular" }
+  ];
+
+  const [freeBePaid,setfreeBePaid]=useState("")
   return (
     <>
       <div className="px-5 md:px-12 xl:px-32 py-4 bg-gray-100 shadow-md">
@@ -103,33 +276,140 @@ export default function Page() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Company input */}
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-1 relative">
               <label className="text-sm font-medium">
                 Company you're hiring for *
               </label>
               <div className="relative">
                 <input
                   type="text"
+                  value={company}
+                  onChange={(e) => {
+                    setCompany(e.target.value);
+                    setShowDropdown(true);
+                  }}
                   placeholder="Select Company"
                   className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
                 />
-                <button className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500">
-                  <RxCross2 />
-                </button>
+                {company && (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                  >
+                    <RxCross2 />
+                  </button>
+                )}
               </div>
-            </div>
 
+              {showDropdown && filteredCompanies.length > 0 && (
+                <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-sm max-h-48 overflow-y-auto text-sm">
+                  {filteredCompanies.map((item, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleSelect(item)}
+                      className="p-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             {/* Job Title */}
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-1 relative">
               <label className="text-sm font-medium">
                 Job Title / Designation *
               </label>
+
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Eg. Accountant"
+                  value={jobInput}
+                  onChange={(e) => {
+                    setJobInput(e.target.value);
+                    setShowJobDropdown(true);
+                  }}
+                  onFocus={() => setShowJobDropdown(true)}
+                  className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                />
+                {jobInput && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJobInput("");
+                      setShowJobDropdown(false);
+                    }}
+                    className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                  >
+                    <RxCross2 />
+                  </button>
+                )}
+              </div>
+
+              {showJobDropdown && jobInput && filteredJobs.length > 0 && (
+                <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+                  {filteredJobs.map((job, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleJobSelect(job)}
+                      className="p-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {job}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-1 relative">
+            <label className="text-sm font-medium">
+              Job Title / Category *
+            </label>
+
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Eg. Accountant"
-                className="w-full border rounded-md p-2 text-sm outline-none focus:ring-2 ring-blue-300"
+                value={jobCategoryInput}
+                onChange={(e) => {
+                  setJobCategoryInput(e.target.value);
+                  setShowJobCategoryDropdown(true);
+                }}
+                onFocus={() => setShowJobCategoryDropdown(true)}
+                className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
               />
+              {jobCategoryInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJobCategoryInput("");
+                    setShowJobCategoryDropdown(false);
+                  }}
+                  className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                >
+                  <RxCross2 />
+                </button>
+              )}
             </div>
+
+            {showJobCategoryDropdown &&
+              jobCategoryInput &&
+              filteredJobCategories.length > 0 && (
+                <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+                  {filteredJobCategories.map((job, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleJobCategorySelect(job)}
+                      className="p-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {job}
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
 
           {/* Type of Job */}
@@ -140,7 +420,13 @@ export default function Page() {
                 (type, i) => (
                   <button
                     key={i}
-                    className="py-1 px-4 border rounded-full text-sm hover:bg-gray-100"
+                    onClick={() => setSelectedTimeType(type)}
+                    className={`py-1 px-4 border rounded-full text-sm transition-colors duration-200
+            ${
+              selectedTimeType === type
+                ? "bg-[#005F3E] text-white border-green-700"
+                : "hover:bg-gray-100"
+            }`}
                   >
                     {type}
                   </button>
@@ -171,11 +457,169 @@ export default function Page() {
                 (type, i) => (
                   <button
                     key={i}
-                    className="py-1 px-4 border rounded-full text-sm hover:bg-gray-100"
+                    onClick={() => setSelectedJobType(type)}
+                    className={`py-1 px-4 border rounded-full text-sm transition-colors duration-200
+            ${
+              selectedJobType === type
+                ? "bg-[#005F3E] text-white border-green-700"
+                : "hover:bg-gray-100"
+            }`}
                   >
                     {type}
                   </button>
                 )
+              )}
+            </div>
+            <div>
+              {selectedJobType == "Work from Office" && (
+                <div className="mt-4">
+                  <label className="text-sm font-medium">
+                    Office address / landmark *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search for your address/locality"
+                      value={locationInput}
+                      onChange={(e) => {
+                        setLocationInput(e.target.value);
+                        setShowLocationDropdown(true);
+                      }}
+                      onFocus={() => setShowLocationDropdown(true)}
+                      className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                    />
+
+                    {locationInput && (
+                      <button
+                        type="button"
+                        onClick={clearInput}
+                        className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                      >
+                        <RxCross2 />
+                      </button>
+                    )}
+
+                    {showLocationDropdown &&
+                      locationInput &&
+                      filteredLocations.length > 0 && (
+                        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+                          {filteredLocations.map((loc, index) => (
+                            <li
+                              key={index}
+                              onClick={() => handleLocationSelect(loc)}
+                              className="p-2 hover:bg-blue-100 cursor-pointer"
+                            >
+                              {loc}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                  </div>
+
+                  {!locationInput && (
+                    <button className="bg-[#1F8268] text-white rounded-lg mt-4 px-5 py-2 flex items-center gap-x-2">
+                      <BiCurrentLocation />
+                      Use my current Location
+                    </button>
+                  )}
+                </div>
+              )}
+              {selectedJobType == "Work from Home" && (
+                <div className="mt-4">
+                  <label className="text-sm font-medium">Job City *</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Select City"
+                      value={cityInput}
+                      onChange={(e) => {
+                        setCityInput(e.target.value);
+                        setShowCityDropdown(true);
+                      }}
+                      onFocus={() => setShowCityDropdown(true)}
+                      className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                    />
+
+                    {cityInput && (
+                      <button
+                        type="button"
+                        onClick={clearCityInput}
+                        className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                      >
+                        <RxCross2 />
+                      </button>
+                    )}
+
+                    {showCityDropdown &&
+                      cityInput &&
+                      filteredCities.length > 0 && (
+                        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+                          {filteredCities.map((city, index) => (
+                            <li
+                              key={index}
+                              onClick={() => handleCitySelect(city)}
+                              className="p-2 hover:bg-blue-100 cursor-pointer"
+                            >
+                              {city}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                  </div>
+                </div>
+              )}
+
+              {selectedJobType == "Field Job" && (
+                <div className="mt-4">
+                  <label className="text-sm font-medium">
+                    Which area will the candidates be working in ? *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search for your address/locality"
+                      value={locationInput}
+                      onChange={(e) => {
+                        setLocationInput(e.target.value);
+                        setShowLocationDropdown(true);
+                      }}
+                      onFocus={() => setShowLocationDropdown(true)}
+                      className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                    />
+
+                    {locationInput && (
+                      <button
+                        type="button"
+                        onClick={clearInput}
+                        className="absolute right-2 top-2.5 text-gray-500 hover:text-red-500"
+                      >
+                        <RxCross2 />
+                      </button>
+                    )}
+
+                    {showLocationDropdown &&
+                      locationInput &&
+                      filteredLocations.length > 0 && (
+                        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+                          {filteredLocations.map((loc, index) => (
+                            <li
+                              key={index}
+                              onClick={() => handleLocationSelect(loc)}
+                              className="p-2 hover:bg-blue-100 cursor-pointer"
+                            >
+                              {loc}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                  </div>
+                  {!locationInput && (
+                    <button className="bg-[#1F8268] text-white rounded-lg mt-4 px-5 py-2 flex items-center gap-x-2">
+                      <BiCurrentLocation />
+                      Use my current Location
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -199,13 +643,89 @@ export default function Page() {
                 (type, i) => (
                   <button
                     key={i}
-                    className="py-1 px-4 border rounded-full text-sm hover:bg-gray-100"
+                    onClick={() => setSelectedSalaryType(type)}
+                    className={`py-1 px-4 border rounded-full text-sm 
+            ${
+              selectedSalaryType === type
+                ? "bg-green-700 text-white"
+                : "hover:bg-gray-100"
+            }`}
                   >
                     {type}
                   </button>
                 )
               )}
             </div>
+
+            {selectedSalaryType == "Fixed Only" && (
+              <div className="mt-4">
+                <label className="text-sm font-semibold">
+                  Fixed salary / month *
+                </label>
+                <div className="flex  mt-2 gap-x-2 flex-col items-center lg:flex-row lg:w-[50%]">
+                  <input
+                    type="text"
+                    placeholder="minium fixes slaary"
+                    className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                  />
+                  <span className="bg-gray-100 "> to</span>
+                  <input
+                    type="text"
+                    placeholder="maximum fixed salary"
+                    className="w-full border rounded-md p-2 pr-8 text-sm outline-none focus:ring-2 ring-blue-300"
+                  />
+                </div>
+                <div></div>
+              </div>
+            )}
+            {selectedSalaryType == "Fixed + Incentive" && (
+              <div className="mt-4">
+                <label className="text-sm font-semibold block mb-2">
+                  Fixed salary / month (excluding incentives) *
+                </label>
+
+                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 lg:w-[80%]">
+                  <input
+                    type="text"
+                    placeholder="Minimum fixed salary"
+                    className="w-full border rounded-md p-2 text-sm outline-none focus:ring-2 ring-blue-300"
+                  />
+
+                  <span className="text-gray-500">to</span>
+
+                  <input
+                    type="text"
+                    placeholder="Maximum fixed salary"
+                    className="w-full border rounded-md p-2 text-sm outline-none focus:ring-2 ring-blue-300"
+                  />
+
+                  <span className="text-gray-500">+</span>
+
+                  <div className="w-full">
+                    <label className="text-sm font-medium block mb-1">
+                      Average Incentive / month *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Eg. 2000"
+                      className="w-full border rounded-md p-2 text-sm outline-none focus:ring-2 ring-blue-300"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            {selectedSalaryType == "Incentive only" && (
+              <div className="w-[70%] mt-4">
+                <label className="text-sm font-bold block mb-1">
+                  Average Incentive / month *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Eg. 2000"
+                  className="w-full border rounded-md p-2 text-sm outline-none focus:ring-2 ring-blue-300"
+                />
+              </div>
+            )}
           </div>
 
           <div>
@@ -213,39 +733,52 @@ export default function Page() {
               Do you offer any additional perks ?
             </label>
             <div className="flex flex-wrap gap-3 mt-2">
-              {[
-                "Flexible Working Hours",
-                "Weekly Payout",
-                "Overtime Pay",
-                "Joining Bonus",
-                "Annual Bonus",
-                "PF",
-                "Travel Allowance (TA)",
-                "Petrol Allowance",
-                "Mobile Allowance",
-                "Internet Allowance",
-                "Laptop",
-                "Health Insurance",
-                "ESI (ESIC)",
-                "Food/Meals",
-                "Accommodation",
-              ].map((type, i) => (
-                <button
-                  key={i}
-                  className="py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm hover:bg-gray-100"
-                >
-                  {type}{" "}
-                  <span className="">
-                    <FaPlus />
-                  </span>
-                </button>
-              ))}
+              {benefits.map((type, i) => {
+                const isSelected = selectedBenefits.includes(type);
+                return (
+                  <button
+                    key={i}
+                    onClick={() => toggleBenefit(type)}
+                    className={`py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm ${
+                      isSelected
+                        ? "bg-[#005F3E] text-white"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    {type}
+                    <span>{isSelected ? <FaCheck /> : <FaPlus />}</span>
+                  </button>
+                );
+              })}
             </div>
-
-            <button className="flex mt-4 items-center gap-x-2 text-green-600 text-sm font-semibold">
-              {" "}
-              <FaPlus /> Add Other perks
-            </button>
+            {addPerk ? (
+              <div className="mt-4 w-full lg:w-[40%]">
+                <label className="text-sm font-bold block mb-1">
+                  Add Other perks
+                </label>
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    placeholder="Add other perks separated by comma"
+                    className="w-full border rounded-md p-2 pr-16 text-sm outline-none focus:ring-2 ring-blue-300"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-green-800 px-3 py-1 rounded-md text-sm  font-semibold"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setaddPerk(true)}
+                className="flex mt-4 items-center gap-x-2 text-green-600 text-sm font-semibold"
+              >
+                {" "}
+                <FaPlus /> Add Other perks
+              </button>
+            )}
           </div>
 
           <div>
@@ -254,13 +787,81 @@ export default function Page() {
             </label>
 
             <div className="flex items-center gap-x-2 mt-4">
-              <button className="py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm hover:bg-gray-100">
+              <button
+                onClick={() => setJoiningFees(true)}
+                className="py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm hover:bg-gray-100"
+              >
                 Yes
               </button>
-              <button className="py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm hover:bg-gray-100">
+              <button
+                onClick={() => setJoiningFees(false)}
+                className="py-1 flex items-center gap-x-2 px-4 border rounded-full text-sm hover:bg-gray-100"
+              >
                 No
               </button>
             </div>
+
+            {joiningFees && (
+              <>
+                <div className="mt-4 w-full lg:w-[40%]">
+                  <label className="text-sm font-bold block mb-1">
+                    Fee amount *
+                  </label>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      placeholder="₹ 1000"
+                      className="w-full border rounded-md p-2 pr-16 text-sm outline-none focus:ring-2 ring-blue-300"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="text-sm font-medium">
+                    What is this fee for? *
+                  </label>
+                  <div className="flex flex-wrap gap-3 mt-2">
+                    {[
+                      "Asset/ Inventory Charge",
+                      "Security deposit( Refundable)",
+                      "Registration/ Training Fees",
+                      "Commission",
+                      "IRDA Exam",
+                      "Other Reason",
+                    ].map((type, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setfeesFor(type)}
+                        className={`py-1 px-4 border rounded-full text-sm 
+            ${
+              feeFor === type ? "bg-green-700 text-white" : "hover:bg-gray-100"
+            }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="text-sm font-medium">
+                  When should the fee be paid? *
+                  </label>
+                  <div className="flex flex-wrap gap-3 mt-2">
+                    {chargeTimingArray.map((elm, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setfreeBePaid(elm.label)}
+                        className={`py-1 px-4 border rounded-full text-sm 
+            ${
+              freeBePaid === elm.label ? "bg-green-700 text-white" : "hover:bg-gray-100"
+            }`}
+                      >
+                        {elm.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

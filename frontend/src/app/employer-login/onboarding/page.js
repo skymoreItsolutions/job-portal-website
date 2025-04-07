@@ -9,8 +9,8 @@ export default function page() {
     { label: "51-100", value: "51-100" },
     { label: "101-300", value: "101-300" },
     { label: "301-500", value: "301-500" },
-    { label: "501", value: "1000" },
-    { label: "1000+", value: "1000 above" },
+    { label: "501-1000", value: "501-1000" },
+    { label: "1000 above", value: "1000 above" },
   ];
 
   const [formData, setFormData] = useState({
@@ -35,7 +35,29 @@ export default function page() {
     console.log("Form Data:", formData);
   };
 
- 
+  const companies = [
+    "Swiggy",
+    "Zomato",
+    "Amazon",
+    "Google",
+    "Flipkart",
+    "Infosys",
+    "TCS",
+    "Wipro",
+  ];
+
+  const [company, setCompany] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filtered = companies.filter((item) =>
+    item.toLowerCase().includes(company.toLowerCase())
+  );
+
+  const handleSelect = (value) => {
+    setCompany(value);
+    setShowDropdown(false);
+  };
+
 
   return (
     <div className="container mx-auto relative flex flex-col-reverse lg:flex-row items-center xl:items-stretch   py-12 md:py-0 gap-y-10">
@@ -62,17 +84,35 @@ export default function page() {
               />
             </div>
 
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">Company name</label>
-              <input
-                type="text"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleChange}
-                placeholder="e.g. Swiggy"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
+            <div className="relative">
+            <div className="relative w-full">
+      <label className="block text-gray-700 font-semibold mb-1">Company name</label>
+      <input
+        type="text"
+        value={company}
+        onChange={(e) => {
+          setCompany(e.target.value);
+          setShowDropdown(true);
+        }}
+        onFocus={() => setShowDropdown(true)}
+        placeholder="e.g. Swiggy"
+        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {showDropdown && company && filtered.length > 0 && (
+        <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
+          {filtered.map((item, index) => (
+            <li
+              key={index}
+              onClick={() => handleSelect(item)}
+              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
               <div className="flex items-center mt-3 space-x-2">
                 <input
                   type="checkbox"
@@ -94,7 +134,7 @@ export default function page() {
                     type="button"
                     className={`border px-4 py-1.5 rounded-full text-sm transition ${
                       formData.employees === option.value
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#309689] text-white"
                         : "bg-gray-100 hover:bg-blue-100 text-gray-800"
                     }`}
                     onClick={() =>
