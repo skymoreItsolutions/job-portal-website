@@ -67,7 +67,7 @@ const JobPortalHero = () => {
             </div>
 
 
-            <div className="relative flex-1">
+            {/* <div className="relative flex-1">
               <button
                 className="w-full flex items-center justify-between bg-white p-4 border border-gray-300 focus:outline-none focus:none"
                 onClick={() => setLocationDropdown(!locationDropdown)}
@@ -95,7 +95,7 @@ const JobPortalHero = () => {
                   ))}
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className="relative flex-1">
               <button
