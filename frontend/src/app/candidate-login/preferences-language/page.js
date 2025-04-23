@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 
 import { FaArrowLeftLong } from "react-icons/fa6";
-
+import { useRouter } from "next/navigation";
 export default function Page() {
+     const router = useRouter();
   const englishLevels = [
     {
       label: "No English",
@@ -51,6 +52,12 @@ export default function Page() {
     "Persian",
     "Malayalam"
   ];
+
+  const handleNext = () => {
+   
+    router.push("/candidate-login/resumes");
+  };
+
   
   return (
     <div className="bg-[#e8e7ea] px-5 md:px-12 xl:px-32 py-8 lg:py-12">
@@ -138,7 +145,7 @@ export default function Page() {
           </div>
 
           <div className="p-4 lg:p-6 border-t border-gray-300">
-            <button className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+            <button onClick={handleNext}   className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
               Next
             </button>
           </div>

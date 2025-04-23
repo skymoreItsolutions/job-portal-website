@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { FaArrowLeftLong } from "react-icons/fa6";
 
 export default function Page() {
   const [selected, setSelected] = useState(null);
-
+  const router = useRouter();
   const education = [
     { label: "10th or below 10" },
     { label: "12th pass" },
@@ -18,6 +18,13 @@ export default function Page() {
   const [pursing, setPurSing] = useState("");
 
   console.log(pursing, "check");
+
+  const handleNext = () => {
+   
+    router.push("/candidate-login/job-type");
+  };
+
+
   return (
     <div className="bg-[#e8e7ea] px-5 md:px-12 xl:px-32 py-8 lg:py-12">
       <div className="w-full xl:h-[87vh] lg:w-[85%] mx-auto flex flex-col lg:flex-row  lg:items-start gap-8">
@@ -53,7 +60,7 @@ export default function Page() {
         <div className="w-full  flex  flex-col justify-between bg-white rounded-3xl shadow-lg  ">
           <div className="p-4 lg:p-6  border-b border-gray-300 flex flex-col sm:flex-row sm:items-center gap-y-4 justify-between">
             <div className="font-semibold text-lg flex items-center gap-x-4">
-              <FaArrowLeftLong />
+              <FaArrowLeftLong  onClick={() => router.push("/candidate-login/educations")}  />
               Experience Details
             </div>
             <div className=" w-[250px] bg-gray-400 rounded-2xl p-2 overflow-x-hidden relative">
@@ -231,7 +238,7 @@ export default function Page() {
           </div>
 
           <div className="p-4 lg:p-6 border-t border-gray-300">
-            <button className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+            <button     onClick={handleNext} className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
               Next
             </button>
           </div>

@@ -5,10 +5,15 @@ import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { MdMyLocation } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
-
+import { useRouter } from "next/navigation";
 export default function Page() {
+   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const [selectedGender, setSelectedGender] = useState(null);
+  const handleNext = () => {
+   
+    router.push("/candidate-login/preferences-language");
+  };
 
   return (
     <div className="bg-[#e8e7ea] px-5 md:px-12 xl:px-32 py-8 lg:py-12">

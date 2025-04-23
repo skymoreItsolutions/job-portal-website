@@ -1,11 +1,32 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 
 export default function Page() {
+  const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const [selectedGender, setSelectedGender] = useState(null);
+  const [fullName, setFullName] = useState("");
+  const [dob, setDob] = useState("");
+  const [email, setEmail] = useState("");
+  
+
+
+  const handleNext = () => {
+    const userData = {
+      fullName,
+      dob,
+      gender: selectedGender,
+      email,
+      whatsappUpdates: isChecked,
+    };
+    localStorage.setItem("candidate_basic_details", JSON.stringify(userData));
+    router.push("/candidate-login/educations");
+  };
+
+
 
   return (
     <div className="bg-[#e8e7ea] px-5 md:px-12 xl:px-32 py-8 lg:py-12">
@@ -54,6 +75,8 @@ export default function Page() {
                 <input
                   type="text"
                   placeholder="Enter full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
                 />
               </div>
@@ -63,6 +86,8 @@ export default function Page() {
                 <input
                   type="text"
                   placeholder="Choose date"
+                  value={dob}
+          onChange={(e) => setDob(e.target.value)}
                   className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
                 />
                 <SlCalender className="absolute right-4 top-12 text-gray-500" />
@@ -119,7 +144,7 @@ export default function Page() {
           </div>
 
           <div className="p-4 border-t border-gray-300">
-            <button className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+            <button  onClick={handleNext} className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
               Next
             </button>
           </div>

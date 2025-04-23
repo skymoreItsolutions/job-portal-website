@@ -3,8 +3,14 @@ import React, { useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { GiEnlightenment } from "react-icons/gi";
 import { IoMdCheckmarkCircle } from "react-icons/io";
-
+import { useRouter } from "next/navigation";
 export default function Page() {
+     const router = useRouter();
+  const handleNext = () => {
+   
+    router.push("/candidate-login/skills");
+  };
+
   return (
     <div className="bg-[#e8e7ea] px-4 sm:px-6 md:px-12 xl:px-32 py-6 md:py-10">
       <div className="w-full xl:h-screen lg:w-[85%] mx-auto flex flex-col lg:flex-row lg:items-start gap-6">
@@ -80,8 +86,8 @@ export default function Page() {
             <button className="w-full py-3 border-2 border-[#2da292] text-[#2da292] font-semibold rounded-lg hover:border-[#3e6e68] active:scale-95 transition">
               Skip
             </button>
-            <button className="w-full py-3 bg-[#309689] text-white font-semibold rounded-lg hover:bg-[#3e6e68] active:scale-95 transition">
-              Select
+            <button onClick={handleNext}  className="w-full py-3 bg-[#309689] text-white font-semibold rounded-lg hover:bg-[#3e6e68] active:scale-95 transition">
+              Next
             </button>
           </div>
         </div>
