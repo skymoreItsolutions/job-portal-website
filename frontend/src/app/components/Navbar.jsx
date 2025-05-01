@@ -2,11 +2,48 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
+import { baseurl } from './common';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loginType, setLoginType] = useState('');
+const [otpsended,SetotpSend]=useState(false)
+const [otp,setotp]=useState('')
+const [loading,setLoading]=useState(false)
+
+const [email,setemail]=useState("")
+const navigation=useRouter()
+const handelotp=async()=>{
+  setLoading(true)
+if(email.trim()){
+  const response=await axios.post(`${baseurl}/send-otp`,{email:email})
+  console.log(response.data)
+  SetotpSend(true)
+}
+
+setLoading(false)
+}
+
+const handelSendopt=async()=>{
+  setLoading(true)
+  if(otp.length==6){ 
+
+    const response=await axios.post(`${baseurl}/verify-otp`,{email:email,otp:otp})
+
+
+  if(response.data.success){
+    localStorage.setItem("port_tok",response.data.token)
+    setShowModal(false)
+    navigation.push('/candidate/candidate-login')
+  }
+  }
+  setLoading(false)
+
+}
+
 
   return (
     <>
@@ -87,14 +124,49 @@ export default function Navbar() {
             </h2>
             <input
               type="email"
+              value={email}
               placeholder="Enter your email"
               className="w-full border p-2 rounded"
+              onChange={(e)=>setemail(e.target.value)}
+              disabled={otpsended}
             /> 
+
+
+{ otpsended &&
+  <div>
+  <label htmlFor='otp'>Otp</label>
+  <input
+              type="number"
+              value={otp}
+              placeholder="Enter your Otp"
+              className="w-full border p-2 rounded"
+              onChange={(e)=>setotp(e.target.value)}
+              maxLength={6}
+              
+            /> 
+  
+  </div>
+}
+
+
+
+
 
             <p className='text-slate-400 my-4'>
             By continuing, you agree  service and Privacy Policy
             </p>
+            {otpsended &&
+            <button
+            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            onClick={handelSendopt}
+            disabled={loading}
+          >
+           {loading?"Loading...":"verifyotp"}  
+          </button>
+
+            }
    
+   { !otpsended &&<>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowModal(false)}
@@ -104,10 +176,16 @@ export default function Navbar() {
               </button>
               <button
                 className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                onClick={handelotp}
+                disabled={loading}
               >
-                Submit
+                
+                {loading?"Loading...":"Submit"} 
               </button>
+             
             </div>
+            </>
+   }
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"

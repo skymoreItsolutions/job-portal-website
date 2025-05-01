@@ -20,7 +20,7 @@ export default function Page() {
   const handleNext = () => {
     
  
-    router.push("/candidate-login/experience");
+    router.push("/candidate/experience");
   };
 
 

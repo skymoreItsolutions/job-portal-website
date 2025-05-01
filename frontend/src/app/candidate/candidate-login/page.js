@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
+import axios from "axios";
+import { baseurl } from "@/app/components/common";
 
 export default function Page() {
   const router = useRouter();
@@ -10,20 +12,21 @@ export default function Page() {
   const [selectedGender, setSelectedGender] = useState(null);
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
-  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
   
 
 
-  const handleNext = () => {
+  const handleNext = async() => {
     const userData = {
-      fullName,
+      full_name: fullName,
       dob,
       gender: selectedGender,
-      email,
-      whatsappUpdates: isChecked,
+      number,
+     
     };
-    localStorage.setItem("candidate_basic_details", JSON.stringify(userData));
-    router.push("/candidate-login/educations");
+   const token=  localStorage.getItem("port_tok")
+const response = await axios.post(`${baseurl}/candidate-educations/${token}`)
+  router.push("/candidate/educations");
   };
 
 
@@ -84,13 +87,13 @@ export default function Page() {
               <div className="relative">
                 <label className="font-semibold text-sm">Date of Birth (DOB)</label>
                 <input
-                  type="text"
+                  type="date"
                   placeholder="Choose date"
                   value={dob}
           onChange={(e) => setDob(e.target.value)}
                   className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
                 />
-                <SlCalender className="absolute right-4 top-12 text-gray-500" />
+                {/* <SlCalender className="absolute right-4 top-12 text-gray-500" /> */}
               </div>
 
               {/* Gender */}
@@ -123,8 +126,11 @@ export default function Page() {
               <div>
                 <label className="font-semibold text-sm">Email Address (Optional)</label>
                 <input
-                  type="email"
-                  placeholder="Enter email address"
+                  type="number"
+                  placeholder="Enter  Number"
+                  onChange={(e)=>setNumber(e.target.value)}
+
+                  
                   className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
                 />
               </div>
