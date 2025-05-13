@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,7 @@ export default function Navbar() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleOtp = async () => {
     setLoading(true);
@@ -26,6 +27,8 @@ export default function Navbar() {
       setLoading(false);
       return;
     }
+
+
 
     try {
       const endpoint = loginType === 'Employer' ? 'employer/send-otp' : 'send-otp';
@@ -60,7 +63,7 @@ export default function Navbar() {
         localStorage.setItem('employer_token', response.data.token);
         
         setShowModal(false);
-        const redirectPath = loginType === 'Employer' ? '/employer/employer-login' : '/candidate/candidate-login';
+        const redirectPath = loginType === 'Employer' ? '/employer/onboarding' : '/candidate/candidate-login';
         router.push(redirectPath);
       } else {
         setError('Invalid OTP. Please try again.');
@@ -71,6 +74,38 @@ export default function Navbar() {
     }
     setLoading(false);
   };
+
+
+  useEffect(() => {
+  const checkLogin = async () => {
+    const token = localStorage.getItem('employerToken');
+    if (!token) return;
+
+    try {
+      const res = await axios.get(`${baseurl}employer/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (res.data && res.data.success) {
+        setIsLoggedIn(true);
+      }
+    } catch (err) {
+      console.error('Not logged in or invalid token');
+      setIsLoggedIn(false);
+    }
+  };
+
+  checkLogin();
+}, []);
+
+const handleLogout = () => {
+  localStorage.removeItem('employer_token');
+  setIsLoggedIn(false);
+  router.push('/'); // redirect to home or login page
+};
+
 
   return (
     <>
@@ -86,18 +121,30 @@ export default function Navbar() {
             <Link href="/about" className="text-black hover:text-gray-600">About</Link>
             <Link href="/jobs" className="text-black hover:text-gray-600">Jobs</Link>
             <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
-            <button
-              onClick={() => { setLoginType('Employer'); setShowModal(true); }}
-              className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
-            >
-              Employer Login
-            </button>
-            <button
-              onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
-              className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
-            >
-              Candidate Login
-            </button>
+           {!isLoggedIn ? (
+  <>
+    <button
+      onClick={() => { setLoginType('Employer'); setShowModal(true); }}
+      className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
+    >
+      Employer Login
+    </button>
+    <button
+      onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
+      className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
+    >
+      Candidate Login
+    </button>
+  </>
+) : (
+  <button
+    onClick={handleLogout}
+    className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
+  >
+    Logout
+  </button>
+)}
+
           </div>
 
           {/* Mobile Menu Toggle */}
