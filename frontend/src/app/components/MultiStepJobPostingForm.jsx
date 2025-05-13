@@ -1,0 +1,727 @@
+'use client';
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight, FaInfoCircle } from 'react-icons/fa';
+import { format } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MultiStepJobPostingForm = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    companyName: '',
+    jobTitle: '',
+    jobType: '',
+    location: '',
+    payType: '',
+    minSalary: '',
+    maxSalary: '',
+    educationLevel: '',
+    experienceLevel: '',
+    genderPreference: 'No Preference',
+    preferredRoles: [],
+    jobOverview: '',
+    keyResponsibilities: '',
+    requiredSkills: [],
+    perks: [],
+    interviewMode: 'Online',
+    contactPreference: [],
+    interviewLocation: '',
+    contactEmail: '',
+    contactPhone: '',
+    interviewDate: '',
+    interviewTime: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('jobPostingFormData');
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === 'checkbox') {
+      if (checked) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: Array.isArray(prev[name]) ? [...prev[name], value] : [value],
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: Array.isArray(prev[name]) ? prev[name].filter((item) => item !== value) : [],
+        }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    localStorage.setItem('jobPostingFormData', JSON.stringify(formData));
+  };
+
+  const validateStep = (step) => {
+    const newErrors = {};
+
+    switch (step) {
+      case 1:
+        if (!formData.companyName) newErrors.companyName = 'Company name is required';
+        if (!formData.jobTitle) newErrors.jobTitle = 'Job title is required';
+        if (!formData.location) newErrors.location = 'Location is required';
+        break;
+      case 2:
+        if (!formData.educationLevel) newErrors.educationLevel = 'Education level is required';
+        if (!formData.experienceLevel) newErrors.experienceLevel = 'Experience level is required';
+        break;
+      case 3:
+        if (!formData.jobOverview) newErrors.jobOverview = 'Job overview is required';
+        if (!formData.keyResponsibilities) newErrors.keyResponsibilities = 'Key responsibilities are required';
+        break;
+      case 4:
+        if (!formData.contactEmail && !formData.contactPhone) {
+          newErrors.contact = 'Either email or phone is required';
+        }
+        break;
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      if (currentStep < 4) {
+        setCurrentStep((prev) => prev + 1);
+      } else {
+        setShowConfirmation(true);
+      }
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateStep(currentStep)) {
+      console.log('Form submitted:', formData);
+      alert('Job posting submitted successfully!');
+      setFormData({
+        companyName: '',
+        jobTitle: '',
+        jobType: '',
+        location: '',
+        payType: '',
+        minSalary: '',
+        maxSalary: '',
+        educationLevel: '',
+        experienceLevel: '',
+        genderPreference: 'No Preference',
+        preferredRoles: [],
+        jobOverview: '',
+        keyResponsibilities: '',
+        requiredSkills: [],
+        perks: [],
+        interviewMode: 'Online',
+        contactPreference: [],
+        interviewLocation: '',
+        contactEmail: '',
+        contactPhone: '',
+        interviewDate: '',
+        interviewTime: '',
+      });
+      setCurrentStep(1);
+      setShowConfirmation(false);
+      localStorage.removeItem('jobPostingFormData');
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Company Name *</label>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${errors.companyName ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              />
+              {errors.companyName && <p className="mt-1 text-xs text-red-500">{errors.companyName}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Job Title *</label>
+              <input
+                type="text"
+                name="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${errors.jobTitle ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              />
+              {errors.jobTitle && <p className="mt-1 text-xs text-red-500">{errors.jobTitle}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Job Type</label>
+              <select
+                name="jobType"
+                value={formData.jobType}
+                onChange={handleInputChange}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              >
+                <option value="">Select Job Type</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Freelance">Freelance</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Location *</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${errors.location ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              />
+              {errors.location && <p className="mt-1 text-xs text-red-500">{errors.location}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Pay Type</label>
+                <select
+                  name="payType"
+                  value={formData.payType}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                >
+                  <option value="">Select Pay Type</option>
+                  <option value="Hourly">Hourly</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Yearly">Yearly</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Minimum Salary</label>
+                <input
+                  type="number"
+                  name="minSalary"
+                  value={formData.minSalary}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Maximum Salary</label>
+                <input
+                  type="number"
+                  name="maxSalary"
+                  value={formData.maxSalary}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+            </div>
+          </motion.div>
+        );
+
+      case 2:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Education Level *</label>
+              <select
+                name="educationLevel"
+                value={formData.educationLevel}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${errors.educationLevel ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              >
+                <option value="">Select Education Level</option>
+                <option value="High School">High School</option>
+                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                <option value="Master's Degree">Master's Degree</option>
+                <option value="PhD">PhD</option>
+              </select>
+              {errors.educationLevel && <p className="mt-1 text-xs text-red-500">{errors.educationLevel}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Experience Level *</label>
+              <select
+                name="experienceLevel"
+                value={formData.experienceLevel}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${errors.experienceLevel ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              >
+                <option value="">Select Experience Level</option>
+                <option value="Entry Level">Entry Level</option>
+                <option value="Mid Level">Mid Level</option>
+                <option value="Senior Level">Senior Level</option>
+                <option value="Executive">Executive</option>
+              </select>
+              {errors.experienceLevel && <p className="mt-1 text-xs text-red-500">{errors.experienceLevel}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Gender Preference</label>
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                {['No Preference', 'Male', 'Female', 'Other'].map((option) => (
+                  <div key={option} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="genderPreference"
+                      value={option}
+                      checked={formData.genderPreference === option}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                    />
+                    <label className="ml-2 text-sm text-gray-700">{option}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Preferred Roles</label>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  'Software Engineer',
+                  'Product Manager',
+                  'Designer',
+                  'Marketing Specialist',
+                  'Sales Representative',
+                ].map((role) => (
+                  <div key={role} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="preferredRoles"
+                      value={role}
+                      checked={formData.preferredRoles.includes(role)}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                    />
+                    <label className="ml-2 text-sm text-gray-700">{role}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        );
+
+      case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Job Overview *</label>
+              <textarea
+                name="jobOverview"
+                value={formData.jobOverview}
+                onChange={handleInputChange}
+                rows={5}
+                className={`mt-2 w-full rounded-lg border ${errors.jobOverview ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
+              />
+              {errors.jobOverview && <p className="mt-1 text-xs text-red-500">{errors.jobOverview}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Key Responsibilities *</label>
+              <textarea
+                name="keyResponsibilities"
+                value={formData.keyResponsibilities}
+                onChange={handleInputChange}
+                rows={5}
+                placeholder="Enter responsibilities (one per line)"
+                className={`mt-2 w-full rounded-lg border ${errors.keyResponsibilities ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
+              />
+              {errors.keyResponsibilities && <p className="mt-1 text-xs text-red-500">{errors.keyResponsibilities}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Required Skills</label>
+              <input
+                type="text"
+                name="requiredSkills"
+                placeholder="Enter skills separated by commas"
+                value={formData.requiredSkills.join(', ')}
+                onChange={(e) => {
+                  const skills = e.target.value
+                    .split(',')
+                    .map((skill) => skill.trim())
+                    .filter(Boolean);
+                  setFormData((prev) => ({ ...prev, requiredSkills: skills }));
+                }}
+                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Optional Perks</label>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  'Health Insurance',
+                  'Remote Work',
+                  'Flexible Hours',
+                  'Professional Development',
+                  'Transportation Allowance',
+                ].map((perk) => (
+                  <div key={perk} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="perks"
+                      value={perk}
+                      checked={formData.perks.includes(perk)}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                    />
+                    <label className="ml-2 text-sm text-gray-700">{perk}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        );
+
+      case 4:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Interview Mode</label>
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                {['Online', 'Walk-in', 'Hybrid'].map((mode) => (
+                  <div key={mode} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="interviewMode"
+                      value={mode}
+                      checked={formData.interviewMode === mode}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                    />
+                    <label className="ml-2 text-sm text-gray-700">{mode}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">Contact Preference</label>
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                {['Email', 'Phone', 'LinkedIn'].map((preference) => (
+                  <div key={preference} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="contactPreference"
+                      value={preference}
+                      checked={formData.contactPreference.includes(preference)}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                    />
+                    <label className="ml-2 text-sm text-gray-700">{preference}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {formData.interviewMode !== 'Online' && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Interview Location</label>
+                <input
+                  type="text"
+                  name="interviewLocation"
+                  value={formData.interviewLocation}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Contact Email</label>
+                <input
+                  type="email"
+                  name="contactEmail"
+                  value={formData.contactEmail}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Contact Phone</label>
+                <input
+                  type="tel"
+                  name="contactPhone"
+                  value={formData.contactPhone}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            {errors.contact && <p className="text-xs text-red-500">{errors.contact}</p>}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Interview Date</label>
+                <input
+                  type="date"
+                  name="interviewDate"
+                  value={formData.interviewDate}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Interview Time</label>
+                <input
+                  type="time"
+                  name="interviewTime"
+                  value={formData.interviewTime}
+                  onChange={handleInputChange}
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+              </div>
+            </div>
+          </motion.div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white shadow-2xl rounded-2xl p-8"
+        >
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-3xl font-bold text-gray-900">Post a New Job</h2>
+              <span className="text-sm text-gray-500 font-medium">Step {currentStep} of 4</span>
+            </div>
+            <div className="mt-6">
+              <div className="relative">
+                <div className="overflow-hidden h-2 rounded-full bg-gray-200">
+                  <motion.div
+                    animate={{ width: `${(currentStep / 4) * 100}%` }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                    className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
+                  />
+                </div>
+                <div className="flex justify-between mt-2">
+                  {['Basic Info', 'Qualifications', 'Description', 'Interview'].map((label, index) => (
+                    <div key={index} className="text-center">
+                      <div
+                        className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-sm font-semibold ${
+                          currentStep >= index + 1
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-500'
+                        } transition-all duration-300`}
+                      >
+                        {index + 1}
+                      </div>
+                      <span className="block mt-1 text-xs text-gray-600">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
+
+            <div className="mt-10 flex flex-col sm:flex-row justify-between gap-4">
+              <motion.button
+                type="button"
+                onClick={handleBack}
+                disabled={currentStep === 1}
+                whileHover={{ scale: currentStep === 1 ? 1 : 1.05 }}
+                whileTap={{ scale: currentStep === 1 ? 1 : 0.95 }}
+                className={`flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  currentStep === 1
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <FaChevronLeft className="mr-2" />
+                Back
+              </motion.button>
+
+              <motion.button
+                type="button"
+                onClick={handleNext}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+              >
+                {currentStep === 4 ? 'Review' : 'Next'}
+                <FaChevronRight className="ml-2" />
+              </motion.button>
+            </div>
+          </form>
+        </motion.div>
+
+        <AnimatePresence>
+          {showConfirmation && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Review Job Posting</h3>
+                <div className="space-y-6">
+                  <div>
+                    <dt className="font-semibold text-gray-800">Company Name</dt>
+                    <dd className="text-gray-600">{formData.companyName}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Job Title</dt>
+                    <dd className="text-gray-600">{formData.jobTitle}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Location</dt>
+                    <dd className="text-gray-600">{formData.location}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Job Type</dt>
+                    <dd className="text-gray-600">{formData.jobType || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Salary Range</dt>
+                    <dd className="text-gray-600">
+                      {formData.minSalary && formData.maxSalary
+                        ? `${formData.minSalary} - ${formData.maxSalary} (${formData.payType || 'Not specified'})`
+                        : 'Not specified'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Education Level</dt>
+                    <dd className="text-gray-600">{formData.educationLevel || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Experience Level</dt>
+                    <dd className="text-gray-600">{formData.experienceLevel || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Job Overview</dt>
+                    <dd className="text-gray-600">{formData.jobOverview || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Key Responsibilities</dt>
+                    <dd className="text-gray-600">{formData.keyResponsibilities || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Required Skills</dt>
+                    <dd className="text-gray-600">{formData.requiredSkills.join(', ') || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Perks</dt>
+                    <dd className="text-gray-600">{formData.perks.join(', ') || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Interview Mode</dt>
+                    <dd className="text-gray-600">{formData.interviewMode}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Contact Information</dt>
+                    <dd className="text-gray-600">
+                      {formData.contactEmail || formData.contactPhone
+                        ? `${formData.contactEmail} ${formData.contactPhone}`
+                        : 'Not specified'}
+                    </dd>
+                  </div>
+                </div>
+                <div className="mt-8 flex flex-col sm:flex-row justify-end gap-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => setShowConfirmation(false)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
+                  >
+                    <FaTimes className="mr-2" />
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    type="submit"
+                    onClick={handleSubmit}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-300"
+                  >
+                    <FaCheck className="mr-2" />
+                    Submit Job Posting
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+
+export default MultiStepJobPostingForm;

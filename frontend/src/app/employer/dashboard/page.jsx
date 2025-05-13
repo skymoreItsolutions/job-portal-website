@@ -1,87 +1,54 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { FiBriefcase, FiDatabase, FiFileText, FiUsers, FiChevronDown, FiPlus } from "react-icons/fi";
-import { BiTrendingUp, BiTrendingDown } from "react-icons/bi";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useState } from 'react';
+import { FiPlus } from 'react-icons/fi';
+import { BiTrendingUp, BiTrendingDown } from 'react-icons/bi';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Sidebar from '../../components/Sidebar';
 
 const data = [
-  { name: "Jan", applications: 400 },
-  { name: "Feb", applications: 300 },
-  { name: "Mar", applications: 600 },
-  { name: "Apr", applications: 800 },
-  { name: "May", applications: 700 }
+  { name: 'Jan', applications: 400 },
+  { name: 'Feb', applications: 300 },
+  { name: 'Mar', applications: 600 },
+  { name: 'Apr', applications: 800 },
+  { name: 'May', applications: 700 },
 ];
 
 const recentJobs = [
-  { id: 1, title: "Senior React Developer", status: "Active", verified: true },
-  { id: 2, title: "UX Designer", status: "Pending", verified: false },
-  { id: 3, title: "Product Manager", status: "Expired", verified: true }
+  { id: 1, title: 'Senior React Developer', status: 'Active', verified: true },
+  { id: 2, title: 'UX Designer', status: 'Pending', verified: false },
+  { id: 3, title: 'Product Manager', status: 'Expired', verified: true },
 ];
 
 const EmployerDashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [activeSubmenu, setActiveSubmenu] = useState("");
-
-  const toggleSubmenu = (menu) => {
-    setActiveSubmenu(activeSubmenu === menu ? "" : menu);
-  };
-
   const [formData, setFormData] = useState({
-    jobTitle: "",
-    description: "",
-    skills: "",
-    salaryRange: "",
-    jobType: "full-time",
-    location: "",
-    deadline: ""
+    jobTitle: '',
+    description: '',
+    skills: '',
+    salaryRange: '',
+    jobType: 'full-time',
+    location: '',
+    deadline: '',
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    console.log('Form submitted:', formData);
     setIsJobModalOpen(false);
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className={`bg-white shadow-lg ${isSidebarOpen ? "w-64" : "w-20"} transition-all duration-300`}>
-        <div className="p-4">
-          <h2 className="text-xl font-bold text-gray-800">Dashboard</h2>
-        </div>
-        <nav className="mt-4">
-          <SidebarItem icon={<FiBriefcase />} title="Jobs" submenu={[
-            "Active Jobs",
-            "Draft Jobs",
-            "Expired Jobs"
-          ]} isActive={activeSubmenu === "jobs"} onClick={() => toggleSubmenu("jobs")} />
-          
-          <SidebarItem icon={<FiDatabase />} title="Database" submenu={[
-            "Candidate Profiles",
-            "Saved Candidates"
-          ]} isActive={activeSubmenu === "database"} onClick={() => toggleSubmenu("database")} />
-          
-          <SidebarItem icon={<FiFileText />} title="Reports" submenu={[
-            "Job Performance",
-            "Application Analytics"
-          ]} isActive={activeSubmenu === "reports"} onClick={() => toggleSubmenu("reports")} />
-          
-          <SidebarItem icon={<FiUsers />} title="Candidates" submenu={[
-            "Pending Reviews",
-            "Interviewed",
-            "Shortlisted"
-          ]} isActive={activeSubmenu === "candidates"} onClick={() => toggleSubmenu("candidates")} />
-        </nav>
-      </div>
 
-      {/* Main Content */}
+      <Sidebar />
+
+
       <div className="flex-1 overflow-auto">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
@@ -94,35 +61,14 @@ const EmployerDashboard = () => {
             </button>
           </div>
 
-          {/* Metrics Grid */}
+      
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <MetricCard
-              title="Total Job Visits"
-              value="12,456"
-              change={12}
-              isPositive={true}
-            />
-            <MetricCard
-              title="Total Applications"
-              value="1,234"
-              change={-5}
-              isPositive={false}
-            />
-            <MetricCard
-              title="Active Jobs"
-              value="45"
-              change={8}
-              isPositive={true}
-            />
-            <MetricCard
-              title="Pending Reviews"
-              value="28"
-              change={0}
-              isPositive={true}
-            />
+            <MetricCard title="Total Job Visits" value="12,456" change={12} isPositive={true} />
+            <MetricCard title="Total Applications" value="1,234" change={-5} isPositive={false} />
+            <MetricCard title="Active Jobs" value="45" change={8} isPositive={true} />
+            <MetricCard title="Pending Reviews" value="28" change={0} isPositive={true} />
           </div>
 
-          {/* Charts & Tables */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4">Application Trends</h3>
@@ -151,11 +97,19 @@ const EmployerDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {recentJobs.map(job => (
+                    {recentJobs.map((job) => (
                       <tr key={job.id} className="border-b">
                         <td className="py-2">{job.title}</td>
                         <td className="py-2">
-                          <span className={`px-2 py-1 rounded-full text-sm ${job.status === "Active" ? "bg-green-100 text-green-800" : job.status === "Pending" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-sm ${
+                              job.status === 'Active'
+                                ? 'bg-green-100 text-green-800'
+                                : job.status === 'Pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
                             {job.status}
                           </span>
                         </td>
@@ -289,37 +243,13 @@ const EmployerDashboard = () => {
   );
 };
 
-const SidebarItem = ({ icon, title, submenu, isActive, onClick }) => {
-  return (
-    <div className="mb-2">
-      <button
-        onClick={onClick}
-        className={`w-full flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 ${isActive ? "bg-gray-100" : ""}`}
-      >
-        <span className="mr-3">{icon}</span>
-        <span>{title}</span>
-        <FiChevronDown className={`ml-auto transform ${isActive ? "rotate-180" : ""} transition-transform`} />
-      </button>
-      {isActive && (
-        <div className="ml-12 mt-2 space-y-2">
-          {submenu.map((item, index) => (
-            <button key={index} className="block w-full text-left text-gray-600 hover:text-gray-900 py-1">
-              {item}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
 const MetricCard = ({ title, value, change, isPositive }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-gray-600 text-sm mb-2">{title}</h3>
       <div className="flex items-center justify-between">
         <span className="text-2xl font-bold">{value}</span>
-        <div className={`flex items-center ${isPositive ? "text-green-500" : "text-red-500"}`}>
+        <div className={`flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
           {isPositive ? <BiTrendingUp size={24} /> : <BiTrendingDown size={24} />}
           <span className="ml-1">{Math.abs(change)}%</span>
         </div>

@@ -76,7 +76,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
   };
 
 
-  useEffect(() => {
+useEffect(() => {
   const checkLogin = async () => {
     const token = localStorage.getItem('employerToken');
     if (!token) return;
@@ -90,6 +90,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
 
       if (res.data && res.data.success) {
         setIsLoggedIn(true);
+
       }
     } catch (err) {
       console.error('Not logged in or invalid token');
