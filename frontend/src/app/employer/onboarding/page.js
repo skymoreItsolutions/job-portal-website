@@ -64,7 +64,7 @@ export default function Page() {
     };
 
     try {
-      const response = await axios.post(`${baseurl}employer/signup`, payload);
+      const response = await axios.post(`${baseurl}/employer/signup`, payload);
       console.log("Signup successful:", response.data);
       localStorage.setItem("employerToken", response.data.token);
 

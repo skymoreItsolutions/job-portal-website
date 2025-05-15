@@ -1,11 +1,12 @@
 'use client';
 
-'use client';
+
 
 import { useState, useEffect } from 'react';
-import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight, FaInfoCircle } from 'react-icons/fa';
-import { format } from 'date-fns';
+import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
+import { baseurl } from './common';
 
 const MultiStepJobPostingForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -36,6 +37,11 @@ const MultiStepJobPostingForm = () => {
 
   const [errors, setErrors] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [apiError, setApiError] = useState(null);
+
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   useEffect(() => {
     const savedData = localStorage.getItem('jobPostingFormData');
@@ -114,11 +120,44 @@ const MultiStepJobPostingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateStep(currentStep)) {
-      console.log('Form submitted:', formData);
+    if (!validateStep(currentStep)) return;
+
+
+    const apiData = {
+      employer_id:19,
+
+      job_title: formData.jobTitle,
+      job_type: formData.jobType,
+      location: formData.location,
+      work_location_type: formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid',
+      compensation: `${formData.minSalary}-${formData.maxSalary}`,
+      pay_type: formData.payType,
+      joining_fee: false,
+      basic_requirements: formData.keyResponsibilities,
+      additional_requirements: JSON.stringify(formData.requiredSkills),
+      is_walkin_interview: formData.interviewMode === 'Walk-in',
+      communication_preference: formData.contactPreference.includes('Phone') ? 'Call' : formData.contactPreference.includes('Email') ? 'Whatsapp' : 'No Preference',
+      total_experience_required: formData.experienceLevel === 'Entry Level' ? 0 : formData.experienceLevel === 'Mid Level' ? 3 : formData.experienceLevel === 'Senior Level' ? 7 : 10,
+      other_job_titles: JSON.stringify(formData.preferredRoles),
+      degree_specialization: JSON.stringify([formData.educationLevel]),
+      job_description: formData.jobOverview,
+      job_expire_time: parseInt(formData.jobExpireTime),
+      number_of_candidates_required: parseInt(formData.numberOfCandidatesRequired),
+    };
+
+    try {
+      const response = await axios.post(`${baseurl}/job-posts`, apiData, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Add Authorization header if needed, e.g., 'Bearer ' + token
+        },
+      });
+
+      // Handle success
       alert('Job posting submitted successfully!');
       setFormData({
         companyName: '',
+
         jobTitle: '',
         jobType: '',
         location: '',
@@ -140,14 +179,27 @@ const MultiStepJobPostingForm = () => {
         contactPhone: '',
         interviewDate: '',
         interviewTime: '',
+        joiningFee: false,
+        jobExpireTime: 7,
+        numberOfCandidatesRequired: 1,
       });
       setCurrentStep(1);
       setShowConfirmation(false);
       localStorage.removeItem('jobPostingFormData');
+      setApiError(null);
+    } catch (error) {
+      // Handle API errors
+      if (error.response?.status === 422) {
+        setErrors(error.response.data.errors);
+        setApiError('Validation failed. Please check the form fields.');
+      } else {
+        setApiError(error.response?.data?.message || 'Failed to create job post');
+      }
+      console.error('API Error:', error);
     }
   };
 
-  const renderStepContent = () => {
+ const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
@@ -165,7 +217,9 @@ const MultiStepJobPostingForm = () => {
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${errors.companyName ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.companyName ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               />
               {errors.companyName && <p className="mt-1 text-xs text-red-500">{errors.companyName}</p>}
             </div>
@@ -177,25 +231,29 @@ const MultiStepJobPostingForm = () => {
                 name="jobTitle"
                 value={formData.jobTitle}
                 onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${errors.jobTitle ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.jobTitle ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               />
               {errors.jobTitle && <p className="mt-1 text-xs text-red-500">{errors.jobTitle}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Job Type</label>
+              <label className="block text-sm font-semibold text-gray-800">Job Type *</label>
               <select
                 name="jobType"
                 value={formData.jobType}
                 onChange={handleInputChange}
-                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.jobType ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               >
                 <option value="">Select Job Type</option>
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Contract">Contract</option>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
                 <option value="Freelance">Freelance</option>
               </select>
+              {errors.jobType && <p className="mt-1 text-xs text-red-500">{errors.jobType}</p>}
             </div>
 
             <div>
@@ -205,47 +263,92 @@ const MultiStepJobPostingForm = () => {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${errors.location ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.location ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               />
               {errors.location && <p className="mt-1 text-xs text-red-500">{errors.location}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-800">Pay Type</label>
+                <label className="block text-sm font-semibold text-gray-800">Pay Type *</label>
                 <select
                   name="payType"
                   value={formData.payType}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.payType ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 >
                   <option value="">Select Pay Type</option>
                   <option value="Hourly">Hourly</option>
-                  <option value="Monthly">Monthly</option>
-                  <option value="Yearly">Yearly</option>
+                  <option value="Salary">Salary</option>
+                  <option value="Per Project">Per Project</option>
                 </select>
+                {errors.payType && <p className="mt-1 text-xs text-red-500">{errors.payType}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-800">Minimum Salary</label>
+                <label className="block text-sm font-semibold text-gray-800">Minimum Salary *</label>
                 <input
                   type="number"
                   name="minSalary"
                   value={formData.minSalary}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.minSalary ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
+                {errors.minSalary && <p className="mt-1 text-xs text-red-500">{errors.minSalary}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-800">Maximum Salary</label>
+                <label className="block text-sm font-semibold text-gray-800">Maximum Salary *</label>
                 <input
                   type="number"
                   name="maxSalary"
                   value={formData.maxSalary}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.maxSalary ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
+                {errors.maxSalary && <p className="mt-1 text-xs text-red-500">{errors.maxSalary}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Job Expiry (days) *</label>
+                <input
+                  type="number"
+                  name="jobExpireTime"
+                  value={formData.jobExpireTime}
+                  onChange={handleInputChange}
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.jobExpireTime ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                  min="1"
+                />
+                {errors.jobExpireTime && <p className="mt-1 text-xs text-red-500">{errors.jobExpireTime}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">Number of Candidates Required *</label>
+                <input
+                  type="number"
+                  name="numberOfCandidatesRequired"
+                  value={formData.numberOfCandidatesRequired}
+                  onChange={handleInputChange}
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.numberOfCandidatesRequired ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                  min="1"
+                />
+                {errors.numberOfCandidatesRequired && (
+                  <p className="mt-1 text-xs text-red-500">{errors.numberOfCandidatesRequired}</p>
+                )}
               </div>
             </div>
           </motion.div>
@@ -266,7 +369,9 @@ const MultiStepJobPostingForm = () => {
                 name="educationLevel"
                 value={formData.educationLevel}
                 onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${errors.educationLevel ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.educationLevel ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               >
                 <option value="">Select Education Level</option>
                 <option value="High School">High School</option>
@@ -283,7 +388,9 @@ const MultiStepJobPostingForm = () => {
                 name="experienceLevel"
                 value={formData.experienceLevel}
                 onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${errors.experienceLevel ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.experienceLevel ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               >
                 <option value="">Select Experience Level</option>
                 <option value="Entry Level">Entry Level</option>
@@ -316,25 +423,21 @@ const MultiStepJobPostingForm = () => {
             <div>
               <label className="block text-sm font-semibold text-gray-800">Preferred Roles</label>
               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  'Software Engineer',
-                  'Product Manager',
-                  'Designer',
-                  'Marketing Specialist',
-                  'Sales Representative',
-                ].map((role) => (
-                  <div key={role} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preferredRoles"
-                      value={role}
-                      checked={formData.preferredRoles.includes(role)}
-                      onChange={handleInputChange}
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
-                    />
-                    <label className="ml-2 text-sm text-gray-700">{role}</label>
-                  </div>
-                ))}
+                {['Software Engineer', 'Product Manager', 'Designer', 'Marketing Specialist', 'Sales Representative'].map(
+                  (role) => (
+                    <div key={role} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="preferredRoles"
+                        value={role}
+                        checked={formData.preferredRoles.includes(role)}
+                        onChange={handleInputChange}
+                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                      />
+                      <label className="ml-2 text-sm text-gray-700">{role}</label>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </motion.div>
@@ -356,7 +459,9 @@ const MultiStepJobPostingForm = () => {
                 value={formData.jobOverview}
                 onChange={handleInputChange}
                 rows={5}
-                className={`mt-2 w-full rounded-lg border ${errors.jobOverview ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.jobOverview ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
               />
               {errors.jobOverview && <p className="mt-1 text-xs text-red-500">{errors.jobOverview}</p>}
             </div>
@@ -369,7 +474,9 @@ const MultiStepJobPostingForm = () => {
                 onChange={handleInputChange}
                 rows={5}
                 placeholder="Enter responsibilities (one per line)"
-                className={`mt-2 w-full rounded-lg border ${errors.keyResponsibilities ? 'border-red-500' : 'border-gray-300'} px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.keyResponsibilities ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none`}
               />
               {errors.keyResponsibilities && <p className="mt-1 text-xs text-red-500">{errors.keyResponsibilities}</p>}
             </div>
@@ -429,8 +536,8 @@ const MultiStepJobPostingForm = () => {
             className="space-y-6"
           >
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Interview Mode</label>
-              <div className="mt-3 grid grid-cols-2 gap-4">
+              <label className="block text-sm font-semibold text-gray-800">Interview Mode *</label>
+              <div className="mt-3 grid grid-cols-3 gap-4">
                 {['Online', 'Walk-in', 'Hybrid'].map((mode) => (
                   <div key={mode} className="flex items-center">
                     <input
@@ -448,8 +555,8 @@ const MultiStepJobPostingForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Contact Preference</label>
-              <div className="mt-3 grid grid-cols-2 gap-4">
+              <label className="block text-sm font-semibold text-gray-800">Contact Preference *</label>
+              <div className="mt-3 grid grid-cols-3 gap-4">
                 {['Email', 'Phone', 'LinkedIn'].map((preference) => (
                   <div key={preference} className="flex items-center">
                     <input
@@ -464,18 +571,22 @@ const MultiStepJobPostingForm = () => {
                   </div>
                 ))}
               </div>
+              {errors.contactPreference && <p className="mt-1 text-xs text-red-500">{errors.contactPreference}</p>}
             </div>
 
             {formData.interviewMode !== 'Online' && (
               <div>
-                <label className="block text-sm font-semibold text-gray-800">Interview Location</label>
+                <label className="block text-sm font-semibold text-gray-800">Interview Location *</label>
                 <input
                   type="text"
                   name="interviewLocation"
                   value={formData.interviewLocation}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.interviewLocation ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
+                {errors.interviewLocation && <p className="mt-1 text-xs text-red-500">{errors.interviewLocation}</p>}
               </div>
             )}
 
@@ -487,7 +598,9 @@ const MultiStepJobPostingForm = () => {
                   name="contactEmail"
                   value={formData.contactEmail}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.contact ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
               </div>
 
@@ -498,12 +611,13 @@ const MultiStepJobPostingForm = () => {
                   name="contactPhone"
                   value={formData.contactPhone}
                   onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.contact ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
               </div>
             </div>
-
-            {errors.contact && <p className="text-xs text-red-500">{errors.contact}</p>}
+            {errors.contact && <p className="mt-1 text-xs text-red-500">{errors.contact}</p>}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -545,6 +659,9 @@ const MultiStepJobPostingForm = () => {
           transition={{ duration: 0.5 }}
           className="bg-white shadow-2xl rounded-2xl p-8"
         >
+          {apiError && (
+            <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">{apiError}</div>
+          )}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <h2 className="text-3xl font-bold text-gray-900">Post a New Job</h2>
@@ -564,9 +681,7 @@ const MultiStepJobPostingForm = () => {
                     <div key={index} className="text-center">
                       <div
                         className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-sm font-semibold ${
-                          currentStep >= index + 1
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-200 text-gray-500'
+                          currentStep >= index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
                         } transition-all duration-300`}
                       >
                         {index + 1}
@@ -602,12 +717,17 @@ const MultiStepJobPostingForm = () => {
               <motion.button
                 type="button"
                 onClick={handleNext}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+                disabled={isSubmitting}
+                whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+                className={`flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  isSubmitting
+                    ? 'bg-gray-400 text-white cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
+                }`}
               >
-                {currentStep === 4 ? 'Review' : 'Next'}
-                <FaChevronRight className="ml-2" />
+                {isSubmitting ? 'Submitting...' : currentStep === 4 ? 'Review' : 'Next'}
+                {!isSubmitting && <FaChevronRight className="ml-2" />}
               </motion.button>
             </div>
           </form>
@@ -633,15 +753,15 @@ const MultiStepJobPostingForm = () => {
                 <div className="space-y-6">
                   <div>
                     <dt className="font-semibold text-gray-800">Company Name</dt>
-                    <dd className="text-gray-600">{formData.companyName}</dd>
+                    <dd className="text-gray-600">{formData.companyName || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Job Title</dt>
-                    <dd className="text-gray-600">{formData.jobTitle}</dd>
+                    <dd className="text-gray-600">{formData.jobTitle || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Location</dt>
-                    <dd className="text-gray-600">{formData.location}</dd>
+                    <dd className="text-gray-600">{formData.location || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Job Type</dt>
@@ -664,6 +784,14 @@ const MultiStepJobPostingForm = () => {
                     <dd className="text-gray-600">{formData.experienceLevel || 'Not specified'}</dd>
                   </div>
                   <div>
+                    <dt className="font-semibold text-gray-800">Gender Preference</dt>
+                    <dd className="text-gray-600">{formData.genderPreference || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Preferred Roles</dt>
+                    <dd className="text-gray-600">{formData.preferredRoles.join(', ') || 'Not specified'}</dd>
+                  </div>
+                  <div>
                     <dt className="font-semibold text-gray-800">Job Overview</dt>
                     <dd className="text-gray-600">{formData.jobOverview || 'Not specified'}</dd>
                   </div>
@@ -681,7 +809,11 @@ const MultiStepJobPostingForm = () => {
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Interview Mode</dt>
-                    <dd className="text-gray-600">{formData.interviewMode}</dd>
+                    <dd className="text-gray-600">{formData.interviewMode || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Interview Location</dt>
+                    <dd className="text-gray-600">{formData.interviewLocation || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Contact Information</dt>
@@ -690,6 +822,30 @@ const MultiStepJobPostingForm = () => {
                         ? `${formData.contactEmail} ${formData.contactPhone}`
                         : 'Not specified'}
                     </dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Contact Preference</dt>
+                    <dd className="text-gray-600">{formData.contactPreference.join(', ') || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Interview Date & Time</dt>
+                    <dd className="text-gray-600">
+                      {formData.interviewDate && formData.interviewTime
+                        ? `${formData.interviewDate} at ${formData.interviewTime}`
+                        : 'Not specified'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Joining Fee</dt>
+                    <dd className="text-gray-600">{formData.joiningFee ? 'Yes' : 'No'}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Job Expiry</dt>
+                    <dd className="text-gray-600">{formData.jobExpireTime} days</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-gray-800">Number of Candidates Required</dt>
+                    <dd className="text-gray-600">{formData.numberOfCandidatesRequired}</dd>
                   </div>
                 </div>
                 <div className="mt-8 flex flex-col sm:flex-row justify-end gap-4">
@@ -706,12 +862,17 @@ const MultiStepJobPostingForm = () => {
                   <motion.button
                     type="submit"
                     onClick={handleSubmit}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-300"
+                    disabled={isSubmitting}
+                    whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                    whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+                    className={`flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                      isSubmitting
+                        ? 'bg-gray-400 text-white cursor-not-allowed'
+                        : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700'
+                    }`}
                   >
                     <FaCheck className="mr-2" />
-                    Submit Job Posting
+                    {isSubmitting ? 'Submitting...' : 'Submit Job Posting'}
                   </motion.button>
                 </div>
               </motion.div>
@@ -720,8 +881,8 @@ const MultiStepJobPostingForm = () => {
         </AnimatePresence>
       </div>
     </div>
-  );
-};
 
+    );
+};
 
 export default MultiStepJobPostingForm;

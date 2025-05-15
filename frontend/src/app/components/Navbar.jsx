@@ -33,7 +33,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
     try {
       const endpoint = loginType === 'Employer' ? 'employer/send-otp' : 'send-otp';
       const payload = loginType === 'Employer' ? { contact_email: email } : { email };
-      const response = await axios.post(`${baseurl}${endpoint}`, payload);
+      const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
     } catch (error) {
@@ -58,7 +58,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
 
         console.log(payload)
 
-      const response = await axios.post(`${baseurl}${endpoint}`, payload);
+      const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       if (response.data.success) {
         localStorage.setItem('employer_token', response.data.token);
         
@@ -82,7 +82,7 @@ useEffect(() => {
     if (!token) return;
 
     try {
-      const res = await axios.get(`${baseurl}employer/profile`, {
+      const res = await axios.get(`${baseurl}/employer/profile`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
