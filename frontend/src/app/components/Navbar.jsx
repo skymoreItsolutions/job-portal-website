@@ -1,12 +1,13 @@
 'use client';
 
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock, FaSpinner, FaTimes } from 'react-icons/fa';
 import { baseurl } from './common';
 
+import { FaUserCircle } from 'react-icons/fa';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +18,7 @@ export default function Navbar() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleOtp = async () => {
     setLoading(true);
@@ -36,6 +37,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
+
     } catch (error) {
       console.error('Error sending OTP:', error);
       setError('Failed to send OTP. Please try again.');
@@ -43,82 +45,83 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
     setLoading(false);
   };
 
-const handleSendOtp = async () => {
-  setLoading(true);
-  setError('');
+  const handleSendOtp = async () => {
+    setLoading(true);
+    setError('');
 
-  if (otp.length !== 6) {
-    setError('Please enter a 6-digit OTP.');
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const endpoint = loginType === 'Employer' ? 'employer/verify-otp' : 'verify-otp';
-    const payload = loginType === 'Employer' ? { contact_email: email, otp } : { email, otp };
-
-    console.log(payload);
-
-    const response = await axios.post(`${baseurl}/${endpoint}`, payload);
-
-    if (response.data.success) {
-      if (loginType === 'Employer') {
-        const sessionToken = response.data.session_token;
-
-        if (sessionToken) {
-          // Session token present, redirect to employer dashboard
-          localStorage.setItem('employer_token', sessionToken); // store session_token
-          router.push('/employer/dashboard');
-        } else {
-          // Session token not found, show error or handle it
-          setError('Session token missing. Please try again.');
-        }
-      } else {
-        setShowModal(false);
-        router.push('/candidate/candidate-login');
-      }
-    } else {
-      setError('Invalid OTP. Please try again.');
+    if (otp.length !== 6) {
+      setError('Please enter a 6-digit OTP.');
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error('Error verifying OTP:', error);
-    setError('Failed to verify OTP. Please try again.');
-  }
-
-  setLoading(false);
-};
-
-
-useEffect(() => {
-  const checkLogin = async () => {
-    const token = localStorage.getItem('employerToken');
-    if (!token) return;
 
     try {
-      const res = await axios.get(`${baseurl}/employer/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const endpoint = loginType === 'Employer' ? 'employer/verify-otp' : 'verify-otp';
+      const payload = loginType === 'Employer' ? { contact_email: email, otp } : { email, otp };
+
+      console.log(payload);
+
+      const response = await axios.post(`${baseurl}/${endpoint}`, payload);
+
+      if (response.data.success) {
+        if (loginType === 'Employer') {
+          const sessionToken = response.data.session_token;
+
+          if (sessionToken) {
+
+            localStorage.setItem('employer_token', sessionToken);
+            setShowModal(false)
+            router.push('/employer/dashboard');
+          } else {
+            // Session token not found, show error or handle it
+            setError('Session token missing. Please try again.');
+          }
+        } else {
+          setShowModal(false);
+          router.push('/candidate/candidate-login');
         }
-      });
-
-      if (res.data && res.data.success) {
-        setIsLoggedIn(true);
-
+      } else {
+        setError('Invalid OTP. Please try again.');
       }
-    } catch (err) {
-      console.error('Not logged in or invalid token');
-      setIsLoggedIn(false);
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setError('Failed to verify OTP. Please try again.');
     }
+
+    setLoading(false);
   };
 
-  checkLogin();
-}, []);
 
-const handleLogout = () => {
-  localStorage.removeItem('employer_token');
-  setIsLoggedIn(false);
-  router.push('/'); // redirect to home or login page
-};
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = localStorage.getItem('employerToken');
+      if (!token) return;
+
+      try {
+        const res = await axios.get(`${baseurl}/employer/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (res.data && res.data.success) {
+          setIsLoggedIn(true);
+
+        }
+      } catch (err) {
+        console.error('Not logged in or invalid token');
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('employer_token');
+    setIsLoggedIn(false);
+    router.push('/'); // redirect to home or login page
+  };
 
 
   return (
@@ -135,29 +138,34 @@ const handleLogout = () => {
             <Link href="/about" className="text-black hover:text-gray-600">About</Link>
             <Link href="/jobs" className="text-black hover:text-gray-600">Jobs</Link>
             <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
-           {!isLoggedIn ? (
-  <>
-    <button
-      onClick={() => { setLoginType('Employer'); setShowModal(true); }}
-      className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
-    >
-      Employer Login
-    </button>
-    <button
-      onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
-      className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
-    >
-      Candidate Login
-    </button>
-  </>
-) : (
-  <button
-    onClick={handleLogout}
-    className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
-  >
-    Logout
-  </button>
-)}
+            {!isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => { setLoginType('Employer'); setShowModal(true); }}
+                  className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
+                >
+                  Employer Login
+                </button>
+                <button
+                  onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
+                  className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                >
+                  Candidate Login
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                <Link href="/employer/dashboard"   >
+      <FaUserCircle className="text-2xl text-green-600" />
+    </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
 
           </div>
 
@@ -203,7 +211,7 @@ const handleLogout = () => {
       </nav>
 
       {/* Login Modal */}
-      {showModal && (
+      {showModal ? (
         <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">
             <button
@@ -271,7 +279,7 @@ const handleLogout = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : ''}
     </>
   );
 }
