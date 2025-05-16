@@ -57,7 +57,28 @@ export default function Page() {
 
         {/* Right Section - Form */}
         <div className="w-full  flex  flex-col justify-between bg-white rounded-3xl shadow-lg  ">
-          <div className="p-4 border-b border-gray-300 flex flex-col sm:flex-row sm:items-center gap-y-4 justify-between">
+          <div>
+            <label htmlFor="education">Your Higher Education</label>
+            <input  type="text" placeholder="Your Higher Education" id="education" />
+          </div>
+          
+          <div>
+            <label htmlFor="year">Passing year</label>
+            <input  type="date" placeholder="Passing year" id="year" />
+          </div>
+
+          <div>
+            <label htmlFor="school">University/School Name</label>
+            <input  type="" placeholder="University/School Name" id="school" />
+          </div>
+
+
+
+
+
+
+
+          {/* <div className="p-4 border-b border-gray-300 flex flex-col sm:flex-row sm:items-center gap-y-4 justify-between">
             <div className="font-semibold text-lg flex items-center gap-x-4">
               <FaArrowLeftLong className="cursor-pointer"   onClick={() => router.push("/candidate-login/basic-details")} />
               Education Details
@@ -470,7 +491,7 @@ export default function Page() {
             <button  onClick={handleNext} className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
               Next
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

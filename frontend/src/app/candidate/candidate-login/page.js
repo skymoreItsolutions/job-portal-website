@@ -1,20 +1,71 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import axios from "axios";
 import { baseurl } from "@/app/components/common";
+import First from "../CondidateCompo/first";
+import Second from "../CondidateCompo/Second";
+import Three from "../CondidateCompo/Three";
+import Four from "../CondidateCompo/Four";
+import Five from "../CondidateCompo/Five";
+import data from "@/app/jobdata";
 
 export default function Page() {
   const router = useRouter();
-  const [isChecked, setIsChecked] = useState(false);
-  const [selectedGender, setSelectedGender] = useState(null);
-  const [fullName, setFullName] = useState("");
-  const [dob, setDob] = useState("");
-  const [number, setNumber] = useState("");
-  
+  // const [isChecked, setIsChecked] = useState(false);
+  // const [selectedGender, setSelectedGender] = useState(null);
+  // const [fullName, setFullName] = useState("");
+  // const [dob, setDob] = useState("");
+  // const [number, setNumber] = useState("");
+  const [alldata,setalldata]=useState({
+    full_name:"",
+    dob:undefined,
+    gender:"",
+    number:0,
+    degree:"",
+    college_name:"",
+    passing_marks:undefined,
+    experience_years:undefined,
+    job_roles:"",
+    job_title:"",
+    experience_months	:undefined,
+    company_name:"",
+    prefers_night_shift:0,
+    prefers_day_shift:1,
+    work_from_home:0,
+    work_from_office	:1,
+    field_job:0,
+    preferred_language:"",
+    skills:"",
 
+  })
+
+  const [resume,setResume]=useState();
+
+
+  const handelresume=(e)=>{
+     const file = e.target.files[0];
+  if (file) {
+    setResume(file);
+  }
+  }
+
+const [nextlen,setnextlen]=useState(1)
+
+  const handelinputs=(e)=>{
+    const { name, value } = e.target;
+  setalldata((prevData) => ({
+    ...prevData,
+    [name]: value,
+  }));
+    // setalldata({...alldata,[e.vtagate.name]:e.tagate.value})
+  }
+const handelgender=(gender)=>{
+  setalldata({...alldata,gender})
+
+}
 
   const handleNext = async() => {
     const userData = {
@@ -22,13 +73,56 @@ export default function Page() {
       dob,
       gender: selectedGender,
       number,
-     
     };
    const token=  localStorage.getItem("port_tok")
-const response = await axios.post(`${baseurl}/candidate-educations/${token}`)
+const response = await axios.post(`${baseurl}/candidate-educations/${token}`,userData)
   router.push("/candidate/educations");
   };
 
+const handelcheckbox=(key,value)=>{
+setalldata({...alldata,[key]:value})
+
+}
+
+
+
+const handelSubmit=async()=>{
+
+const formData= new FormData();
+
+Object.entries(alldata).forEach(([key, value]) => {
+
+
+  if (value === undefined || value === null) {
+      formData.append(key, "");
+    } else {
+      formData.append(key, value);
+    }
+  });
+
+  
+ if (resume) {
+    formData.append("resume", resume); 
+  }
+ const token= localStorage.getItem("site_user")
+const response= await axios.post(`${baseurl}/updatecandidate/${token}`,formData);
+console.log(response.data)
+
+}
+
+
+const getcondidate=async(token)=>{
+  const response= await axios.get(`${baseurl}/candidateinfo/${token}`)
+  if(response.data.success){
+setalldata(response.data.candidate)
+  }
+
+}
+
+useEffect(()=>{
+ const token= localStorage.getItem("site_user")
+ getcondidate(token)
+},[])
 
 
   return (
@@ -64,95 +158,24 @@ const response = await axios.post(`${baseurl}/candidate-educations/${token}`)
 
         {/* Right Section - Form */}
         <div className="w-full  flex  flex-col justify-between bg-white rounded-3xl shadow-lg h-full">
-          <div>
-            <div className="p-4 border-b border-gray-300 flex flex-col sm:flex-row sm:items-center justify-between">
-              <h6 className="font-semibold text-lg">Basic Details</h6>
-              <div className=" w-[250px] bg-gray-400 rounded-2xl p-2 overflow-x-hidden relative">
-                    <div className="bg-[#309689] w-[10%] h-full absolute left-0 top-0 "></div>
-              </div>
-            </div>
+         {nextlen==1 && <First  alldata={alldata} handelinputs={handelinputs} handelgender={handelgender}/>}
+         {nextlen==2 && <Second  alldata={alldata} handelinputs={handelinputs} handelgender={handelgender}/>}
+         {nextlen==3 && <Three  alldata={alldata} handelinputs={handelinputs} handelgender={handelgender}/>}
+         {nextlen==4 && <Four  alldata={alldata} handelinputs={handelinputs}  handelcheckbox={handelcheckbox}/>}
+         {nextlen==5 && <Five  resume={resume} handelresume={handelresume}  alldata={alldata} handelinputs={handelinputs} handelgender={handelgender}/>}
 
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="font-semibold text-sm">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-              </div>
-
-              <div className="relative">
-                <label className="font-semibold text-sm">Date of Birth (DOB)</label>
-                <input
-                  type="date"
-                  placeholder="Choose date"
-                  value={dob}
-          onChange={(e) => setDob(e.target.value)}
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-                {/* <SlCalender className="absolute right-4 top-12 text-gray-500" /> */}
-              </div>
-
-              {/* Gender */}
-              <div>
-                <label className="font-semibold text-sm">Gender</label>
-                <div className="flex gap-4 mt-2">
-                  <button
-                    onClick={() => setSelectedGender("Male")}
-                    className={`px-6 py-2 border rounded-full transition ${
-                      selectedGender === "Male"
-                        ? "bg-[#309689] text-white border-green-500"
-                        : "border-[#309689] text-[#309689]"
-                    }`}
-                  >
-                    Male
-                  </button>
-                  <button
-                    onClick={() => setSelectedGender("Female")}
-                    className={`px-6 py-2 border rounded-full transition ${
-                      selectedGender === "Female"
-                        ? "bg-[#309689] text-white border-green-500"
-                        : "border-[#309689] text-[#309689]"
-                    }`}
-                  >
-                    Female
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="font-semibold text-sm">Email Address (Optional)</label>
-                <input
-                  type="number"
-                  placeholder="Enter  Number"
-                  onChange={(e)=>setNumber(e.target.value)}
-
-                  
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-              </div>
-
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setIsChecked(!isChecked)}
-              >
-                {isChecked ? (
-                  <MdCheckBox className="text-green-600 text-lg" />
-                ) : (
-                  <MdCheckBoxOutlineBlank className="text-gray-500 text-lg" />
-                )}
-                <p className="text-gray-600 text-sm">Send me important job updates on WhatsApp</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 border-t border-gray-300">
-            <button  onClick={handleNext} className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+          <div className="p-4 border-t border-gray-300 flex justify-between">
+          <button  disabled={nextlen==1} onClick={()=>setnextlen(nextlen-1)} className=" py-3 px-5  bg-[#fc3e3e] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+              Prev
+            </button>
+          { nextlen<5 && <button  disabled={nextlen==5} onClick={()=>setnextlen(nextlen+1)} className=" py-3 px-5 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
               Next
             </button>
+}
+   { nextlen==5 && <button   onClick={handelSubmit} className=" py-3 px-5 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#3e6e68] active:-translate-y-2 transition">
+              Submit
+            </button>
+}
           </div>
         </div>
       </div>
