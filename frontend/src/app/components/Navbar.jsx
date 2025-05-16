@@ -43,37 +43,50 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
     setLoading(false);
   };
 
-  const handleSendOtp = async () => {
-    setLoading(true);
-    setError('');
-    if (otp.length !== 6) {
-      setError('Please enter a 6-digit OTP.');
-      setLoading(false);
-      return;
-    }
+const handleSendOtp = async () => {
+  setLoading(true);
+  setError('');
 
-    try {
-      const endpoint = loginType === 'Employer' ? 'employer/verify-otp' : 'verify-otp';
-        const payload = loginType === 'Employer' ? { contact_email: email,otp } : { email,otp };
-
-        console.log(payload)
-
-      const response = await axios.post(`${baseurl}/${endpoint}`, payload);
-      if (response.data.success) {
-        localStorage.setItem('employer_token', response.data.token);
-        
-        setShowModal(false);
-        const redirectPath = loginType === 'Employer' ? '/employer/onboarding' : '/candidate/candidate-login';
-        router.push(redirectPath);
-      } else {
-        setError('Invalid OTP. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setError('Failed to verify OTP. Please try again.');
-    }
+  if (otp.length !== 6) {
+    setError('Please enter a 6-digit OTP.');
     setLoading(false);
-  };
+    return;
+  }
+
+  try {
+    const endpoint = loginType === 'Employer' ? 'employer/verify-otp' : 'verify-otp';
+    const payload = loginType === 'Employer' ? { contact_email: email, otp } : { email, otp };
+
+    console.log(payload);
+
+    const response = await axios.post(`${baseurl}/${endpoint}`, payload);
+
+    if (response.data.success) {
+      if (loginType === 'Employer') {
+        const sessionToken = response.data.session_token;
+
+        if (sessionToken) {
+          // Session token present, redirect to employer dashboard
+          localStorage.setItem('employer_token', sessionToken); // store session_token
+          router.push('/employer/dashboard');
+        } else {
+          // Session token not found, show error or handle it
+          setError('Session token missing. Please try again.');
+        }
+      } else {
+        setShowModal(false);
+        router.push('/candidate/candidate-login');
+      }
+    } else {
+      setError('Invalid OTP. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    setError('Failed to verify OTP. Please try again.');
+  }
+
+  setLoading(false);
+};
 
 
 useEffect(() => {
