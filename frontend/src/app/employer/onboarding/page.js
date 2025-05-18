@@ -199,7 +199,7 @@ export default function Page() {
 
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                Work email
+                 Phone Number
               </label>
               <input
                 type="email"

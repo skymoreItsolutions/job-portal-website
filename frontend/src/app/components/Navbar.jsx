@@ -68,22 +68,29 @@ export default function Navbar() {
           const sessionToken = response.data.session_token;
 
           if (sessionToken) {
-
+            setOtpSent(false);
             localStorage.setItem('employer_token', sessionToken);
             setShowModal(false)
             router.push('/employer/dashboard');
           } else {
-            // Session token not found, show error or handle it
-            setError('Session token missing. Please try again.');
+            // Session token not found, show error or han
+            //   router.push('/employer/dashboard');dle it
+             setOtpSent(false);
+ setShowModal(false)
+              router.push('/employer/onboarding');
+
           }
         } else {
           setShowModal(false);
+           setOtpSent(false);
           router.push('/candidate/candidate-login');
         }
       } else {
+         setOtpSent(false);
         setError('Invalid OTP. Please try again.');
       }
     } catch (error) {
+       setOtpSent(false);
       console.error('Error verifying OTP:', error);
       setError('Failed to verify OTP. Please try again.');
     }
