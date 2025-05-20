@@ -46,10 +46,14 @@ const EmployerDashboard = () => {
     checkLogin();
   }, []);
 
+
+  console.log('isLoggedI',isLoggedIn.id)
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const employerId = 1;
+        const employerId = isLoggedIn.id;
+          console.log('isLogged',employerId)
         const response = await fetch(`${baseurl}/jobs/employer/${employerId}`);
         const result = await response.json();
 
@@ -63,7 +67,7 @@ const EmployerDashboard = () => {
       }
     };
     fetchJobs();
-  }, []);
+  }, [isLoggedIn.id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
