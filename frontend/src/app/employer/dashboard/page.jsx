@@ -80,8 +80,10 @@ const EmployerDashboard = () => {
     setIsJobModalOpen(false);
   };
 
+  console.log('isLoggedIn.is_verified',isLoggedIn)
+
   // Check if employer is not verified
-  if (isLoggedIn && isLoggedIn.is_verified === 0) {
+  if (isLoggedIn.is_verified === 0 || isLoggedIn.is_verified === null || isLoggedIn.is_blocked === 1 ) {
     return (
          <div className="flex h-screen bg-gradient-to-br from-gray-100 to-gray-200">
         
@@ -188,55 +190,84 @@ const JobCard = ({ job }) => {
   const deadlineFormatted = deadline.toLocaleDateString();
   const isExpired = isAfter(new Date(), deadline);
   const status = isExpired ? 'Expired' : 'Active';
+  const verify = job.is_verified ? 'Active' : 'Not Active';
+
   const postedDate = createdAt.toLocaleDateString();
 
   return (
-    <div className="bg-white w-full h-[250px] shadow-xs p-6 rounded-lg hover:shadow-lg transition-shadow">
-      <div className="flex justify-between w-full h-full items-center">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="h-[140px] p-4 rounded-xl flex flex-col justify-between shadow">
-            <div>
-              <h3 className="text-4xl font-bold text-gray-800">{job?.job_title || 'Untitled Job'}</h3>
-              <p className="text-sm text-gray-700 font-medium">📍 {job?.location || 'N/A'}</p>
-            </div>
-            <p className="text-xs text-gray-600 font-semibold">🗓️ Posted on: {postedDate}</p>
+    <div className="bg-white w-full mx-auto shadow-md rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div className="p-6 sm:p-8">
+        {/* Header with Job Title and Status */}
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">
+            {job?.job_title || 'Untitled Job'}
+          </h3>
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {status}
+          </span>
+
+
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              verify === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {verify}
+          </span>
+        </div>
+
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Job Info */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">📍</span> {job?.location || 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">🗓️</span> Posted: {postedDate}
+            </p>
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">📅</span> Deadline: {deadlineFormatted}
+            </p>
           </div>
-          <div className="h-[140px] p-4 rounded-xl flex flex-col justify-between shadow">
-            <div>
-              <p className="text-sm text-gray-700 font-medium line-clamp-2">
-                {job?.job_description || 'No description available'}
-              </p>
-              <p className="text-xs text-gray-600 mt-2 font-semibold">
-                🛠️ Skills: {additionalRequirements?.skills?.join(', ') || 'None'}
-              </p>
-            </div>
-            <p className="text-xs text-gray-700 font-semibold">
+
+          {/* Description and Skills */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-700 line-clamp-3">
+              {job?.job_description || 'No description available'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Skills:</span>{' '}
+              {additionalRequirements?.skills?.join(', ') || 'None'}
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Applied:</span> {job?.applied_to_job || 26}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Matches:</span> {job?.database_matches || 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Posted by:</span> {job?.posted_by || 'Manshu'}
+            </p>
+          </div>
+
+          {/* Compensation and Action */}
+          <div className="flex flex-col justify-between space-y-4">
+            <p className="text-lg font-bold text-gray-800">
+              💰 {job?.compensation ? `$${parseInt(job.compensation).toLocaleString()}` : 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
               {job?.job_type || 'N/A'} • {job?.work_location_type || 'N/A'}
             </p>
-          </div>
-          <div className="h-[140px] bg-red-100 p-4 rounded-xl flex flex-col justify-between shadow">
-            <div>
-              <p className="text-sm text-gray-700 font-bold">
-                ✅ Applied: <span className="font-medium">{job?.applied_to_job || 26}</span>
-              </p>
-              <p className="text-sm text-gray-700 font-bold">
-                🔍 Matches: <span className="font-medium">{job?.database_matches || 'N/A'}</span>
-              </p>
-            </div>
-            <p className="text-xs text-gray-600 font-semibold">
-              👤 Posted by: {job?.posted_by || 'Manshu'}
-            </p>
-          </div>
-          <div className="h-[140px] p-4 rounded-xl flex flex-col justify-between shadow">
-            <div>
-              <p className="text-sm text-gray-800 font-bold">
-                💰 {job?.compensation ? `$${parseInt(job.compensation).toLocaleString()}` : 'N/A'}
-              </p>
-              <p className="text-sm text-gray-700 font-semibold">📅 Deadline: {deadlineFormatted}</p>
-            </div>
-            <button className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700 transition-all duration-200">
-              {job?.select_plan || 'Select Plan'}
-            </button>
+           
           </div>
         </div>
       </div>

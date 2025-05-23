@@ -144,11 +144,12 @@ const MultiStepJobPostingForm = () => {
     }
   };
 
+    console.log(isLoggedIn.id)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
 
-
+    
     const apiData = {
       employer_id: isLoggedIn.id,
 

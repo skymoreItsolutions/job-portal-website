@@ -69,7 +69,7 @@ export default function Navbar() {
 
           if (sessionToken) {
             setOtpSent(false);
-            localStorage.setItem('employer_token', sessionToken);
+            localStorage.setItem('employerToken', sessionToken);
             setShowModal(false)
             router.push('/employer/dashboard');
           } else {
@@ -125,7 +125,11 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('employer_token');
+    localStorage.removeItem('employerToken');
+    localStorage.removeItem('employerToken');
+
+
+
     setIsLoggedIn(false);
     router.push('/'); // redirect to home or login page
   };

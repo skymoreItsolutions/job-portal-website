@@ -24,6 +24,9 @@ export default function Page() {
     isConsultancy: false,
     agreedTerms: false,
     employees: "",
+    contact_phone: "",
+    companyLocation:"",
+
     // Optional fields (uncomment if needed)
     // companyLocation: "",
     // contactPerson: "",
@@ -33,8 +36,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
 
   // Replace with actual session_token source
-  const sessionToken = localStorage.getItem("employer_token") || "your-session-token-here"; // Update as needed
-
+  const sessionToken = localStorage.getItem("employerToken") ;
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -60,7 +62,8 @@ export default function Page() {
       company_name: formData.companyName,
       password: formData.password,
       session_token: sessionToken,
-
+       contact_phone: formData.contact_phone,
+       company_location: formData.companyLocation
     };
 
     try {
@@ -160,46 +163,24 @@ export default function Page() {
               </label>
               <input
                 type="text"
-                value={company}
-                onChange={(e) => {
-                  setCompany(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
+                // value={company}
+                // onChange={(e) => {
+                //   setCompany(e.target.value);
+                //   setShowDropdown(true);
+                // }}
+                 name="companyName"
+                 value={formData.companyName}
+                onChange={handleChange}
                 placeholder="e.g. Swiggy"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required // Added to ensure company name is provided
               />
-              {showDropdown && company && filtered.length > 0 && (
-                <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow max-h-48 overflow-y-auto text-sm">
-                  {filtered.map((item, index) => (
-                    <li
-                      key={index}
-                      onClick={() => handleSelect(item)}
-                      className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="flex items-center mt-3 space-x-2">
-                <input
-                  type="checkbox"
-                  name="isConsultancy"
-                  checked={formData.isConsultancy}
-                  onChange={handleChange}
-                  className="w-5 h-5"
-                />
-                <label className="text-gray-600 text-sm">
-                  This is a consultancy (Hiring or staffing agency)
-                </label>
-              </div>
+            
             </div>
 
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                 Phone Number
+                Company Email
               </label>
               <input
                 type="email"
@@ -211,6 +192,37 @@ export default function Page() {
                 required
               />
             </div>
+    {/* contact_phone */}
+
+     <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                Phone Number
+              </label>
+              <input
+                type="number"
+                name="contact_phone"
+                value={formData.contact_phone}
+                onChange={handleChange}
+                placeholder="Enter your work email"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+             <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                Company Location
+              </label>
+              <input
+                type="text"
+                name="companyLocation"
+                value={formData.companyLocation}
+                onChange={handleChange}
+                placeholder="Enter Company Location State"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            
 
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
