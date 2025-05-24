@@ -81,7 +81,7 @@ export default function Page() {
       });
 
 
-      router.push("/employer/dashboard"); // Redirect to dashboard or job posting page
+     window.location.href = "/employer/dashboard";
     } catch (err) {
       console.error("Signup error:", err);
       let errorMessage = "An error occurred during signup.";
