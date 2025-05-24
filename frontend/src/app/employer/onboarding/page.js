@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LeftCommonCard from "../LeftCommonCard";
 import axios from "axios";
@@ -34,9 +34,14 @@ export default function Page() {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const [sessionToken, setSessionToken] = useState(null);
   // Replace with actual session_token source
-  const sessionToken = localStorage.getItem("employerToken") ;
+useEffect(() => {
+    const token = localStorage.getItem('employerToken');
+    setSessionToken(token);
+  }, []); // Empty dependency array ensures this runs once on mount
+
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
