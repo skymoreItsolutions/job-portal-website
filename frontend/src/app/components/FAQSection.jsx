@@ -34,7 +34,7 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-extrabold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Frequently Asked Questions</h2>
         <p className="text-center text-gray-600 mb-12 text-lg">Everything you need to know about our services</p>
