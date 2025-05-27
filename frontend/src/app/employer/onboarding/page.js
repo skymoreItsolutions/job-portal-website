@@ -26,6 +26,8 @@ export default function Page() {
     employees: "",
     contact_phone: "",
     companyLocation:"",
+    gst_certificate: null, // New field for GST certificate file
+    company_pan_card: null, 
 
     // Optional fields (uncomment if needed)
     // companyLocation: "",
@@ -42,12 +44,17 @@ useEffect(() => {
   }, []); // Empty dependency array ensures this runs once on mount
 
 
+
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value, type, checked, files } = e.target;
+    if (type === "file") {
+      setFormData({ ...formData, [name]: files[0] || null }); // Store the selected file or null
+    } else if (type === "checkbox") {
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -61,49 +68,63 @@ useEffect(() => {
       return;
     }
 
-    const payload = {
-      name: formData.fullName,
-      contact_email: formData.workEmail,
-      company_name: formData.companyName,
-      password: formData.password,
-      session_token: sessionToken,
-       contact_phone: formData.contact_phone,
-       company_location: formData.companyLocation
-    };
+    if (!formData.gst_certificate && !formData.company_pan_card) {
+      setError("At least one of GST certificate or company PAN card is required.");
+      setLoading(false);
+      return;
+    }
+
+    // Create FormData object for multipart/form-data request
+    const payload = new FormData();
+    payload.append("name", formData.fullName);
+    payload.append("contact_email", formData.workEmail);
+    payload.append("company_name", formData.companyName);
+    payload.append("contact_phone", formData.contact_phone);
+    payload.append("company_location", formData.companyLocation);
+    payload.append("password", formData.password);
+    payload.append("session_token", sessionToken);
+    if (formData.gst_certificate) {
+      payload.append("gst_certificate", formData.gst_certificate);
+    }
+    if (formData.company_pan_card) {
+      payload.append("company_pan_card", formData.company_pan_card);
+    }
 
     try {
-      const response = await axios.post(`${baseurl}/employer/signup`, payload);
+      const response = await axios.post(`${baseurl}/employer/signup`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log("Signup successful:", response.data);
       localStorage.setItem("employerToken", response.data.token);
 
       await Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'You have successfully signed up!',
-        confirmButtonColor: '#309689',
-        timer: 2000, // Auto-close after 2 seconds
+        icon: "success",
+        title: "Success!",
+        text: "You have successfully signed up!",
+        confirmButtonColor: "#309689",
+        timer: 2000,
         timerProgressBar: true,
       });
 
-
-     window.location.href = "/employer/dashboard";
+      window.location.href = "/employer/dashboard";
     } catch (err) {
       console.error("Signup error:", err);
       let errorMessage = "An error occurred during signup.";
       if (err.response?.data?.errors) {
-        errorMessage = Object.values(err.response.data.errors).join(", ");
+        errorMessage = Object.values(err.response.data.errors).flat().join(", ");
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (!err.response) {
         errorMessage = "Network error. Please check your connection.";
       }
 
-      // Show SweetAlert2 error notification
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
+        icon: "error",
+        title: "Oops...",
         text: errorMessage,
-        confirmButtonColor: '#309689',
+        confirmButtonColor: "#309689",
       });
 
       setError(errorMessage);
@@ -111,7 +132,6 @@ useEffect(() => {
       setLoading(false);
     }
   };
-
   const companies = [
     "Swiggy",
     "Zomato",
@@ -146,151 +166,175 @@ useEffect(() => {
         <div className="max-w-lg mx-auto lg:max-w-[80%] border border-gray-500 bg-white shadow-2xl rounded-lg p-6 md:p-8">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Let’s get you started!</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Your full name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
+           <form onSubmit={handleSubmit} className="space-y-5" encType="multipart/form-data">
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Your full name
+        </label>
+        <input
+          type="text"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="Enter your full name"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-            <div className="relative">
-              <label className="block text-gray-700 font-semibold mb-1">
-                Company name
-              </label>
-              <input
-                type="text"
-                // value={company}
-                // onChange={(e) => {
-                //   setCompany(e.target.value);
-                //   setShowDropdown(true);
-                // }}
-                 name="companyName"
-                 value={formData.companyName}
-                onChange={handleChange}
-                placeholder="e.g. Swiggy"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required // Added to ensure company name is provided
-              />
-            
-            </div>
+      <div className="relative">
+        <label className="block text-gray-700 font-semibold mb-1">
+          Company name
+        </label>
+        <input
+          type="text"
+          name="companyName"
+          value={formData.companyName}
+          onChange={handleChange}
+          placeholder="e.g. Swiggy"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Company Email
-              </label>
-              <input
-                type="email"
-                name="workEmail"
-                value={formData.workEmail}
-                onChange={handleChange}
-                placeholder="Enter your work email"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-    {/* contact_phone */}
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Company Email
+        </label>
+        <input
+          type="email"
+          name="workEmail"
+          value={formData.workEmail}
+          onChange={handleChange}
+          placeholder="Enter your work email"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-     <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Phone Number
-              </label>
-              <input
-                type="number"
-                name="contact_phone"
-                value={formData.contact_phone}
-                onChange={handleChange}
-                placeholder="Enter your work email"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-             <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Company Location
-              </label>
-              <input
-                type="text"
-                name="companyLocation"
-                value={formData.companyLocation}
-                onChange={handleChange}
-                placeholder="Enter Company Location State"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Phone Number
+        </label>
+        <input
+          type="tel"
+          name="contact_phone"
+          value={formData.contact_phone}
+          onChange={handleChange}
+          placeholder="Enter your phone number"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Company Location
+        </label>
+        <input
+          type="text"
+          name="companyLocation"
+          value={formData.companyLocation}
+          onChange={handleChange}
+          placeholder="Enter Company Location State"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-            <div>
-              <p className="text-gray-700 font-medium">
-                Number of employees in your company
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {employeeOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`border px-4 py-1.5 rounded-full text-sm transition ${formData.employees === option.value
-                        ? "bg-[#309689] text-white"
-                        : "bg-gray-100 hover:bg-blue-100 text-gray-800"
-                      }`}
-                    onClick={() =>
-                      setFormData({ ...formData, employees: option.value })
-                    }
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="Enter your password"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
 
-            <div className="flex items-start mt-2 space-x-2">
-              <input
-                type="checkbox"
-                name="agreedTerms"
-                checked={formData.agreedTerms}
-                onChange={handleChange}
-                className="w-5 h-5 mt-1"
-                required
-              />
-              <label className="text-gray-600 text-sm">
-                I agree to Apna's{" "}
-                <span className="text-blue-600 underline">Terms of Service</span> and{" "}
-                <span className="text-blue-600 underline">Privacy Policy</span>
-              </label>
-            </div>
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          GST Certificate (PDF)
+        </label>
+        <input
+          type="file"
+          name="gst_certificate"
+          accept="application/pdf"
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
+      <div>
+        <label className="block text-gray-700 font-semibold mb-1">
+          Company PAN Card (PDF)
+        </label>
+        <input
+          type="file"
+          name="company_pan_card"
+          accept="application/pdf"
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <p className="text-gray-700 font-medium">
+          Number of employees in your company
+        </p>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {employeeOptions.map((option) => (
             <button
-              type="submit"
-              className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#267a73] transition transform hover:-translate-y-1"
-              disabled={loading}
+              key={option.value}
+              type="button"
+              className={`border px-4 py-1.5 rounded-full text-sm transition ${
+                formData.employees === option.value
+                  ? "bg-[#309689] text-white"
+                  : "bg-gray-100 hover:bg-blue-100 text-gray-800"
+              }`}
+              onClick={() =>
+                setFormData({ ...formData, employees: option.value })
+              }
             >
-              {loading ? "Signing up..." : "Sign Up"}
+              {option.label}
             </button>
-          </form>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-start mt-2 space-x-2">
+        <input
+          type="checkbox"
+          name="agreedTerms"
+          checked={formData.agreedTerms}
+          onChange={handleChange}
+          className="w-5 h-5 mt-1"
+          required
+        />
+        <label className="text-gray-600 text-sm">
+          I agree to Apna's{" "}
+          <span className="text-blue-600 underline">Terms of Service</span> and{" "}
+          <span className="text-blue-600 underline">Privacy Policy</span>
+        </label>
+      </div>
+
+      {error && (
+        <div className="text-red-500 text-sm mt-2">{error}</div>
+      )}
+
+      <button
+        type="submit"
+        className="w-full py-3 bg-[#309689] text-white font-semibold rounded-md hover:bg-[#267a73] transition transform hover:-translate-y-1"
+        disabled={loading}
+      >
+        {loading ? "Signing up..." : "Sign Up"}
+      </button>
+    </form>
         </div>
       </div>
     </div>

@@ -74,7 +74,7 @@ export default function Navbar() {
             setOtpSent(false);
             localStorage.setItem("employerToken", sessionToken);
             setShowModal(false);
-            router.push("/employer/dashboard");
+          window.location.href = "/employer/dashboard";
           } else {
             // Session token not found, show error or han
             //   router.push('/employer/dashboard');dle it
