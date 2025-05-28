@@ -18,7 +18,7 @@ const Sidebar = () => {
     {
       title: 'Applications',
       icon: <FiFileText />,
-      route: '/applications/pending',
+      route: '/employer/candidate-database',
     },
     {
       title: 'Database',
