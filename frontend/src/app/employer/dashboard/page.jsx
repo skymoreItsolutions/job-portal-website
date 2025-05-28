@@ -1,27 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import { BiTrendingUp, BiTrendingDown } from 'react-icons/bi';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/Sidebar';
-
-const data = [
-  { name: 'Jan', applications: 400 },
-  { name: 'Feb', applications: 300 },
-  { name: 'Mar', applications: 600 },
-  { name: 'Apr', applications: 800 },
-  { name: 'May', applications: 700 },
-];
-
-const recentJobs = [
-  { id: 1, title: 'Senior React Developer', status: 'Active', verified: true },
-  { id: 2, title: 'UX Designer', status: 'Pending', verified: false },
-  { id: 3, title: 'Product Manager', status: 'Expired', verified: true },
-];
+import { baseurl } from '@/app/components/common';
+import { parseISO, addDays, isAfter } from 'date-fns';
+import axios from 'axios';
 
 const EmployerDashboard = () => {
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     jobTitle: '',
     description: '',
@@ -32,10 +22,57 @@ const EmployerDashboard = () => {
     deadline: '',
   });
 
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = localStorage.getItem('employerToken');
+      if (!token) return;
+
+      try {
+        const res = await axios.get(`${baseurl}/employer/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data && res.data.success) {
+          setIsLoggedIn(res.data.data);
+        }
+      } catch (err) {
+        console.error('Not logged in or invalid token');
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
+  }, []);
+
+
+  console.log('isLoggedI',isLoggedIn.id)
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const employerId = isLoggedIn.id;
+          console.log('isLogged',employerId)
+        const response = await fetch(`${baseurl}/jobs/employer/${employerId}`);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          setJobs(result.data);
+        } else {
+          console.error('Failed to fetch jobs:', result.message);
+        }
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      }
+    };
+    fetchJobs();
+  }, [isLoggedIn.id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+ girl};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,14 +80,53 @@ const EmployerDashboard = () => {
     setIsJobModalOpen(false);
   };
 
+  console.log('isLoggedIn.is_verified',isLoggedIn)
+
+  // Check if employer is not verified
+  if (isLoggedIn.is_verified === 0 || isLoggedIn.is_verified === null || isLoggedIn.is_blocked === 1 ) {
+    return (
+         <div className="flex h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+        
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full p-8 rounded-2xl shadow-xl transform transition-all animate-fadeIn">
+            <div className="flex items-center justify-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-800 flex items-center">
+                Profile in Review Mode
+                <span className="ml-3 inline-block w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+              </h2>
+            </div>
+            <p className="text-gray-600 text-center mb-6 leading-relaxed">
+              Your employer account is currently under review by our admin team. Once verified, you'll be able to post jobs and allow candidates to log in and apply. Please wait for admin approval or contact support for assistance.
+            </p>
+            <div className="flex justify-center gap-4">
+              <a
+                href="/employer/verify-status" // Replace with your verification status page URL
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
+              >
+                Check Verification Status
+              </a>
+              <a
+                href="/contact" // Replace with your support page URL
+                className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-300"
+              >
+                Contact Support
+              </a>
+            </div>
+            <p className="text-sm text-gray-500 text-center mt-6">
+              We typically review accounts within 24-48 hours. Thank you for your patience!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render the full dashboard if verified
   return (
     <div className="flex h-screen bg-gray-100">
-
       <Sidebar />
-
-
       <div className="flex-1 overflow-auto">
-        <div className="p-8">
+        <div className="px-8 mt-4">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-bold text-gray-800">Employer Dashboard</h1>
             <button
@@ -61,184 +137,25 @@ const EmployerDashboard = () => {
             </button>
           </div>
 
-      
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard title="Total Job Visits" value="12,456" change={12} isPositive={true} />
             <MetricCard title="Total Applications" value="1,234" change={-5} isPositive={false} />
             <MetricCard title="Active Jobs" value="45" change={8} isPositive={true} />
             <MetricCard title="Pending Reviews" value="28" change={0} isPositive={true} />
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Application Trends</h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="applications" stroke="#4F46E5" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Recent Job Posts</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2">Job Title</th>
-                      <th className="text-left py-2">Status</th>
-                      <th className="text-left py-2">Verification</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentJobs.map((job) => (
-                      <tr key={job.id} className="border-b">
-                        <td className="py-2">{job.title}</td>
-                        <td className="py-2">
-                          <span
-                            className={`px-2 py-1 rounded-full text-sm ${
-                              job.status === 'Active'
-                                ? 'bg-green-100 text-green-800'
-                                : job.status === 'Pending'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}
-                          >
-                            {job.status}
-                          </span>
-                        </td>
-                        <td className="py-2">
-                          {job.verified ? (
-                            <span className="text-green-600">✓ Verified</span>
-                          ) : (
-                            <span className="text-yellow-600">Pending</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+        <div className="mb-8 px-[2%] py-5">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Job Postings</h2>
+          <div className="grid grid-cols-1 gap-6">
+            {jobs.length > 0 ? (
+              jobs.map((job) => <JobCard key={job.id} job={job} />)
+            ) : (
+              <p className="text-gray-600">No jobs posted yet.</p>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Job Posting Modal */}
-      {isJobModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-6">Post New Job</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Job Title</label>
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Job Description</label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Required Skills</label>
-                  <input
-                    type="text"
-                    name="skills"
-                    value={formData.skills}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Salary Range</label>
-                    <input
-                      type="text"
-                      name="salaryRange"
-                      value={formData.salaryRange}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Job Type</label>
-                    <select
-                      name="jobType"
-                      value={formData.jobType}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="full-time">Full-time</option>
-                      <option value="part-time">Part-time</option>
-                      <option value="contract">Contract</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Application Deadline</label>
-                  <input
-                    type="date"
-                    name="deadline"
-                    value={formData.deadline}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setIsJobModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Post Job
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -252,6 +169,106 @@ const MetricCard = ({ title, value, change, isPositive }) => {
         <div className={`flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
           {isPositive ? <BiTrendingUp size={24} /> : <BiTrendingDown size={24} />}
           <span className="ml-1">{Math.abs(change)}%</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const JobCard = ({ job }) => {
+  let additionalRequirements = { skills: [] };
+  try {
+    if (job?.additional_requirements && typeof job.additional_requirements === 'string') {
+      additionalRequirements = JSON.parse(job.additional_requirements);
+    }
+  } catch (error) {
+    console.error('Error parsing additional_requirements:', error);
+  }
+
+  const createdAt = job?.created_at ? parseISO(job.created_at) : new Date();
+  const deadline = addDays(createdAt, job?.job_expire_time || 14);
+  const deadlineFormatted = deadline.toLocaleDateString();
+  const isExpired = isAfter(new Date(), deadline);
+  const status = isExpired ? 'Expired' : 'Active';
+  const verify = job.is_verified ? 'Active' : 'Not Active';
+
+  const postedDate = createdAt.toLocaleDateString();
+
+  return (
+    <div className="bg-white w-full mx-auto shadow-md rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div className="p-6 sm:p-8">
+        {/* Header with Job Title and Status */}
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">
+            {job?.job_title || 'Untitled Job'}
+          </h3>
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {status}
+          </span>
+
+
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              verify === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {verify}
+          </span>
+        </div>
+
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Job Info */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">📍</span> {job?.location || 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">🗓️</span> Posted: {postedDate}
+            </p>
+            <p className="text-sm text-gray-600 font-medium flex items-center">
+              <span className="mr-2">📅</span> Deadline: {deadlineFormatted}
+            </p>
+          </div>
+
+          {/* Description and Skills */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-700 line-clamp-3">
+              {job?.job_description || 'No description available'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Skills:</span>{' '}
+              {additionalRequirements?.skills?.join(', ') || 'None'}
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Applied:</span> {job?.applied_to_job || 26}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Matches:</span> {job?.database_matches || 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-semibold">Posted by:</span> {job?.posted_by || 'Manshu'}
+            </p>
+          </div>
+
+          {/* Compensation and Action */}
+          <div className="flex flex-col justify-between space-y-4">
+            <p className="text-lg font-bold text-gray-800">
+              💰 {job?.compensation ? `$${parseInt(job.compensation).toLocaleString()}` : 'N/A'}
+            </p>
+            <p className="text-sm text-gray-600 font-medium">
+              {job?.job_type || 'N/A'} • {job?.work_location_type || 'N/A'}
+            </p>
+           
+          </div>
         </div>
       </div>
     </div>

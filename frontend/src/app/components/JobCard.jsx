@@ -1,67 +1,138 @@
-import Link from "next/link";
-import React from "react";
-import { CiBookmarkPlus } from "react-icons/ci";
-import { FaDollarSign, FaMapMarkerAlt,  } from "react-icons/fa";
-import { IoBagOutline } from "react-icons/io5";
-
-
-import { IoTimeOutline } from "react-icons/io5";
-
 export default function JobCard({ jobcard }) {
-  const { title, company, img ,jobType,salary,location,industry} = jobcard;
 
-  const jobDetailsList = [
-    {
-      name: industry,
-      icon: <IoBagOutline/>,
-    },
-    {
-      name: jobType,
-      icon: <IoTimeOutline/>,
-    },
-    {
-      name: salary,
-      icon: <FaDollarSign />,
-    },
-    {
-      name: location,
-      icon: <FaMapMarkerAlt />,
-    },
-  ];
+  // Parse JSON strings for other_job_titles and degree_specialization
+let otherJobTitles = [];
+  const rawOtherJobTitles = jobcard?.other_job_titles;
 
+  if (typeof rawOtherJobTitles === "string" && rawOtherJobTitles.trim() !== "") {
+    try {
+      // Attempt to parse the string as JSON
+      otherJobTitles = JSON.parse(rawOtherJobTitles);
+      // Ensure the result is an array
+      if (!Array.isArray(otherJobTitles)) {
+        console.warn(
+          `Parsed other_job_titles is not an array: ${rawOtherJobTitles}`,
+          otherJobTitles
+        );
+        otherJobTitles = [];
+      }
+    } catch (error) {
+      console.error(
+        `Error parsing other_job_titles: "${error.message}" for value: "${rawOtherJobTitles}"`,
+        { jobId: jobcard?.id }
+      );
+      otherJobTitles = [];
+    }
+  } else {
+    // Handle null, undefined, empty string, or non-string cases
+    otherJobTitles = [];
+  }
+  // Format created_at date
+  const formattedDate = new Date(jobcard.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 
   return (
-    <>
-      <div className="mt-5 lg:mt-10  space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-[#309689] bg-[#3096891A] text-base px-2 rounded-2xl">
-            10 min ago
-          </span>
-          <button>
-            <CiBookmarkPlus />
-          </button>
+   <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6 transform hover:scale-105 transition-transform duration-300 border border-gray-100 hover:border-[#309689]">
+      {/* Header Section */}
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{jobcard.job_title}</h3>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {otherJobTitles.length > 0 ? (
+              otherJobTitles.map((title, idx) => (
+                <span
+                  key={idx}
+                  className="text-sm text-[#309689] bg-[#3096891A] rounded-full px-3 py-1"
+                >
+                  {title}
+                </span>
+              ))
+            ) : (
+              <span className="text-sm text-gray-500 italic">No additional titles</span>
+            )}
+          </div>
         </div>
-        <div className="flex flex-row gap-x-4 lg:gap-x-2 items-center">
-          <img src={img} alt="job-logo" className="w-8 h-8 lg:h-8 lg:w-8" />
+        <button className="bg-[#309689] text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-[#287f74] transition-colors duration-200">
+          Apply Now
+        </button>
+      </div>
+
+      {/* Job Details Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+        <div className="flex items-center space-x-3">
+          {/* <MdWork className="text-[#309689] text-xl" /> */}
           <div>
-            <h5 className="font-semibold text-xl lg:text-xl">{title}</h5>
-            <p className="text-base">{company}</p>
+            <span className="font-semibold text-sm">Job Type</span>
+            <p className="text-base">{jobcard.job_type}</p>
           </div>
         </div>
-        <div className="flex  flex-col gap-y-5 lg:gap-y-0 md:flex-row justify-between">
-          <div className="grid grid-cols-1 gap-y-5 lg:gap-y-0 md:flex  items-center gap-x-4 text-black">
-            {jobDetailsList.map((elm, indx) => (
-              <div key={indx} className="flex items-center text-base gap-x-2">
-                <span className="text-[#309689]">{elm.icon}</span>
-                <span className="text-[#6C757D]">{elm.name}</span>
-              </div>
-            ))}
+        <div className="flex items-center space-x-3">
+          {/* <FaMapMarkerAlt className="text-[#309689] text-xl" /> */}
+          <div>
+            <span className="font-semibold text-sm">Location</span>
+            <p className="text-base">{jobcard.location}</p>
           </div>
-          <Link href={`/job-detail/${title.split(" ").join("-").toLowerCase()}`} className="px-4  lg:px-16 py-2 rounded bg-[#309689] text-base text-white">
-            Apply Job
-          </Link>
+        </div>
+        <div className="flex items-center space-x-3">
+          {/* <FaDollarSign className="text-[#309689] text-xl" /> */}
+          <div>
+            <span className="font-semibold text-sm">Compensation</span>
+            <p className="text-base">
+              {jobcard.compensation} ({jobcard.pay_type})
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          {/* <IoTimeOutline className="text-[#309689] text-xl" /> */}
+          <div>
+            <span className="font-semibold text-sm">Work Location</span>
+            <p className="text-base">{jobcard.work_location_type}</p>
+          </div>
         </div>
       </div>
-    </>
+
+      {/* Additional Info Section */}
+      <div className="space-y-3 text-gray-600">
+        <div className="flex items-center space-x-3">
+          <span className="font-semibold text-sm">Experience Required:</span>
+          <p className="text-base">{jobcard.total_experience_required} years</p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span className="font-semibold text-sm">Education:</span>
+          <div className="flex flex-wrap gap-2">
+            {/* {degreeSpecialization?.length > 0 ? (
+              degreeSpecialization?.map((degree, idx) => (
+                <span
+                  key={idx}
+                  className="text-sm text-[#309689] bg-[#3096891A] rounded-full px-3 py-1"
+                >
+                  {degree}
+                </span>
+              ))
+            ) : (
+              <span className="text-base">Not specified</span>
+            )} */}
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span className="font-semibold text-sm">Walk-in Interview:</span>
+          <p className="text-base">{jobcard.is_walkin_interview ? "Yes" : "No"}</p>
+        </div>
+      </div>
+
+      {/* Footer Section */}
+      <div className="flex justify-between items-center text-sm text-gray-500">
+        <p>
+          <span className="font-semibold">Posted:</span> {formattedDate}
+        </p>
+        <p className="line-clamp-2">
+          <span className="font-semibold">Description:</span>{" "}
+          {jobcard.job_description || "No description available"}
+        </p>
+      </div>
+    </div>
   );
 }

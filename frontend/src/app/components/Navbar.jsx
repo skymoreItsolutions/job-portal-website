@@ -1,112 +1,138 @@
-'use client';
+"use client";
 
-import { useState,useEffect } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import { FaEnvelope, FaLock, FaSpinner, FaTimes } from 'react-icons/fa';
-import { baseurl } from './common';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { FaEnvelope, FaLock, FaSpinner, FaTimes } from "react-icons/fa";
+import { baseurl } from "./common";
 
+import { FaUserCircle } from "react-icons/fa";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [loginType, setLoginType] = useState('');
+  const [loginType, setLoginType] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
-const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleOtp = async () => {
     setLoading(true);
-    setError('');
+    setError("");
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email.');
+      setError("Please enter a valid email.");
       setLoading(false);
       return;
     }
 
-
-
     try {
-      const endpoint = loginType === 'Employer' ? 'employer/send-otp' : 'send-otp';
-      const payload = loginType === 'Employer' ? { contact_email: email } : { email };
+      const endpoint =
+        loginType === "Employer" ? "employer/send-otp" : "send-otp";
+      const payload =
+        loginType === "Employer" ? { contact_email: email } : { email };
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
     } catch (error) {
-      console.error('Error sending OTP:', error);
-      setError('Failed to send OTP. Please try again.');
+      console.error("Error sending OTP:", error);
+      setError("Failed to send OTP. Please try again.");
     }
     setLoading(false);
   };
 
   const handleSendOtp = async () => {
     setLoading(true);
-    setError('');
+    setError("");
+
     if (otp.length !== 6) {
-      setError('Please enter a 6-digit OTP.');
+      setError("Please enter a 6-digit OTP.");
       setLoading(false);
       return;
     }
 
     try {
-      const endpoint = loginType === 'Employer' ? 'employer/verify-otp' : 'verify-otp';
-        const payload = loginType === 'Employer' ? { contact_email: email,otp } : { email,otp };
+      const endpoint =
+        loginType === "Employer" ? "employer/verify-otp" : "verify-otp";
+      const payload =
+        loginType === "Employer"
+          ? { contact_email: email, otp }
+          : { email, otp };
 
-        console.log(payload)
+      console.log(payload);
 
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
+
       if (response.data.success) {
-        localStorage.setItem('employer_token', response.data.token);
-        
-        setShowModal(false);
-        const redirectPath = loginType === 'Employer' ? '/employer/onboarding' : '/candidate/candidate-login';
-        router.push(redirectPath);
+        if (loginType === "Employer") {
+          const sessionToken = response.data.session_token;
+
+          if (sessionToken) {
+            setOtpSent(false);
+            localStorage.setItem("employerToken", sessionToken);
+            setShowModal(false);
+          window.location.href = "/employer/dashboard";
+          } else {
+            // Session token not found, show error or han
+            //   router.push('/employer/dashboard');dle it
+            setOtpSent(false);
+            setShowModal(false);
+            router.push("/employer/onboarding");
+          }
+        } else {
+                    const sessionToken = response.data.token;
+
+          localStorage.setItem("port_tok", sessionToken);
+          setShowModal(false);
+          setOtpSent(false);
+          router.push("/candidate/candidate-login");
+        }
       } else {
-        setError('Invalid OTP. Please try again.');
+        setOtpSent(false);
+        setError("Invalid OTP. Please try again.");
       }
     } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setError('Failed to verify OTP. Please try again.');
+      setOtpSent(false);
+      console.error("Error verifying OTP:", error);
+      setError("Failed to verify OTP. Please try again.");
     }
+
     setLoading(false);
   };
 
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = localStorage.getItem("employerToken");
+      if (!token) return;
 
-useEffect(() => {
-  const checkLogin = async () => {
-    const token = localStorage.getItem('employerToken');
-    if (!token) return;
+      try {
+        const res = await axios.get(`${baseurl}/employer/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    try {
-      const res = await axios.get(`${baseurl}/employer/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+        if (res.data && res.data.success) {
+          setIsLoggedIn(true);
         }
-      });
-
-      if (res.data && res.data.success) {
-        setIsLoggedIn(true);
-
+      } catch (err) {
+        console.error("Not logged in or invalid token");
+        setIsLoggedIn(false);
       }
-    } catch (err) {
-      console.error('Not logged in or invalid token');
-      setIsLoggedIn(false);
-    }
+    };
+
+    checkLogin();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("employerToken");
+
+    setIsLoggedIn(false);
+    router.push("/"); // redirect to home or login page
   };
-
-  checkLogin();
-}, []);
-
-const handleLogout = () => {
-  localStorage.removeItem('employer_token');
-  setIsLoggedIn(false);
-  router.push('/'); // redirect to home or login page
-};
-
 
   return (
     <>
@@ -118,34 +144,52 @@ const handleLogout = () => {
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <Link href="/" className="text-black hover:text-gray-600">Home</Link>
-            <Link href="/about" className="text-black hover:text-gray-600">About</Link>
-            <Link href="/jobs" className="text-black hover:text-gray-600">Jobs</Link>
-            <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
-           {!isLoggedIn ? (
-  <>
-    <button
-      onClick={() => { setLoginType('Employer'); setShowModal(true); }}
-      className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
-    >
-      Employer Login
-    </button>
-    <button
-      onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
-      className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
-    >
-      Candidate Login
-    </button>
-  </>
-) : (
-  <button
-    onClick={handleLogout}
-    className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
-  >
-    Logout
-  </button>
-)}
-
+            <Link href="/" className="text-black hover:text-gray-600">
+              Home
+            </Link>
+            <Link href="/about" className="text-black hover:text-gray-600">
+              About
+            </Link>
+            <Link href="/jobs" className="text-black hover:text-gray-600">
+              Jobs
+            </Link>
+            <Link href="/contact" className="text-black hover:text-gray-600">
+              Contact
+            </Link>
+            {!isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => {
+                    setLoginType("Employer");
+                    setShowModal(true);
+                  }}
+                  className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
+                >
+                  Employer Login
+                </button>
+                <button
+                  onClick={() => {
+                    setLoginType("Candidate");
+                    setShowModal(true);
+                  }}
+                  className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                >
+                  Candidate Login
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                <Link href="/employer/dashboard">
+                  <FaUserCircle className="text-2xl text-green-600" />
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -158,8 +202,18 @@ const handleLogout = () => {
               {isOpen ? (
                 <FaTimes className="w-6 h-6" />
               ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               )}
             </button>
@@ -169,18 +223,32 @@ const handleLogout = () => {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden flex flex-col space-y-4 mt-4">
-            <Link href="/" className="text-black hover:text-gray-600">Home</Link>
-            <Link href="/about" className="text-black hover:text-gray-600">About</Link>
-            <Link href="/jobs" className="text-black hover:text-gray-600">Jobs</Link>
-            <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
+            <Link href="/" className="text-black hover:text-gray-600">
+              Home
+            </Link>
+            <Link href="/about" className="text-black hover:text-gray-600">
+              About
+            </Link>
+            <Link href="/jobs" className="text-black hover:text-gray-600">
+              Jobs
+            </Link>
+            <Link href="/contact" className="text-black hover:text-gray-600">
+              Contact
+            </Link>
             <button
-              onClick={() => { setLoginType('Employer'); setShowModal(true); }}
+              onClick={() => {
+                setLoginType("Employer");
+                setShowModal(true);
+              }}
               className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg"
             >
               Employer Login
             </button>
             <button
-              onClick={() => { setLoginType('Candidate'); setShowModal(true); }}
+              onClick={() => {
+                setLoginType("Candidate");
+                setShowModal(true);
+              }}
               className="text-white bg-green-500 px-4 py-2 rounded-lg"
             >
               Candidate Login
@@ -190,7 +258,7 @@ const handleLogout = () => {
       </nav>
 
       {/* Login Modal */}
-      {showModal && (
+      {showModal ? (
         <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">
             <button
@@ -200,7 +268,9 @@ const handleLogout = () => {
             >
               <FaTimes className="w-5 h-5" />
             </button>
-            <h2 className="text-2xl mb-6 font-bold text-gray-800">{loginType} Login</h2>
+            <h2 className="text-2xl mb-6 font-bold text-gray-800">
+              {loginType} Login
+            </h2>
 
             <div className="space-y-4">
               <div className="relative">
@@ -232,9 +302,15 @@ const handleLogout = () => {
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
               <p className="text-gray-500 text-sm">
-                By continuing, you agree to our{' '}
-                <a href="/terms" className="text-blue-500 hover:underline">Terms of Service</a> and{' '}
-                <a href="/privacy" className="text-blue-500 hover:underline">Privacy Policy</a>.
+                By continuing, you agree to our{" "}
+                <a href="/terms" className="text-blue-500 hover:underline">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" className="text-blue-500 hover:underline">
+                  Privacy Policy
+                </a>
+                .
               </p>
 
               <div className="flex justify-end space-x-3">
@@ -252,12 +328,18 @@ const handleLogout = () => {
                   disabled={loading}
                 >
                   {loading && <FaSpinner className="animate-spin mr-2" />}
-                  {loading ? 'Processing...' : otpSent ? 'Verify OTP' : 'Send OTP'}
+                  {loading
+                    ? "Processing..."
+                    : otpSent
+                    ? "Verify OTP"
+                    : "Send OTP"}
                 </button>
               </div>
             </div>
           </div>
         </div>
+      ) : (
+        ""
       )}
     </>
   );

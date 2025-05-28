@@ -39,6 +39,32 @@ const MultiStepJobPostingForm = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [apiError, setApiError] = useState(null);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = localStorage.getItem('employerToken');
+      if (!token) return;
+
+      try {
+        const res = await axios.get(`${baseurl}/employer/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data && res.data.success) {
+          setIsLoggedIn(res.data.data);
+        }
+      } catch (err) {
+        console.error('Not logged in or invalid token');
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
+  }, []);
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -118,13 +144,14 @@ const MultiStepJobPostingForm = () => {
     }
   };
 
+    console.log(isLoggedIn.id)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
 
-
+    
     const apiData = {
-      employer_id:19,
+      employer_id: isLoggedIn.id,
 
       job_title: formData.jobTitle,
       job_type: formData.jobType,

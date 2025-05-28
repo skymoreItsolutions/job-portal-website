@@ -11,6 +11,7 @@ import Three from "../CondidateCompo/Three";
 import Four from "../CondidateCompo/Four";
 import Five from "../CondidateCompo/Five";
 import data from "@/app/jobdata";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function Page() {
     full_name:"",
     dob:undefined,
     gender:"",
-    number:0,
+    number:undefined,
     degree:"",
     college_name:"",
     passing_marks:undefined,
@@ -104,53 +105,72 @@ Object.entries(alldata).forEach(([key, value]) => {
  if (resume) {
     formData.append("resume", resume); 
   }
- const token= localStorage.getItem("site_user")
+ const token= localStorage.getItem("port_tok")
 const response= await axios.post(`${baseurl}/updatecandidate/${token}`,formData);
-console.log(response.data)
+if(response.data.success){
+  Swal.fire({
+    title:"Submit Success",
+      text: "You clicked the button!",
+  icon: "success"
+  })
+  router.push("/")
+
+}else{
+   Swal.fire({
+    title:"Submit Error",
+      text: "You clicked the button!",
+  icon: "error"
+  })
+}
 
 }
 
 
 const getcondidate=async(token)=>{
+  if(!token){
+      router.push("/")
+
+  }
+  else{
   const response= await axios.get(`${baseurl}/candidateinfo/${token}`)
   if(response.data.success){
 setalldata(response.data.candidate)
   }
-
+  }
 }
 
 useEffect(()=>{
- const token= localStorage.getItem("site_user")
+ const token= localStorage.getItem("port_tok")
  getcondidate(token)
 },[])
 
 
   return (
     <div className="bg-[#e8e7ea] px-5 md:px-12 xl:px-32 py-8 lg:py-12">
-      <div className="w-full xl:h-[85vh] lg:w-[85%] mx-auto flex flex-col lg:flex-row  lg:items-stretch gap-8">
+      <div className="w-full xl:h-[85vh] lg:w-[85%] mx-auto flex flex-col lg:flex-row lg:items-stretch gap-8">
         {/* Left Section */}
-        <div className="w-full  flex flex-row lg:flex-1/2 gap-4 h-full">
-          <div className="flex flex-col  flex-1 h-full ">
+        <div className="w-full flex flex-row lg:flex-1/2 gap-4 h-full">
+          <div className="flex flex-col flex-1 h-full">
             <img
               src="https://cdn.apna.co/cloudinary/OnboardingV3NonJobContextBanner.png"
-              alt="job"
-              className="rounded-3xl  object-center h-full w-full"
+              alt="job banner"
+              className="rounded-3xl object-center h-full w-full"
             />
             <img
               src="https://storage.googleapis.com/mumbai_apnatime_prod/cloudinary/OnboardingV3CompanyLogo.png"
-              alt="job"
+              alt="company logo"
               className="mx-auto mt-4 h-auto"
             />
           </div>
-          <div className=" hidden md:flex lg:hidden  flex-col flex-1 h-full ">
+          <div className="hidden md:flex lg:hidden flex-col flex-1 h-full">
             <img
               src="https://cdn.apna.co/cloudinary/OnboardingV3NonJobContextBanner.png"
-              alt="job"
+              alt="job banner"
               className="rounded-3xl object-cover object-center h-full w-full max-h-[250px] md:max-h-[420px] lg:max-h-[100px]"
             />
             <img
               src="https://storage.googleapis.com/mumbai_apnatime_prod/cloudinary/OnboardingV3CompanyLogo.png"
-              alt="job"
+              alt="company logo"
               className="mx-auto mt-4 h-auto"
             />
           </div>
