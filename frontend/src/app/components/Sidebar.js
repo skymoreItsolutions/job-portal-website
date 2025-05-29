@@ -16,20 +16,22 @@ const Sidebar = () => {
       route: '/employer/post-job',
     },
     {
-      title: 'Applications',
-      icon: <FiFileText />,
+      title: 'Database',
+      icon: <FiDatabase />,
       route: '/employer/candidate-database',
     },
     {
-      title: 'Database',
-      icon: <FiDatabase />,
+      title: 'Applications',
+      icon: <FiFileText />,
       route: '/database/profiles',
     },
-    {
-      title: 'Candidates',
-      icon: <FiUsers />,
-      route: '/candidates/shortlisted',
+
+     {
+      title: 'Contact',
+      icon: <FiDatabase />,
+      route: '/contact',
     },
+   
   ];
 
   return (
