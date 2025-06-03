@@ -34,6 +34,7 @@ export default function Navbar() {
         loginType === "Employer" ? "employer/send-otp" : "send-otp";
       const payload =
         loginType === "Employer" ? { contact_email: email } : { email };
+        localStorage.setItem("emp-email", email);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
@@ -48,6 +49,8 @@ export default function Navbar() {
     setLoading(true);
     setError("");
 
+    
+    
     if (otp.length !== 6) {
       setError("Please enter a 6-digit OTP.");
       setLoading(false);

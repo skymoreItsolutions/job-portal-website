@@ -28,6 +28,7 @@ export default function Page() {
     companyLocation:"",
     gst_certificate: null, // New field for GST certificate file
     company_pan_card: null, 
+    others_doc: null, // New field for other document file
 
     // Optional fields (uncomment if needed)
     // companyLocation: "",
@@ -46,18 +47,19 @@ useEffect(() => {
 
 
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === "file") {
-      setFormData({ ...formData, [name]: files[0] || null }); // Store the selected file or null
-    } else if (type === "checkbox") {
-      setFormData({ ...formData, [name]: checked });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
+ const handleChange = (e) => {
+  const { name, files, type, value, checked } = e.target;
+  if (type === "file") {
+    setFormData({ ...formData, [name]: files[0] });
+  } else if (type === "checkbox") {
+    setFormData({ ...formData, [name]: checked });
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+};
 
-  const handleSubmit = async (e) => {
+
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -68,26 +70,33 @@ useEffect(() => {
       return;
     }
 
-    if (!formData.gst_certificate && !formData.company_pan_card) {
-      setError("At least one of GST certificate or company PAN card is required.");
+    // Validation: At least one of gst_certificate, company_pan_card, or others_doc is required
+    // If neither gst_certificate nor company_pan_card is provided, others_doc is mandatory
+    if (!formData.gst_certificate && !formData.company_pan_card && !formData.others_doc) {
+      setError("You must upload at least one of GST Certificate, Company PAN Card, or Other document.");
       setLoading(false);
       return;
     }
 
+    const getEmail = localStorage.getItem("emp-email");
     // Create FormData object for multipart/form-data request
     const payload = new FormData();
     payload.append("name", formData.fullName);
-    payload.append("contact_email", formData.workEmail);
+    payload.append("contact_email", getEmail);
     payload.append("company_name", formData.companyName);
     payload.append("contact_phone", formData.contact_phone);
     payload.append("company_location", formData.companyLocation);
     payload.append("password", formData.password);
     payload.append("session_token", sessionToken);
+
     if (formData.gst_certificate) {
       payload.append("gst_certificate", formData.gst_certificate);
     }
     if (formData.company_pan_card) {
       payload.append("company_pan_card", formData.company_pan_card);
+    }
+    if (formData.others_doc) {
+      payload.append("company_pan_card", formData.others_doc);
     }
 
     try {
@@ -131,7 +140,8 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  };
+};
+
   const companies = [
     "Swiggy",
     "Zomato",
@@ -197,20 +207,6 @@ useEffect(() => {
         />
       </div>
 
-      <div>
-        <label className="block text-gray-700 font-semibold mb-1">
-          Company Email
-        </label>
-        <input
-          type="email"
-          name="workEmail"
-          value={formData.workEmail}
-          onChange={handleChange}
-          placeholder="Enter your work email"
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-      </div>
 
       <div>
         <label className="block text-gray-700 font-semibold mb-1">
@@ -259,7 +255,7 @@ useEffect(() => {
 
       <div>
         <label className="block text-gray-700 font-semibold mb-1">
-          GST Certificate (PDF)
+          GST Certificate (PDF) /  Company PAN Card (PDF)
         </label>
         <input
           type="file"
@@ -269,19 +265,18 @@ useEffect(() => {
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-
-      <div>
-        <label className="block text-gray-700 font-semibold mb-1">
-          Company PAN Card (PDF)
-        </label>
-        <input
-          type="file"
-          name="company_pan_card"
-          accept="application/pdf"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+<div>
+  <label className="block text-gray-700 font-semibold mb-1">
+    Other's Document (PDF)
+  </label>
+  <input
+    type="file"
+    name="others_doc"
+    accept="application/pdf"
+    onChange={handleChange}
+    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 
       <div>
         <p className="text-gray-700 font-medium">
@@ -317,7 +312,7 @@ useEffect(() => {
           required
         />
         <label className="text-gray-600 text-sm">
-          I agree to Apna's{" "}
+          I agree to Hire Bot{" "}
           <span className="text-blue-600 underline">Terms of Service</span> and{" "}
           <span className="text-blue-600 underline">Privacy Policy</span>
         </label>

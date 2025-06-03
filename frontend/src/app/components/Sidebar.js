@@ -10,10 +10,22 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   const menuItems = [
+
+     {
+      title: 'Dashboard',
+      icon: <FiBriefcase />,
+      route: '/employer/dashboard',
+    },
     {
-      title: 'Jobs',
+      title: 'Job Post ',
       icon: <FiBriefcase />,
       route: '/employer/post-job',
+    },
+
+    {
+      title: 'My Jobs',
+      icon: <FiBriefcase />,
+      route: '/employer/my-jobs',
     },
     {
       title: 'Database',

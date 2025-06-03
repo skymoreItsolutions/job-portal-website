@@ -47,7 +47,7 @@ const [formData, setFormData] = useState({
   };
 
   // Fetch candidates from the backend
-  const fetchCandidates = async (pageUrl = 'https://jobprtal.skymoreitsolutions.com/api/v1/candidate/filter') => {
+  const fetchCandidates = async (pageUrl = 'http://localhost:8000/api/v1/candidate/filter') => {
     setLoading(true);
     setError(null);
     try {

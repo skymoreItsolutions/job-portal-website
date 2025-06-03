@@ -4,6 +4,7 @@ import MultiStepJobPostingForm from '@/app/components/MultiStepJobPostingForm'
 import React,{useState,useEffect} from 'react'
 import axios from 'axios'
 import { baseurl } from '@/app/components/common'
+import Sidebar from '@/app/components/Sidebar'
 
 
  const page = (props) => {
@@ -36,7 +37,10 @@ import { baseurl } from '@/app/components/common'
 
   return(
      <>
-     <MultiStepJobPostingForm userdata={LoggedIn} />
+      <Sidebar />
+      <div className='absolute inset-0 left-64 bg-gray-100 p-4 md:p-8 lg:p-12 xl:p-16'>
+             <MultiStepJobPostingForm userdata={LoggedIn} />
+      </div>
      </>
    )
 
