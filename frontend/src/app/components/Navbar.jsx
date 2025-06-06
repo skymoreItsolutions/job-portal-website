@@ -147,7 +147,10 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <Link href="/" className="text-black hover:text-gray-600">
+\
+            {!isLoggedIn ? (
+              <>
+              <Link href="/" className="text-black hover:text-gray-600">
               Home
             </Link>
             <Link href="/about" className="text-black hover:text-gray-600">
@@ -159,8 +162,6 @@ export default function Navbar() {
             <Link href="/contact" className="text-black hover:text-gray-600">
               Contact
             </Link>
-            {!isLoggedIn ? (
-              <>
                 <button
                   onClick={() => {
                     setLoginType("Employer");
@@ -182,6 +183,11 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
+
+                <Link href="/employer/dashboard" className="text-black hover:text-gray-600">
+                  Dashboard
+                </Link>
+            
                 <Link href="/employer/dashboard">
                   <FaUserCircle className="text-2xl text-green-600" />
                 </Link>
