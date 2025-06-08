@@ -10,26 +10,40 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   const menuItems = [
+
+     {
+      title: 'Dashboard',
+      icon: <FiBriefcase />,
+      route: '/employer/dashboard',
+    },
     {
-      title: 'Jobs',
+      title: 'Job Post ',
       icon: <FiBriefcase />,
       route: '/employer/post-job',
     },
+
     {
-      title: 'Applications',
-      icon: <FiFileText />,
-      route: '/employer/candidate-database',
+      title: 'My Jobs',
+      icon: <FiBriefcase />,
+      route: '/employer/my-jobs',
     },
     {
       title: 'Database',
       icon: <FiDatabase />,
-      route: '/database/profiles',
+      route: '/employer/candidate-database',
     },
     {
-      title: 'Candidates',
-      icon: <FiUsers />,
-      route: '/candidates/shortlisted',
+      title: 'Applications',
+      icon: <FiFileText />,
+      route: '/database/profiles',
     },
+
+     {
+      title: 'Contact',
+      icon: <FiDatabase />,
+      route: '/contact',
+    },
+   
   ];
 
   return (

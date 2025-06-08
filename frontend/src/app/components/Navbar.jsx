@@ -36,6 +36,7 @@ const [password,setpassword]=useState()
         loginType === "Employer" ? "employer/send-otp" : "send-otp";
       const payload =
         loginType === "Employer" ? { contact_email: email } : { email };
+        localStorage.setItem("emp-email", email);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
@@ -50,6 +51,8 @@ const [password,setpassword]=useState()
     setLoading(true);
     setError("");
 
+    
+    
     if (otp.length !== 6) {
       setError("Please enter a 6-digit OTP.");
       setLoading(false);
@@ -168,7 +171,10 @@ alert(responsedata.message)
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <Link href="/" className="text-black hover:text-gray-600">
+\
+            {!isLoggedIn ? (
+              <>
+              <Link href="/" className="text-black hover:text-gray-600">
               Home
             </Link>
             <Link href="/about" className="text-black hover:text-gray-600">
@@ -180,8 +186,6 @@ alert(responsedata.message)
             <Link href="/contact" className="text-black hover:text-gray-600">
               Contact
             </Link>
-            {!isLoggedIn ? (
-              <>
                 <button
                   onClick={() => {
                     setLoginType("Employer");
@@ -203,6 +207,11 @@ alert(responsedata.message)
               </>
             ) : (
               <div className="flex items-center gap-4">
+
+                <Link href="/employer/dashboard" className="text-black hover:text-gray-600">
+                  Dashboard
+                </Link>
+            
                 <Link href="/employer/dashboard">
                   <FaUserCircle className="text-2xl text-green-600" />
                 </Link>

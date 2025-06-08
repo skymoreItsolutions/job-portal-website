@@ -7,9 +7,9 @@ import Sidebar from '../../components/Sidebar';
 import { baseurl } from '@/app/components/common';
 import { parseISO, addDays, isAfter } from 'date-fns';
 import axios from 'axios';
-import { useRouter, usePathname } from 'next/navigation';
-const EmployerDashboard = () => {
-        const router = useRouter();
+import {useRouter} from 'next/navigation';
+const MyJobs = () => {
+      const router = useRouter();
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -129,9 +129,12 @@ const EmployerDashboard = () => {
       <div className="flex-1 overflow-auto">
         <div className="px-8 mt-4">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-800">Employer Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+                My Jobs
+            </h1>
             <button
-              onClick={() => router.push('/employer/post-job')}
+            onClick={() => router.push('/employer/post-job')}
+
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <FiPlus className="mr-2" /> Post New Job
@@ -276,4 +279,4 @@ const JobCard = ({ job }) => {
   );
 };
 
-export default EmployerDashboard;
+export default MyJobs;

@@ -5,11 +5,11 @@ import { SlCalender } from "react-icons/sl";
 import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import axios from "axios";
 import { baseurl } from "@/app/components/common";
-import First from "../CondidateCompo/first";
-import Second from "../CondidateCompo/Second";
-import Three from "../CondidateCompo/Three";
-import Four from "../CondidateCompo/Four";
-import Five from "../CondidateCompo/Five";
+import First from "../condidatecompo/First";
+import Second from "../condidatecompo/Second";
+import Three from "../condidatecompo/Three";
+import Four from "../condidatecompo/Four";
+import Five from "../condidatecompo/Five";
 import data from "@/app/jobdata";
 import Swal from "sweetalert2";
 
