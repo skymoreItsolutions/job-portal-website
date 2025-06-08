@@ -1,7 +1,10 @@
-import React from 'react'
+"use client"
+import React, { useState } from 'react'
 import { FiUploadCloud, FiFileText, FiX, FiCheckCircle } from "react-icons/fi";
+import { FaEye,FaEyeSlash } from "react-icons/fa";
 
 const Five = ({alldata,handelinputs,handelresume,resume}) => {
+  const [showpassword,setShowpassword]=useState(false)
   return (
      <div className="question space-y-4 lg:space-y-4 p-4 lg:p-6  overflow-y-auto  xl:max-h-[500px]">
 
@@ -38,6 +41,25 @@ const Five = ({alldata,handelinputs,handelresume,resume}) => {
             />
           </div>
         </div>
+        <div>
+          <h6 className="text-sm font-semibold">Password</h6>
+
+          <div className="flex items-center gap-x-4 mt-2 relative" >
+            <input
+              type={showpassword?"text":"password"}
+              placeholder="Enter Your Password"
+              name="password"
+              value={alldata.password}
+               minLength={6}
+              onChange={(e)=>handelinputs(e)}
+              className="w-full py-3 border border-gray-400 focus:border-green-800 px-4"
+            />
+   {showpassword && <FaEye className='absolute right-2 text-xl ' onClick={()=>setShowpassword(!showpassword)}/>}
+   {!showpassword && <FaEyeSlash className='absolute right-2 text-xl ' onClick={()=>setShowpassword(!showpassword)}/>}
+
+          </div>
+        </div>
+
 
         <div className="space-y-2">
       <h6 className="text-sm font-semibold text-gray-700">Upload Resume</h6>
@@ -109,7 +131,7 @@ const Five = ({alldata,handelinputs,handelresume,resume}) => {
       </div>
     </div>
 
-        
+       
       </div>
 
   </div>
