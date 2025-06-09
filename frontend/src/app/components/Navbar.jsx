@@ -6,6 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { FaEnvelope, FaLock, FaSpinner, FaTimes, FaUserCircle } from "react-icons/fa";
 import { baseurl } from "./common";
+import { RiLockPasswordFill } from "react-icons/ri";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,11 +16,12 @@ export default function Navbar() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const [useOtpLogin, setUseOtpLogin] = useState(false);
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [password,setpassword]=useState()
 
   const handleOtp = async () => {
     setLoading(true);
@@ -161,8 +163,30 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("employerToken");
     setIsLoggedIn(false);
-    router.push("/");
+    router.push("/"); // redirect to home or login page
   };
+
+
+const handellogin=async()=>{
+  setLoading(true)
+  if(!email || !password){
+
+  }else{
+const response= await axios.post(`${baseurl}/candidate/login`,{email,password})
+const responsedata= await response.data;
+if(responsedata.success){
+    localStorage.setItem("port_tok", responsedata.token);
+     router.push("/candidate/dashboard")
+     setLoginType("")
+
+}else{
+alert(responsedata.message)
+}
+
+  }
+  setLoading(false)
+}
+
 
   return (
     <>
@@ -293,6 +317,19 @@ export default function Navbar() {
 
       {/* Login Modal */}
       {/* Login Modal */}
+      {showModal  &&   loginType==="Employer" &&
+        <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+              aria-label="Close modal"
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+            <h2 className="text-2xl mb-6 font-bold text-gray-800">
+              {loginType} Login
+            </h2>
 {showModal ? (
   <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">

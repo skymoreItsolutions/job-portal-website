@@ -40,7 +40,7 @@ export default function Page() {
     field_job:0,
     preferred_language:"",
     skills:"",
-    pursuing: 0
+    password:"",
 
   })
 
