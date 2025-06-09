@@ -4,10 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { FaEnvelope, FaLock, FaSpinner, FaTimes } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaSpinner, FaTimes, FaUserCircle } from "react-icons/fa";
 import { baseurl } from "./common";
 
-import { FaUserCircle } from "react-icons/fa";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -16,7 +15,9 @@ export default function Navbar() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [useOtpLogin, setUseOtpLogin] = useState(false);
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -34,7 +35,7 @@ export default function Navbar() {
         loginType === "Employer" ? "employer/send-otp" : "send-otp";
       const payload =
         loginType === "Employer" ? { contact_email: email } : { email };
-        localStorage.setItem("emp-email", email);
+      localStorage.setItem("emp-email", email);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
       console.log(response.data);
       setOtpSent(true);
@@ -49,8 +50,6 @@ export default function Navbar() {
     setLoading(true);
     setError("");
 
-    
-    
     if (otp.length !== 6) {
       setError("Please enter a 6-digit OTP.");
       setLoading(false);
@@ -77,17 +76,14 @@ export default function Navbar() {
             setOtpSent(false);
             localStorage.setItem("employerToken", sessionToken);
             setShowModal(false);
-          window.location.href = "/employer/dashboard";
+            window.location.href = "/employer/dashboard";
           } else {
-            // Session token not found, show error or han
-            //   router.push('/employer/dashboard');dle it
             setOtpSent(false);
             setShowModal(false);
             router.push("/employer/onboarding");
           }
         } else {
-                    const sessionToken = response.data.token;
-
+          const sessionToken = response.data.token;
           localStorage.setItem("port_tok", sessionToken);
           setShowModal(false);
           setOtpSent(false);
@@ -101,6 +97,38 @@ export default function Navbar() {
       setOtpSent(false);
       console.error("Error verifying OTP:", error);
       setError("Failed to verify OTP. Please try again.");
+    }
+
+    setLoading(false);
+  };
+
+  const handleEmployerLogin = async () => {
+    setLoading(true);
+    setError("");
+
+    if (!email || !password) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${baseurl}/employer/login`, {
+        contact_email: email,
+        password,
+      });
+
+      if (response.data.success) {
+        const token = response.data.session_token;
+        localStorage.setItem("employerToken", token);
+        setShowModal(false);
+        window.location.href = "/employer/dashboard";
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Failed to login. Please check your credentials.");
     }
 
     setLoading(false);
@@ -132,9 +160,8 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("employerToken");
-
     setIsLoggedIn(false);
-    router.push("/"); // redirect to home or login page
+    router.push("/");
   };
 
   return (
@@ -147,21 +174,20 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
-\
             {!isLoggedIn ? (
               <>
-              <Link href="/" className="text-black hover:text-gray-600">
-              Home
-            </Link>
-            <Link href="/about" className="text-black hover:text-gray-600">
-              About
-            </Link>
-            <Link href="/jobs" className="text-black hover:text-gray-600">
-              Jobs
-            </Link>
-            <Link href="/contact" className="text-black hover:text-gray-600">
-              Contact
-            </Link>
+                <Link href="/" className="text-black hover:text-gray-600">
+                  Home
+                </Link>
+                <Link href="/about" className="text-black hover:text-gray-600">
+                  About
+                </Link>
+                <Link href="/jobs" className="text-black hover:text-gray-600">
+                  Jobs
+                </Link>
+                <Link href="/contact" className="text-black hover:text-gray-600">
+                  Contact
+                </Link>
                 <button
                   onClick={() => {
                     setLoginType("Employer");
@@ -183,11 +209,9 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-
                 <Link href="/employer/dashboard" className="text-black hover:text-gray-600">
                   Dashboard
                 </Link>
-            
                 <Link href="/employer/dashboard">
                   <FaUserCircle className="text-2xl text-green-600" />
                 </Link>
@@ -259,7 +283,8 @@ export default function Navbar() {
                 setShowModal(true);
               }}
               className="text-white bg-green-500 px-4 py-2 rounded-lg"
-            >
+
+              >
               Candidate Login
             </button>
           </div>
@@ -267,89 +292,129 @@ export default function Navbar() {
       </nav>
 
       {/* Login Modal */}
-      {showModal ? (
-        <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">
+      {/* Login Modal */}
+{showModal ? (
+  <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full relative transform transition-all duration-300 scale-100">
+      <button
+        onClick={() => setShowModal(false)}
+        className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+        aria-label="Close modal"
+      >
+        <FaTimes className="w-5 h-5" />
+      </button>
+      <h2 className="text-2xl mb-6 font-bold text-gray-800">
+        {loginType} Login
+      </h2>
+
+      <div className="space-y-4">
+        <div className="relative">
+          <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
+          <input
+            type="email"
+            value={email}
+            placeholder="Enter your email"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={otpSent}
+          />
+        </div>
+
+     
+
+        {loginType === "Candidate" && (
+          <div>
+            <p className="text-gray-500 text-sm mb-2">Login With OTP</p>
+          </div>
+        )}
+
+        {loginType === "Employer" && !useOtpLogin && !otpSent && (
+          <div className="relative">
+            <FaLock className="absolute top-3 left-3 text-gray-400" />
+            <input
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        )}
+           {loginType === "Employer" && (
+          <div>
+            <p
+              className="text-blue-500 text-sm mb-2 cursor-pointer hover:underline"
+              onClick={() => !otpSent && setUseOtpLogin(!useOtpLogin)} // Toggle only if OTP not sent
+            >
+              Login With {useOtpLogin ? "Password" : "OTP"}
+            </p>
+          </div>
+        )}
+
+        {(otpSent || loginType === "Candidate") && (
+          <div className="relative">
+            <FaLock className="absolute top-3 left-3 text-gray-400" />
+            <input
+              type="text"
+              value={otp}
+              placeholder="Enter 6-digit OTP"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setOtp(e.target.value)}
+              maxLength={6}
+            />
+          </div>
+        )}
+
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <p className="text-gray-500 text-sm">
+          By continuing, you agree to our{" "}
+          <a href="/terms" className="text-blue-500 hover:underline">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="text-blue-500 hover:underline">
+            Privacy Policy
+          </a>
+          .
+        </p>
+
+        <div className="flex justify-end space-x-3">
+          {!otpSent && (
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-              aria-label="Close modal"
+              className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
             >
-              <FaTimes className="w-5 h-5" />
+              Cancel
             </button>
-            <h2 className="text-2xl mb-6 font-bold text-gray-800">
-              {loginType} Login
-            </h2>
-
-            <div className="space-y-4">
-              <div className="relative">
-                <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="email"
-                  value={email}
-                  placeholder="Enter your email"
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={otpSent}
-                />
-              </div>
-
-              {otpSent && (
-                <div className="relative">
-                  <FaLock className="absolute top-3 left-3 text-gray-400" />
-                  <input
-                    type="text"
-                    value={otp}
-                    placeholder="Enter 6-digit OTP"
-                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onChange={(e) => setOtp(e.target.value)}
-                    maxLength={6}
-                  />
-                </div>
-              )}
-
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-
-              <p className="text-gray-500 text-sm">
-                By continuing, you agree to our{" "}
-                <a href="/terms" className="text-blue-500 hover:underline">
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a href="/privacy" className="text-blue-500 hover:underline">
-                  Privacy Policy
-                </a>
-                .
-              </p>
-
-              <div className="flex justify-end space-x-3">
-                {!otpSent && (
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
-                  >
-                    Cancel
-                  </button>
-                )}
-                <button
-                  className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-                  onClick={otpSent ? handleSendOtp : handleOtp}
-                  disabled={loading}
-                >
-                  {loading && <FaSpinner className="animate-spin mr-2" />}
-                  {loading
-                    ? "Processing..."
-                    : otpSent
-                    ? "Verify OTP"
-                    : "Send OTP"}
-                </button>
-              </div>
-            </div>
-          </div>
+          )}
+          <button
+            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            onClick={
+              otpSent
+                ? handleSendOtp
+                : loginType === "Employer" && !useOtpLogin
+                ? handleEmployerLogin
+                : handleOtp
+            }
+            disabled={loading}
+          >
+            {loading && <FaSpinner className="animate-spin mr-2" />}
+            {loading
+              ? "Processing..."
+              : otpSent
+              ? "Verify OTP"
+              : loginType === "Employer" && !useOtpLogin
+              ? "Login"
+              : "Send OTP"}
+          </button>
         </div>
-      ) : (
-        ""
-      )}
+      </div>
+    </div>
+  </div>
+) : (
+  ""
+)}
     </>
   );
 }

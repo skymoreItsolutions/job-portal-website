@@ -50,6 +50,9 @@ const MultiStepJobPostingForm = ({ userdata }) => {
     interviewTime: '',
     experienceMax: '',
 
+    notEmail: false,
+  viewedNumber: false,
+
   });
 
   const [errors, setErrors] = useState({});
@@ -378,9 +381,9 @@ const MultiStepJobPostingForm = ({ userdata }) => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1  gap-4">
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-semibold text-gray-800">Job Expiry (days) *</label>
                 <input
                   type="number"
@@ -392,7 +395,7 @@ const MultiStepJobPostingForm = ({ userdata }) => {
                   min="1"
                 />
                 {errors.jobExpireTime && <p className="mt-1 text-xs text-red-500">{errors.jobExpireTime}</p>}
-              </div>
+              </div> */}
               <div>
                 <label className="block text-sm font-semibold text-gray-800">Number of Vacancies Required *</label>
                 <input
@@ -653,7 +656,8 @@ const MultiStepJobPostingForm = ({ userdata }) => {
                 {[
                   'Health Insurance',
                   'Remote Work',
-                  'Flexible Hours',
+                  'Proviendtent Fund',
+ 
                   'Professional Development',
                   'Transportation Allowance',
                 ].map((perk) => (
@@ -737,31 +741,57 @@ const MultiStepJobPostingForm = ({ userdata }) => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-800">Contact Email</label>
-                <input
-                  type="email"
-                  name="contactEmail"
-                  value={formData.contactEmail}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${errors.contact ? 'border-red-500' : 'border-gray-300'
-                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                />
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm font-semibold text-gray-800">Contact Email</label>
+    <input
+      type="email"
+      name="contactEmail"
+      value={formData.contactEmail}
+      onChange={handleInputChange}
+      className={`mt-2 w-full rounded-lg border ${
+        errors.contact ? 'border-red-500' : 'border-gray-300'
+      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+    />
+    <div className="mt-2">
+      <label className="flex items-center text-sm text-gray-800">
+        <input
+          type="checkbox"
+          name="notEmail"
+          checked={formData.notEmail}
+          onChange={handleInputChange}
+          className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+        />
+        Do not use email
+      </label>
+    </div>
+  </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-800">Contact Phone</label>
-                <input
-                  type="tel"
-                  name="contactPhone"
-                  value={formData.contactPhone}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${errors.contact ? 'border-red-500' : 'border-gray-300'
-                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                />
-              </div>
-            </div>
+  <div>
+    <label className="block text-sm font-semibold text-gray-800">Contact Phone</label>
+    <input
+      type="tel"
+      name="contactPhone"
+      value={formData.contactPhone}
+      onChange={handleInputChange}
+      className={`mt-2 w-full rounded-lg border ${
+        errors.contact ? 'border-red-500' : 'border-gray-300'
+      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+    />
+    <div className="mt-2">
+      <label className="flex items-center text-sm text-gray-800">
+        <input
+          type="checkbox"
+          name="viewedNumber"
+          checked={formData.viewedNumber}
+          onChange={handleInputChange}
+          className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+        />
+        Allow phone number to be viewed
+      </label>
+    </div>
+  </div>
+</div>
             {errors.contact && <p className="mt-1 text-xs text-red-500">{errors.contact}</p>}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
