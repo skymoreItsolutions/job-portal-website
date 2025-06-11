@@ -58,7 +58,7 @@ export default function Navbar() {
     }
 
     try {
-      const endpoint = loginType === "Employer" ? "employer/send-otp" : "candidate/send-otp";
+      const endpoint = loginType === "Employer" ? "employer/send-otp" : "send-otp";
       const payload = loginType === "Employer" ? { contact_email: email } : { email };
       localStorage.setItem("emp-email", email);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
@@ -83,7 +83,7 @@ export default function Navbar() {
     }
 
     try {
-      const endpoint = loginType === "Employer" ? "employer/verify-otp" : "candidate/verify-otp";
+      const endpoint = loginType === "Employer" ? "employer/verify-otp" : "verify-otp";
       const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
 
