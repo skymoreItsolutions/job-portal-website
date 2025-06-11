@@ -25,11 +25,11 @@ export default function Navbar() {
   // Check if user is logged in on mount
   useEffect(() => {
     const checkLogin = async () => {
-      const token = localStorage.getItem("employerToken");
+      const token = localStorage.getItem("employerToken") || localStorage.getItem("port_tok");
       if (!token) return;
 
       try {
-        const res = await axios.get(`${baseurl}/employer/profile`, {
+        const res = await axios.get(`${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/profile"}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -58,7 +58,7 @@ export default function Navbar() {
     }
 
     try {
-      const endpoint = loginType === "Employer" ? "employer/send-otp" : "send-otp";
+      const endpoint = loginType === "Employer" ? "employer/send-otp" : "candidate/send-otp";
       const payload = loginType === "Employer" ? { contact_email: email } : { email };
       localStorage.setItem("emp-email", email);
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
@@ -83,7 +83,7 @@ export default function Navbar() {
     }
 
     try {
-      const endpoint = loginType === "Employer" ? "employer/verify-otp" : "verify-otp";
+      const endpoint = loginType === "Employer" ? "employer/verify-otp" : "candidate/verify-otp";
       const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
       const response = await axios.post(`${baseurl}/${endpoint}`, payload);
 
@@ -105,7 +105,7 @@ export default function Navbar() {
           localStorage.setItem("port_tok", sessionToken);
           setShowModal(false);
           setOtpSent(false);
-          router.push("/candidate/candidate-login");
+          router.push("/candidate/dashboard");
         }
       } else {
         setError("Invalid OTP. Please try again.");
@@ -232,10 +232,10 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link href="/employer/dashboard" className="text-black hover:text-gray-600">
+                <Link href={loginType === "Employer" ? "/employer/dashboard" : "/candidate/dashboard"} className="text-black hover:text-gray-600">
                   Dashboard
                 </Link>
-                <Link href="/employer/dashboard">
+                <Link href={loginType === "Employer" ? "/employer/dashboard" : "/candidate/dashboard"}>
                   <FaUserCircle className="text-2xl text-green-600" />
                 </Link>
                 <button
@@ -314,7 +314,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/employer/dashboard" className="text-black hover:text-gray-600">
+                <Link href={loginType === "Employer" ? "/employer/dashboard" : "/candidate/dashboard"} className="text-black hover:text-gray-600">
                   Dashboard
                 </Link>
                 <button
@@ -365,7 +365,7 @@ export default function Navbar() {
                 />
               </div>
 
-              {loginType === "Employer" && !otpSent && (
+              {!otpSent && (
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -438,11 +438,11 @@ export default function Navbar() {
                   onClick={
                     otpSent
                       ? handleSendOtp
-                      : loginType === "Employer" && !useOtpLogin
+                      : useOtpLogin
+                      ? handleOtp
+                      : loginType === "Employer"
                       ? handleEmployerLogin
-                      : loginType === "Candidate" && !otpSent
-                      ? handleCandidateLogin
-                      : handleOtp
+                      : handleCandidateLogin
                   }
                   disabled={loading}
                 >
@@ -451,11 +451,9 @@ export default function Navbar() {
                     ? "Processing..."
                     : otpSent
                     ? "Verify OTP"
-                    : loginType === "Employer" && !useOtpLogin
-                    ? "Login"
-                    : loginType === "Candidate" && !otpSent
-                    ? "Login"
-                    : "Send OTP"}
+                    : useOtpLogin
+                    ? "Send OTP"
+                    : "Login"}
                 </button>
               </div>
             </div>

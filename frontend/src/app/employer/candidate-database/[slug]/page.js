@@ -227,7 +227,7 @@ const CandidateList = () => {
         page,
         per_page: perPage,
       }).toString();
-      const response = await axios.get(`http://localhost:8000/api/v1/filter?${queryParams}`);
+      const response = await axios.get(`https://jobprtal.skymoreitsolutions.com/api/v1/filter?${queryParams}`);
       const { data, pagination: responsePagination } = response.data;
       setCandidates(data);
       setPagination({ ...responsePagination, per_page: perPage });
