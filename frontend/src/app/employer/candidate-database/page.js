@@ -45,7 +45,7 @@ const CandidatesDashboard = () => {
       experienceType: formData.experienceType,
     }).toString();
     // Redirect to candidate-database page with query parameters
-    router.push(`/employer/candidate-database/${queryParams}`);
+    router.push(`/employer/candidate-data?${queryParams}`);
   };
 
   return (

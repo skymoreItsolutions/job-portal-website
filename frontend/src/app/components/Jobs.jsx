@@ -14,6 +14,7 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 import JobCard from "./JobCard";
+import { baseurl } from "./common";
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -179,7 +180,7 @@ export default function Jobs() {
         salary_max: filters.salary_range[1] || undefined,
       };
 
-      const response = await axios.get("http://localhost:8000/api/v1/jobs", { params });
+      const response = await axios.get(`${baseurl}/jobs`, { params });
       if (response.data.status === "success") {
         setJobs(response.data.data.data);
         setTotalPages(response.data.data.last_page);

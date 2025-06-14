@@ -23,6 +23,12 @@ const Sidebar = () => {
     },
 
     {
+      title: 'Manage Company',
+      icon: <FiDatabase />,
+      route: '/employer/employer-company',
+    },
+
+    {
       title: 'My Jobs',
       icon: <FiBriefcase />,
       route: '/employer/my-jobs',

@@ -258,7 +258,7 @@ const CandidateList = () => {
       Object.entries(filters).filter(([_, value]) => value !== '' && value !== null)
     );
     const query = new URLSearchParams(cleanedFilters).toString();
-    router.push(`/employer/candidate-data?${query}`, { scroll: false });
+    router.push(`/employer/candidate-database?${query}`, { scroll: false });
     fetchCandidates(1, pagination.per_page);
   };
 
