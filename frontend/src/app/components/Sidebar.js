@@ -17,6 +17,11 @@ const Sidebar = () => {
       route: '/employer/dashboard',
     },
     {
+      title: 'Database',
+      icon: <FiDatabase />,
+      route: '/employer/candidate-database',
+    },
+    {
       title: 'Job Post ',
       icon: <FiBriefcase />,
       route: '/employer/post-job',
@@ -33,22 +38,18 @@ const Sidebar = () => {
       icon: <FiBriefcase />,
       route: '/employer/my-jobs',
     },
-    {
-      title: 'Database',
-      icon: <FiDatabase />,
-      route: '/employer/candidate-database',
-    },
-    {
-      title: 'Applications',
-      icon: <FiFileText />,
-      route: '/database/profiles',
-    },
+   
+    // {
+    //   title: 'Applications',
+    //   icon: <FiFileText />,
+    //   route: '/database/profiles',
+    // },
 
-     {
-      title: 'Contact',
-      icon: <FiDatabase />,
-      route: '/contact',
-    },
+    //  {
+    //   title: 'Contact',
+    //   icon: <FiDatabase />,
+    //   route: '/contact',
+    // },
    
   ];
 

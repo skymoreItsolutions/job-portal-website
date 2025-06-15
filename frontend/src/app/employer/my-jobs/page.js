@@ -127,28 +127,7 @@ const MyJobs = () => {
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 overflow-auto">
-        <div className="px-8 mt-4">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-800">
-                My Jobs
-            </h1>
-            <button
-            onClick={() => router.push('/employer/post-job')}
-
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <FiPlus className="mr-2" /> Post New Job
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <MetricCard title="Total Job Visits" value="12,456" change={12} isPositive={true} />
-            <MetricCard title="Total Applications" value="1,234" change={-5} isPositive={false} />
-            <MetricCard title="Active Jobs" value="45" change={8} isPositive={true} />
-            <MetricCard title="Pending Reviews" value="28" change={0} isPositive={true} />
-          </div>
-        </div>
-
+      
         <div className="mb-8 px-[2%] py-5">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Job Postings</h2>
           <div className="grid grid-cols-1 gap-6">
