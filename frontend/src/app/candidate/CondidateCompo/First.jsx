@@ -1,99 +1,102 @@
 import React from 'react'
 import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
-import { SlCalender } from "react-icons/sl";
+
+ import { FiCalendar } from 'react-icons/fi';
 
 
 const First = ({alldata,handelinputs,handelgender}) => {
     const isChecked=true
   return (
-    <div>
-            <div className="p-4 border-b border-gray-300 flex flex-col sm:flex-row sm:items-center justify-between">
-              <h6 className="font-semibold text-lg">Basic Details</h6>
-              <div className=" w-[250px] bg-gray-400 rounded-2xl p-2 overflow-x-hidden relative">
-                    <div className="bg-[#309689] w-[10%] h-full absolute left-0 top-0 "></div>
-              </div>
-            </div>
+  
 
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="font-semibold text-sm">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter full name"
-                  name='full_name'
-                  value={alldata.full_name}
-                  onChange={(e) => handelinputs(e)}
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-              </div>
+<div className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
+ 
 
-              <div className="relative">
-                <label className="font-semibold text-sm">Date of Birth (DOB)</label>
-                <input
-                  type="date"
-                  placeholder="Choose date"
-                  name='dob'
-                  value={alldata.dob}
-          onChange={(e) => handelinputs(e)}
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-                {/* <SlCalender className="absolute right-4 top-12 text-gray-500" /> */}
-              </div>
+  {/* Form Content */}
+  <div className="p-6 space-y-6">
+    {/* Full Name Field */}
+    <div className="animate-fade-in">
+      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="John Doe"
+          name="full_name"
+          value={alldata.full_name}
+          onChange={handelinputs}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+        />
+      </div>
+    </div>
 
-              {/* Gender */}
-              <div>
-                <label className="font-semibold text-sm">Gender</label>
-                <div className="flex gap-4 mt-2">
-                  <button
-                    onClick={() => handelgender("Male")}
-                    className={`px-6 py-2 border rounded-full transition ${
-                      alldata.gender === "Male"
-                        ? "bg-[#309689] text-white border-green-500"
-                        : "border-[#309689] text-[#309689]"
-                    }`}
-                  >
-                    Male
-                  </button>
-                  <button
-                    onClick={() => handelgender("Female")}
-                    className={`px-6 py-2 border rounded-full transition ${
-                        alldata.gender === "Female"
-                        ? "bg-[#309689] text-white border-green-500"
-                        : "border-[#309689] text-[#309689]"
-                    }`}
-                  >
-                    Female
-                  </button>
-                </div>
-              </div>
+    {/* Date of Birth Field */}
+    <div className="animate-fade-in">
+      <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+      <div className="relative">
+        <input
+          type="date"
+          name="dob"
+          value={alldata.dob}
+          onChange={handelinputs}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 appearance-none"
+        />
+        <FiCalendar className="absolute right-3 top-3.5 text-gray-400" />
+      </div>
+    </div>
 
-              <div>
-                <label className="font-semibold text-sm">number (Optional)</label>
-                <input
-                  type="number"
-                  placeholder="Enter  Number"
-                  name="number"
-                  onChange={(e)=>handelinputs(e)}
-value={alldata.number}
+    {/* Gender Selection */}
+    <div className="animate-fade-in">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+      <div className="flex gap-3">
+        {['Male', 'Female'].map((gender) => (
+          <button
+            key={gender}
+            onClick={() => handelgender(gender)}
+            className={`flex-1 py-2.5 px-4 rounded-lg border transition-all duration-200 ${
+              alldata.gender === gender
+                ? 'bg-emerald-500 text-white border-emerald-500 shadow-md'
+                : 'border-gray-300 text-gray-700 hover:border-emerald-300'
+            }`}
+          >
+            {gender}
+          </button>
+        ))}
+      </div>
+    </div>
 
-                min={10}  
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-              </div>
+    {/* Phone Number Field */}
+    <div className="animate-fade-in">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Phone Number <span className="text-gray-400">(Optional)</span>
+      </label>
+      <input
+        type="tel"
+        placeholder="+91 (___) ___-____"
+        name="number"
+        value={alldata.number}
+        onChange={handelinputs}
+        minLength={10}
+        maxLength={15}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+      />
+    </div>
 
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                // onClick={() => setIsChecked(!isChecked)}
-              >
-                {isChecked ? (
-                  <MdCheckBox className="text-green-600 text-lg" />
-                ) : (
-                  <MdCheckBoxOutlineBlank className="text-gray-500 text-lg" />
-                )}
-                <p className="text-gray-600 text-sm">Send me important job updates on WhatsApp</p>
-              </div>
-            </div>
-          </div>
+    {/* WhatsApp Checkbox */}
+    <div 
+      className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 animate-fade-in"
+      onClick={() => setIsChecked(!isChecked)}
+    >
+      {isChecked ? (
+        <MdCheckBox className="text-emerald-500 text-xl flex-shrink-0" />
+      ) : (
+        <MdCheckBoxOutlineBlank className="text-gray-400 text-xl flex-shrink-0" />
+      )}
+      <p className="text-gray-600 text-sm">
+        Send me important job updates on WhatsApp
+      </p>
+    </div>
+  </div>
+</div>
   )
 }
 

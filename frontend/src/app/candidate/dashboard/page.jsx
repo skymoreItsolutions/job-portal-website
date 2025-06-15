@@ -6,38 +6,41 @@ import { useRouter } from 'next/navigation';
 import {
   FaUser, FaBirthdayCake, FaPhone, FaGraduationCap, FaUniversity, FaBriefcase,
   FaBuilding, FaClock, FaSun, FaMoon, FaHome, FaLaptop, FaLanguage, FaCode,
-  FaLock, FaEdit, FaChartLine, FaUserTie, FaRegStar, FaStar
+  FaLock, FaEdit, FaChartLine, FaUserTie, FaRegStar, FaStar, FaTimes
 } from 'react-icons/fa';
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiEdit2, FiSave, FiX } from 'react-icons/fi';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import Link from 'next/link';
 
 const Dashboard = () => {
   const router = useRouter();
-  const [userData, setalldata] = useState({
+  const [userData, setUserData] = useState({
     full_name: "",
-    dob: undefined,
+    dob: "",
     gender: "",
-    number: undefined,
+    number: "",
     degree: "",
     college_name: "",
-    passing_marks: undefined,
-    experience_years: undefined,
+    passing_marks: "",
+    experience_years: "",
     job_roles: "",
     job_title: "",
-    experience_months: undefined,
+    experience_months: "",
     company_name: "",
-    prefers_night_shift: 0,
-    prefers_day_shift: 1,
-    work_from_home: 0,
-    work_from_office: 1,
-    field_job: 0,
+    prefers_night_shift: false,
+    prefers_day_shift: true,
+    work_from_home: false,
+    work_from_office: true,
+    field_job: false,
     preferred_language: "",
-    skills: "",
+    skills: [],
     password: "",
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
+  const [editMode, setEditMode] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [tempData, setTempData] = useState({});
 
   const fetchData = async (token) => {
     if (!token) {
@@ -47,7 +50,9 @@ const Dashboard = () => {
         setLoading(true);
         const response = await axios.get(`${baseurl}/candidateinfo/${token}`);
         if (response.data.success) {
-          setalldata(response.data.candidate);
+          
+    setUserData(response.data.candidate)
+          setTempData(response.data.candidate);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -57,10 +62,51 @@ const Dashboard = () => {
     }
   };
 
+
+
+
   useEffect(() => {
     const token = localStorage.getItem("port_tok");
     fetchData(token);
   }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTempData({...tempData, [name]: value});
+  };
+
+  const handleCheckboxChange = (field) => {
+    setTempData({...tempData, [field]: !tempData[field]});
+  };
+
+  const addSkill = () => {
+    if (newSkill.trim() && tempData.skills.length < 10) {
+      setTempData({
+        ...tempData,
+        skills: [...tempData.skills, newSkill.trim()]
+      });
+      setNewSkill("");
+    }
+  };
+
+  const removeSkill = (index) => {
+    const updatedSkills = [...tempData.skills];
+    updatedSkills.splice(index, 1);
+    setTempData({...tempData, skills: updatedSkills});
+  };
+
+  const saveChanges = async () => {
+    try {
+      const token = localStorage.getItem("port_tok");
+      const response = await axios.post(`${baseurl}/updatecandidate/${token}`, tempData);
+      if (response.data.success) {
+        setUserData(tempData);
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -105,9 +151,29 @@ const Dashboard = () => {
               </h2>
               <p className="opacity-90">Here's your complete profile overview</p>
             </div>
-            <Link href={"/candidate/candidate-login"} className="mt-4 md:mt-0 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center">
-              <FaEdit className="mr-2" /> Edit Profile
-            </Link>
+            {editMode ? (
+              <div className="flex space-x-2 mt-4 md:mt-0">
+                <button 
+                  onClick={saveChanges}
+                  className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+                >
+                  <FiSave className="mr-2" /> Save Changes
+                </button>
+                <button 
+                  onClick={() =>   setEditMode(false)}
+                  className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium flex items-center"
+                >
+                  <FiX className="mr-2" /> Cancel
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setEditMode(true)}
+                className="mt-4 md:mt-0 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+              >
+                <FiEdit2 className="mr-2" /> Edit Profile
+              </button>
+            )}
           </div>
         </div>
 
@@ -131,29 +197,119 @@ const Dashboard = () => {
             <div className="lg:col-span-2 space-y-6">
               <DashboardCard title="Personal Information" icon={<FaUser className="text-blue-500" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoField icon={<FaUser />} label="Full Name" value={userData.full_name || "Not provided"} />
-                  <InfoField icon={<FaBirthdayCake />} label="Date of Birth" value={userData.dob || "Not provided"} />
-                  <InfoField icon={<FaUser />} label="Gender" value={userData.gender || "Not provided"} />
-                  <InfoField icon={<FaPhone />} label="Phone Number" value={userData.number || "Not provided"} />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaUser />}
+                    label="Full Name"
+                    name="full_name"
+                    value={editMode ? tempData.full_name : userData.full_name}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaBirthdayCake />}
+                    label="Date of Birth"
+                    name="dob"
+                    type="date"
+                    value={editMode ? tempData.dob : userData.dob}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaUser />}
+                    label="Gender"
+                    name="gender"
+                    value={editMode ? tempData.gender : userData.gender}
+                    onChange={handleInputChange}
+                    selectOptions={["Male", "Female", "Other"]}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaPhone />}
+                    label="Phone Number"
+                    name="number"
+                    type="tel"
+                    value={editMode ? tempData.number : userData.number}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </DashboardCard>
 
               <DashboardCard title="Education" icon={<FaGraduationCap className="text-blue-500" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoField icon={<FaGraduationCap />} label="Degree" value={userData.degree || "Not provided"} />
-                  <InfoField icon={<FaUniversity />} label="College Name" value={userData.college_name || "Not provided"} />
-                  <InfoField icon={<FaGraduationCap />} label="Passing Marks" value={userData.passing_marks || "Not provided"} />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaGraduationCap />}
+                    label="Degree"
+                    name="degree"
+                    value={editMode ? tempData.degree : userData.degree}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaUniversity />}
+                    label="College Name"
+                    name="college_name"
+                    value={editMode ? tempData.college_name : userData.college_name}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaGraduationCap />}
+                    label="Passing Marks"
+                    name="passing_marks"
+                    type="number"
+                    value={editMode ? tempData.passing_marks : userData.passing_marks}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </DashboardCard>
 
               <DashboardCard title="Work Experience" icon={<FaBriefcase className="text-blue-500" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoField icon={<FaClock />} label="Experience (Years)" value={userData.experience_years || "0"} />
-                  <InfoField icon={<FaClock />} label="Experience (Months)" value={userData.experience_months || "0"} />
-                  <InfoField icon={<FaBriefcase />} label="Job Title" value={userData.job_title || "Not provided"} />
-                  <InfoField icon={<FaBuilding />} label="Company Name" value={userData.company_name || "Not provided"} />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaClock />}
+                    label="Experience (Years)"
+                    name="experience_years"
+                    type="number"
+                    value={editMode ? tempData.experience_years : userData.experience_years}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaClock />}
+                    label="Experience (Months)"
+                    name="experience_months"
+                    type="number"
+                    value={editMode ? tempData.experience_months : userData.experience_months}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaBriefcase />}
+                    label="Job Title"
+                    name="job_title"
+                    value={editMode ? tempData.job_title : userData.job_title}
+                    onChange={handleInputChange}
+                  />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaBuilding />}
+                    label="Company Name"
+                    name="company_name"
+                    value={editMode ? tempData.company_name : userData.company_name}
+                    onChange={handleInputChange}
+                  />
                   <div className="md:col-span-2">
-                    <InfoField icon={<FaBriefcase />} label="Job Roles" value={userData.job_roles || "Not provided"} />
+                    <EditableField 
+                      editMode={editMode}
+                      icon={<FaBriefcase />}
+                      label="Job Roles"
+                      name="job_roles"
+                      value={editMode ? tempData.job_roles : userData.job_roles}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
               </DashboardCard>
@@ -162,52 +318,179 @@ const Dashboard = () => {
             <div className="space-y-6">
               <DashboardCard title="Preferences" icon={<FaRegStar className="text-blue-500" />}>
                 <div className="space-y-4">
-                  <PreferenceField
-                    icon={userData.prefers_day_shift ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-indigo-500" />}
-                    label="Shift Preference"
-                    value={userData.prefers_day_shift ? "Day Shift" : "Night Shift"}
-                  />
-                  <PreferenceField
-                    icon={userData.work_from_home ? <FaHome className="text-green-500" /> : <FaBuilding className="text-gray-500" />}
-                    label="Work Location"
-                    value={userData.work_from_home ? "Work From Home" : "Work From Office"}
-                  />
-                  <PreferenceField
-                    icon={<FaBriefcase className={userData.field_job ? "text-orange-500" : "text-blue-500"} />}
-                    label="Job Type"
-                    value={userData.field_job ? "Field Job" : "Office Job"}
-                  />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FaSun className="text-yellow-500 mr-3" />
+                      <span>Day Shift</span>
+                    </div>
+                    {editMode ? (
+                      <input
+                        type="checkbox"
+                        checked={tempData.prefers_day_shift}
+                        onChange={() => handleCheckboxChange("prefers_day_shift")}
+                        className="h-5 w-5 text-blue-600 rounded"
+                      />
+                    ) : (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.prefers_day_shift ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {userData.prefers_day_shift ? 'Yes' : 'No'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FaMoon className="text-indigo-500 mr-3" />
+                      <span>Night Shift</span>
+                    </div>
+                    {editMode ? (
+                      <input
+                        type="checkbox"
+                        checked={tempData.prefers_night_shift}
+                        onChange={() => handleCheckboxChange("prefers_night_shift")}
+                        className="h-5 w-5 text-blue-600 rounded"
+                      />
+                    ) : (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.prefers_night_shift ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {userData.prefers_night_shift ? 'Yes' : 'No'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FaHome className="text-green-500 mr-3" />
+                      <span>Work From Home</span>
+                    </div>
+                    {editMode ? (
+                      <input
+                        type="checkbox"
+                        checked={tempData.work_from_home}
+                        onChange={() => handleCheckboxChange("work_from_home")}
+                        className="h-5 w-5 text-blue-600 rounded"
+                      />
+                    ) : (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.work_from_home ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {userData.work_from_home ? 'Yes' : 'No'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FaBuilding className="text-gray-500 mr-3" />
+                      <span>Work From Office</span>
+                    </div>
+                    {editMode ? (
+                      <input
+                        type="checkbox"
+                        checked={tempData.work_from_office}
+                        onChange={() => handleCheckboxChange("work_from_office")}
+                        className="h-5 w-5 text-blue-600 rounded"
+                      />
+                    ) : (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.work_from_office ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {userData.work_from_office ? 'Yes' : 'No'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <FaBriefcase className="text-orange-500 mr-3" />
+                      <span>Field Job</span>
+                    </div>
+                    {editMode ? (
+                      <input
+                        type="checkbox"
+                        checked={tempData.field_job}
+                        onChange={() => handleCheckboxChange("field_job")}
+                        className="h-5 w-5 text-blue-600 rounded"
+                      />
+                    ) : (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.field_job ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {userData.field_job ? 'Yes' : 'No'}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </DashboardCard>
 
               <DashboardCard title="Skills & Language" icon={<FaCode className="text-blue-500" />}>
                 <div className="space-y-4">
-                  <InfoField icon={<FaLanguage />} label="Preferred Language" value={userData.preferred_language || "Not provided"} />
+                  <EditableField 
+                    editMode={editMode}
+                    icon={<FaLanguage />}
+                    label="Preferred Language"
+                    name="preferred_language"
+                    value={editMode ? tempData.preferred_language : userData.preferred_language}
+                    onChange={handleInputChange}
+                  />
                   <div>
                     <div className="flex items-center mb-2">
                       <FaCode className="text-gray-500 mr-2" />
                       <span className="text-sm font-medium text-gray-500">Skills</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.skills ? (
-                        userData.skills.split(',').map((skill, index) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                            {skill.trim()}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-gray-800 font-semibold">Not provided</span>
+                      {editMode && (
+                        <span className="text-xs text-gray-500 ml-auto">
+                          {tempData.skills.length}/10
+                        </span>
                       )}
                     </div>
+                    {editMode ? (
+                      <div>
+                        <div className="flex mb-2">
+                          <input
+                            type="text"
+                            value={newSkill}
+                            onChange={(e) => setNewSkill(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && addSkill()}
+                            placeholder="Add skill and press Enter"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={addSkill}
+                            disabled={!newSkill.trim() || tempData.skills.length >= 10}
+                            className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {tempData.skills.map((skill, index) => (
+                            <div key={index} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                              {skill}
+                              <button
+                                onClick={() => removeSkill(index)}
+                                className="ml-1 text-blue-600 hover:text-blue-800"
+                              >
+                                <FaTimes size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {userData.skills.length > 0 ? (
+                          userData.skills.map((skill, index) => (
+                            <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-gray-500">No skills added</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </DashboardCard>
 
               <DashboardCard title="Account Information" icon={<FaLock className="text-blue-500" />}>
-                <InfoField icon={<FaLock />} label="Password" value="••••••••" />
-                <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium text-sm transition-colors">
-                  Change Password
-                </button>
+                <EditableField 
+                  editMode={editMode}
+                  icon={<FaLock />}
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={editMode ? tempData.password : "••••••••"}
+                  onChange={handleInputChange}
+                />
               </DashboardCard>
             </div>
           </div>
@@ -219,19 +502,19 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard
                 title="Profile Completion"
-                value="75%"
+                value={`${calculateCompletion(userData)}%`}
                 icon={<FaUser className="text-blue-500" />}
-                progress={75}
+                progress={calculateCompletion(userData)}
               />
               <StatCard
                 title="Profile Strength"
-                value={userData.skills ? "Good" : "Basic"}
+                value={calculateStrength(userData)}
                 icon={<FaStar className="text-yellow-500" />}
-                progress={userData.skills ? 80 : 40}
+                progress={calculateStrengthScore(userData)}
               />
               <StatCard
                 title="Last Updated"
-                value="2 days ago"
+                value="Just now"
                 icon={<FaEdit className="text-green-500" />}
               />
             </div>
@@ -242,6 +525,7 @@ const Dashboard = () => {
   );
 };
 
+// Helper components
 const DashboardCard = ({ title, icon, children }) => (
   <div className="bg-white rounded-xl shadow-sm overflow-hidden">
     <div className="border-b border-gray-200 px-6 py-4 flex items-center">
@@ -252,25 +536,40 @@ const DashboardCard = ({ title, icon, children }) => (
   </div>
 );
 
-const InfoField = ({ icon, label, value }) => (
-  <div>
-    <div className="flex items-center mb-1">
-      <span className="text-gray-500 mr-2">{icon}</span>
-      <span className="text-sm font-medium text-gray-500">{label}</span>
-    </div>
-    <p className="text-gray-800 font-semibold">{value}</p>
-  </div>
-);
-
-const PreferenceField = ({ icon, label, value }) => (
-  <div className="flex items-start">
-    <div className="flex-shrink-0 mt-1 mr-3">{icon}</div>
+const EditableField = ({ editMode, icon, label, name, value, onChange, type = "text", selectOptions }) => {
+  return (
     <div>
-      <p className="text-sm font-medium text-gray-500">{label}</p>
-      <p className="text-gray-800 font-semibold">{value}</p>
+      <div className="flex items-center mb-1">
+        <span className="text-gray-500 mr-2">{icon}</span>
+        <span className="text-sm font-medium text-gray-500">{label}</span>
+      </div>
+      {editMode ? (
+        selectOptions ? (
+          <select
+            name={name}
+            value={value}
+            onChange={onChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            {selectOptions.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        )
+      ) : (
+        <p className="text-gray-800 font-semibold">{value || "Not provided"}</p>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 const StatCard = ({ title, value, icon, progress }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-xs">
@@ -289,5 +588,44 @@ const StatCard = ({ title, value, icon, progress }) => (
     )}
   </div>
 );
+
+// Helper functions
+const calculateCompletion = (data) => {
+  const fields = [
+    data.full_name,
+    data.dob,
+    data.gender,
+    data.number,
+    data.degree,
+    data.college_name,
+    data.job_title,
+    data.company_name,
+    data.skills.length > 0
+  ];
+  const filledFields = fields.filter(field => Boolean(field)).length;
+  return Math.round((filledFields / fields.length) * 100);
+};
+
+const calculateStrength = (data) => {
+  const score = calculateStrengthScore(data);
+  if (score > 80) return "Excellent";
+  if (score > 60) return "Good";
+  if (score > 40) return "Basic";
+  return "Weak";
+};
+
+const calculateStrengthScore = (data) => {
+  let score = 0;
+  if (data.full_name) score += 10;
+  if (data.dob) score += 5;
+  if (data.gender) score += 5;
+  if (data.number) score += 10;
+  if (data.degree) score += 10;
+  if (data.college_name) score += 10;
+  if (data.job_title) score += 15;
+  if (data.company_name) score += 15;
+  if (data.skills.length > 0) score += 20;
+  return Math.min(score, 100);
+};
 
 export default Dashboard;
