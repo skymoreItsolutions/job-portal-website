@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, Suspense,useEffect } from 'react';
+
 import { useRouter, useSearchParams } from 'next/navigation';
+
 import Sidebar from '@/app/components/Sidebar';
 import {
   UserIcon,
@@ -282,6 +284,8 @@ const CandidateList = () => {
   }, [filters]);
 
   return (
+
+
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-7xl mx-auto w-full">
@@ -466,9 +470,11 @@ const CandidateList = () => {
                 </p>
               ) : (
                 <div className="space-y-6">
+                  <Suspense fallback={<div>Loading filters...</div>}>
                   {candidates.map((candidate, ind) => (
                     <CandidateCard key={ind} candidate={candidate} />
-                  ))}
+                    ))}
+                  </Suspense>
                 </div>
               )}
             </div>
@@ -476,6 +482,7 @@ const CandidateList = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 
