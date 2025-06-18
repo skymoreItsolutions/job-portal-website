@@ -1,1 +1,1 @@
-export const baseurl=`https://jobportal.skymoreitsolutions.com/api/v1`
+export const baseurl=`http://jobportal.skymoreitsolutions.com/api/v1`
