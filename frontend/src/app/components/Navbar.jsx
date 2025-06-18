@@ -94,7 +94,7 @@ export default function Navbar() {
             localStorage.setItem("employerToken", sessionToken);
             setOtpSent(false);
             setShowModal(false);
-            window.location.href = "/employer/candidate-login";
+            window.location.href = "/employer/dashboard";
           } else {
             setOtpSent(false);
             setShowModal(false);
@@ -232,10 +232,10 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link href={loginType === "Employer" ? "/employer/dashboard" : "/candidate/dashboard"} className="text-black hover:text-gray-600">
+                <Link href={loginType == "Employer" ? "/candidate/dashboard" : "/employer/dashboard"} className="text-black hover:text-gray-600">
                   Dashboard
                 </Link>
-                <Link href={loginType === "Employer" ? "/employer/dashboard" : "/candidate/dashboard"}>
+                <Link href={loginType == "Employer" ? "/candidate/dashboard" : "/employer/profile"}>
                   <FaUserCircle className="text-2xl text-green-600" />
                 </Link>
                 <button
