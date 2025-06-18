@@ -466,7 +466,7 @@ const Dashboard = () => {
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {userData.skills.length > 0 ? (
+                        {userData?.skills?.length > 0 ? (
                           userData.skills.map((skill, index) => (
                             <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
                               {skill}
