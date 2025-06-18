@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect ,Suspense} from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/app/components/Sidebar';
 import {
   UserIcon,
@@ -11,7 +11,7 @@ import {
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
 import { FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaGlobe, FaPhone } from 'react-icons/fa';
 import { MdWorkHistory } from 'react-icons/md';
 import { baseurl } from '@/app/components/common';
@@ -155,7 +155,7 @@ const SkeletonLoader = () => (
 
 const CandidateList = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useParams();
 
   // Initialize filters with fallback to empty strings
   const [filters, setFilters] = useState({
@@ -188,31 +188,31 @@ const CandidateList = () => {
   }, [searchParams]);
 
   // Export candidates to Excel
-  const exportToExcel = () => {
-    const worksheetData = candidates.map((candidate) => ({
-      'Full Name': candidate.full_name,
-      'Job Title': candidate.job_title,
-      'Phone Number': candidate.number || 'N/A',
-      'Email': candidate.email || 'N/A',
-      'Preferred Shift': candidate.prefers_night_shift ? 'Night' : candidate.prefers_day_shift ? 'Day' : 'N/A',
-      'Field Job': candidate.field_job ? 'Yes' : 'No',
-      'Work From Home': candidate.work_from_home ? 'Yes' : 'No',
-      'Work From Office': candidate.work_from_office ? 'Yes' : 'No',
-      'Company': candidate.company_name || 'N/A',
-      'Experience': `${candidate.experience_years} Years, ${candidate.experience_months} Months`,
-      'Location': `${candidate.city}, ${candidate.state}`,
-      'Language': candidate.preferred_language,
-      'Education': `${candidate.degree || 'N/A'} in ${candidate.specialization || 'N/A'}, ${candidate.college_name || 'N/A'}`,
-      'Employment Type': candidate.employment_type,
-      'Skills': candidate.skills.join(', '),
-      'Status': candidate.active_user ? 'Active' : 'Inactive',
-    }));
+  // const exportToExcel = () => {
+  //   const worksheetData = candidates.map((candidate) => ({
+  //     'Full Name': candidate.full_name,
+  //     'Job Title': candidate.job_title,
+  //     'Phone Number': candidate.number || 'N/A',
+  //     'Email': candidate.email || 'N/A',
+  //     'Preferred Shift': candidate.prefers_night_shift ? 'Night' : candidate.prefers_day_shift ? 'Day' : 'N/A',
+  //     'Field Job': candidate.field_job ? 'Yes' : 'No',
+  //     'Work From Home': candidate.work_from_home ? 'Yes' : 'No',
+  //     'Work From Office': candidate.work_from_office ? 'Yes' : 'No',
+  //     'Company': candidate.company_name || 'N/A',
+  //     'Experience': `${candidate.experience_years} Years, ${candidate.experience_months} Months`,
+  //     'Location': `${candidate.city}, ${candidate.state}`,
+  //     'Language': candidate.preferred_language,
+  //     'Education': `${candidate.degree || 'N/A'} in ${candidate.specialization || 'N/A'}, ${candidate.college_name || 'N/A'}`,
+  //     'Employment Type': candidate.employment_type,
+  //     'Skills': candidate.skills.join(', '),
+  //     'Status': candidate.active_user ? 'Active' : 'Inactive',
+  //   }));
 
-    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Candidates');
-    XLSX.writeFile(workbook, 'candidates.xlsx');
-  };
+  //   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Candidates');
+  //   XLSX.writeFile(workbook, 'candidates.xlsx');
+  // };
 
   // Fetch candidates with filters and pagination
   const fetchCandidates = async (page = 1, perPage = pagination.per_page) => {
@@ -403,12 +403,12 @@ const CandidateList = () => {
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                   Candidate Profiles
                 </h2>
-                <button
+                {/* <button
                   onClick={exportToExcel}
                   className="py-2 px-4 bg-green-600 text-white rounded-lg text-sm sm:text-base hover:bg-green-700 transition-colors"
                 >
                   Export as Excel
-                </button>
+                </button> */}
               </div>
 
               {/* Pagination Controls */}
