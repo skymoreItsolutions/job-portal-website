@@ -1,19 +1,12 @@
 'use client';
 
-import { useState, useEffect ,Suspense} from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/app/components/Sidebar';
-import {
-  UserIcon,
-  BriefcaseIcon,
-  CodeBracketIcon,
-  MapPinIcon,
-  AcademicCapIcon,
-} from '@heroicons/react/24/outline';
-import axios from 'axios';
-// import * as XLSX from 'xlsx';
 import { FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaGlobe, FaPhone } from 'react-icons/fa';
 import { MdWorkHistory } from 'react-icons/md';
+import axios from 'axios';
+import * as XLSX from 'xlsx';
 import { baseurl } from '@/app/components/common';
 
 const ProfileDetails = ({ icon, label, value }) => (
@@ -31,8 +24,8 @@ const CandidateCard = ({ candidate }) => {
   const [showPhone, setShowPhone] = useState(false);
 
   const formatExperience = () => {
-    const years = candidate.experience_years;
-    const months = candidate.experience_months;
+    const years = candidate.experience_years || 0;
+    const months = candidate.experience_months || 0;
     if (years === 0 && months === 0) return 'N/A';
     return `${years} Year${years !== 1 ? 's' : ''}${months > 0 ? `, ${months} Month${months !== 1 ? 's' : ''}` : ''}`;
   };
@@ -62,12 +55,12 @@ const CandidateCard = ({ candidate }) => {
           <ProfileDetails
             icon={<FaMapMarkerAlt className="text-xl" />}
             label="Current Location"
-            value={`${candidate.city}, ${candidate.state}`}
+            value={`${candidate.city || 'N/A'}, ${candidate.state || 'N/A'}`}
           />
           <ProfileDetails
             icon={<FaGlobe className="text-xl" />}
             label="Preferred Language"
-            value={candidate.preferred_language}
+            value={candidate.preferred_language || 'N/A'}
           />
           <ProfileDetails
             icon={<FaGraduationCap className="text-xl" />}
@@ -77,20 +70,20 @@ const CandidateCard = ({ candidate }) => {
           <ProfileDetails
             icon={<FaBriefcase className="text-xl" />}
             label="Employment Type"
-            value={candidate.employment_type}
+            value={candidate.employment_type || 'N/A'}
           />
         </div>
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Skills</h2>
           <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
-            {candidate.skills.map((skill, index) => (
+            {candidate.skills?.map((skill, index) => (
               <span
                 key={index}
                 className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm hover:bg-blue-100 transition-colors"
               >
                 {skill}
               </span>
-            ))}
+            )) || <span className="text-gray-500">No skills listed</span>}
           </div>
         </div>
         <div className="mb-6">
@@ -127,6 +120,7 @@ const CandidateCard = ({ candidate }) => {
           <button
             onClick={() => setShowPhone(!showPhone)}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            aria-label={showPhone ? 'Hide phone number' : 'Show phone number'}
           >
             <FaPhone />
             {showPhone ? candidate.number || 'N/A' : 'View Phone Number'}
@@ -137,35 +131,41 @@ const CandidateCard = ({ candidate }) => {
   );
 };
 
-const SkeletonLoader = () => (
-  <div className="animate-pulse space-y-4 p-5 sm:p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl">
-    <div className="flex items-center space-x-3">
-      <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
-      <div className="h-6 w-1/3 bg-gray-300 rounded"></div>
-    </div>
-    {[...Array(5)].map((_, i) => (
-      <div key={i} className="flex items-center space-x-2">
-        <div className="h-5 w-5 bg-gray-300 rounded"></div>
-        <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+const SkeletonLoader = ({ count }) => (
+  <div className="space-y-6">
+    {[...Array(count)].map((_, i) => (
+      <div
+        key={i}
+        className="animate-pulse space-y-4 p-5 sm:p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl"
+      >
+        <div className="flex items-center space-x-3">
+          <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+          <div className="h-6 w-1/3 bg-gray-300 rounded"></div>
+        </div>
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-center space-x-2">
+            <div className="h-5 w-5 bg-gray-300 rounded"></div>
+            <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+          </div>
+        ))}
+        <div className="h-10 w-full bg-gray-300 rounded-lg mt-4"></div>
       </div>
     ))}
-    <div className="h-10 w-full bg-gray-300 rounded-lg mt-4"></div>
   </div>
 );
 
 const CandidateList = () => {
   const router = useRouter();
-  const searchParams = useParams();
+  const params = useParams();
 
-  // Initialize filters with fallback to empty strings
   const [filters, setFilters] = useState({
-    job_title: searchParams.get('job_title') ?? '',
-    skills: searchParams.get('skills') ?? '',
-    education: searchParams.get('education') ?? '',
-    experience: searchParams.get('experience') ?? '',
-    location: searchParams.get('location') ?? '',
-    active: searchParams.get('active') ?? '',
-    experienceType: searchParams.get('experienceType') ?? '',
+    job_title: params.job_title ? decodeURIComponent(params.job_title) : '',
+    skills: params.skills ? decodeURIComponent(params.skills) : '',
+    education: params.education ? decodeURIComponent(params.education) : '',
+    experience: params.experience ? decodeURIComponent(params.experience) : '',
+    location: params.location ? decodeURIComponent(params.location) : '',
+    active: params.active ? decodeURIComponent(params.active) : '',
+    experienceType: params.experienceType ? decodeURIComponent(params.experienceType) : '',
   });
 
   const [candidates, setCandidates] = useState([]);
@@ -180,46 +180,48 @@ const CandidateList = () => {
     per_page: 10,
   });
 
-  // Log searchParams for debugging
+  // Log params for debugging
   useEffect(() => {
-    console.log('searchParams:', Object.fromEntries(searchParams));
-    console.log('searchParams size:', searchParams.size);
+    console.log('params:', params);
     console.log('Current URL:', window.location.href);
-  }, [searchParams]);
+  }, [params]);
 
   // Export candidates to Excel
-  // const exportToExcel = () => {
-  //   const worksheetData = candidates.map((candidate) => ({
-  //     'Full Name': candidate.full_name,
-  //     'Job Title': candidate.job_title,
-  //     'Phone Number': candidate.number || 'N/A',
-  //     'Email': candidate.email || 'N/A',
-  //     'Preferred Shift': candidate.prefers_night_shift ? 'Night' : candidate.prefers_day_shift ? 'Day' : 'N/A',
-  //     'Field Job': candidate.field_job ? 'Yes' : 'No',
-  //     'Work From Home': candidate.work_from_home ? 'Yes' : 'No',
-  //     'Work From Office': candidate.work_from_office ? 'Yes' : 'No',
-  //     'Company': candidate.company_name || 'N/A',
-  //     'Experience': `${candidate.experience_years} Years, ${candidate.experience_months} Months`,
-  //     'Location': `${candidate.city}, ${candidate.state}`,
-  //     'Language': candidate.preferred_language,
-  //     'Education': `${candidate.degree || 'N/A'} in ${candidate.specialization || 'N/A'}, ${candidate.college_name || 'N/A'}`,
-  //     'Employment Type': candidate.employment_type,
-  //     'Skills': candidate.skills.join(', '),
-  //     'Status': candidate.active_user ? 'Active' : 'Inactive',
-  //   }));
+  const exportToExcel = () => {
+    const worksheetData = candidates.map((candidate) => ({
+      'Full Name': candidate.full_name || 'N/A',
+      'Job Title': candidate.job_title || 'N/A',
+      'Phone Number': candidate.number || 'N/A',
+      'Email': candidate.email || 'N/A',
+      'Preferred Shift': candidate.prefers_night_shift
+        ? 'Night'
+        : candidate.prefers_day_shift
+        ? 'Day'
+        : 'N/A',
+      'Field Job': candidate.field_job ? 'Yes' : 'No',
+      'Work From Home': candidate.work_from_home ? 'Yes' : 'No',
+      'Work From Office': candidate.work_from_office ? 'Yes' : 'No',
+      'Company': candidate.company_name || 'N/A',
+      'Experience': `${candidate.experience_years || 0} Years, ${candidate.experience_months || 0} Months`,
+      'Location': `${candidate.city || 'N/A'}, ${candidate.state || 'N/A'}`,
+      'Language': candidate.preferred_language || 'N/A',
+      'Education': `${candidate.degree || 'N/A'} in ${candidate.specialization || 'N/A'}, ${candidate.college_name || 'N/A'}`,
+      'Employment Type': candidate.employment_type || 'N/A',
+      'Skills': candidate.skills?.join(', ') || 'N/A',
+      'Status': candidate.active_user ? 'Active' : 'Inactive',
+    }));
 
-  //   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Candidates');
-  //   XLSX.writeFile(workbook, 'candidates.xlsx');
-  // };
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Candidates');
+    XLSX.writeFile(workbook, 'candidates.xlsx');
+  };
 
   // Fetch candidates with filters and pagination
   const fetchCandidates = async (page = 1, perPage = pagination.per_page) => {
     setLoading(true);
     setError(null);
     try {
-      // Only include non-empty filters in queryParams
       const cleanedFilters = Object.fromEntries(
         Object.entries(filters).filter(([_, value]) => value !== '' && value !== null)
       );
@@ -230,13 +232,18 @@ const CandidateList = () => {
       }).toString();
       console.log('queryParams:', queryParams);
       const response = await axios.get(`${baseurl}/filter?${queryParams}`);
+      if (!response.data?.data || !response.data?.pagination) {
+        throw new Error('Invalid API response structure');
+      }
       const { data, pagination: responsePagination } = response.data;
       setCandidates(data);
       setPagination({ ...responsePagination, per_page: perPage });
     } catch (err) {
       console.error('Error fetching candidates:', err);
       setError(
-        err.response?.data?.messages || 'An error occurred while fetching candidates.'
+        err.response?.data?.messages ||
+          err.message ||
+          'An error occurred while fetching candidates.'
       );
       setCandidates([]);
     } finally {
@@ -253,12 +260,21 @@ const CandidateList = () => {
   // Handle filter form submission
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    // Update URL with non-empty filters
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, value]) => value !== '' && value !== null)
     );
-    const query = new URLSearchParams(cleanedFilters).toString();
-    router.push(`/employer/candidate-database?${query}`, { scroll: false });
+    // Construct dynamic route with filter values, using '_' for empty values
+    const routeParams = [
+      cleanedFilters.job_title || '_',
+      cleanedFilters.skills || '_',
+      cleanedFilters.education || '_',
+      cleanedFilters.experience || '_',
+      cleanedFilters.location || '_',
+      cleanedFilters.active || '_',
+      cleanedFilters.experienceType || '_',
+    ].map(encodeURIComponent);
+    const route = `/employer/candidate-database/${routeParams.join('/')}`;
+    router.push(route, { scroll: false });
     fetchCandidates(1, pagination.per_page);
   };
 
@@ -276,14 +292,14 @@ const CandidateList = () => {
     fetchCandidates(1, perPage);
   };
 
-  // Fetch candidates on initial load and when filters change
+  // Fetch candidates on initial load and when params or per_page change
   useEffect(() => {
     fetchCandidates(1, pagination.per_page);
-  }, [filters]);
+  }, [params, pagination.per_page]);
 
   return (
-
     <div className="flex min-h-screen bg-gray-100">
+      <Sidebar />
       <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-7xl mx-auto w-full">
           {/* Filter Column */}
@@ -292,7 +308,6 @@ const CandidateList = () => {
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6">
                 Filter Candidates
               </h2>
-              
               <form className="space-y-5 sm:space-y-6" onSubmit={handleFilterSubmit}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Keywords</label>
@@ -303,6 +318,7 @@ const CandidateList = () => {
                     value={filters.job_title}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Search by job title"
                   />
                 </div>
                 <div>
@@ -314,6 +330,7 @@ const CandidateList = () => {
                     value={filters.skills}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Search by skills"
                   />
                 </div>
                 <div>
@@ -323,6 +340,7 @@ const CandidateList = () => {
                     value={filters.education}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Filter by education"
                   >
                     <option value="">Select Education</option>
                     <option value="10th">10th</option>
@@ -340,6 +358,7 @@ const CandidateList = () => {
                     value={filters.experience}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Filter by experience"
                   >
                     <option value="">Select Experience</option>
                     <option value="0-2">0-2 Years</option>
@@ -355,6 +374,7 @@ const CandidateList = () => {
                     value={filters.active}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Filter by status"
                   >
                     <option value="">Select Status</option>
                     <option value="1">Active</option>
@@ -370,6 +390,7 @@ const CandidateList = () => {
                     value={filters.location}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Search by location"
                   />
                 </div>
                 <div>
@@ -379,6 +400,7 @@ const CandidateList = () => {
                     value={filters.experienceType}
                     onChange={handleFilterChange}
                     className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                    aria-label="Filter by experience type"
                   >
                     <option value="">Select Experience Type</option>
                     <option value="any">Any</option>
@@ -389,6 +411,7 @@ const CandidateList = () => {
                 <button
                   type="submit"
                   className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  aria-label="Search candidates"
                 >
                   Search
                 </button>
@@ -403,12 +426,13 @@ const CandidateList = () => {
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                   Candidate Profiles
                 </h2>
-                {/* <button
+                <button
                   onClick={exportToExcel}
                   className="py-2 px-4 bg-green-600 text-white rounded-lg text-sm sm:text-base hover:bg-green-700 transition-colors"
+                  aria-label="Export candidates to Excel"
                 >
                   Export as Excel
-                </button> */}
+                </button>
               </div>
 
               {/* Pagination Controls */}
@@ -422,6 +446,7 @@ const CandidateList = () => {
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}
+                    aria-label="Previous page"
                   >
                     Previous
                   </button>
@@ -429,11 +454,15 @@ const CandidateList = () => {
                     Page {pagination.current_page} of {pagination.last_page} ({pagination.total} candidates)
                   </span>
                   <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700">Items per page:</label>
+                    <label className="text-sm font-medium text-gray-700" htmlFor="per-page">
+                      Items per page:
+                    </label>
                     <select
+                      id="per-page"
                       value={pagination.per_page}
                       onChange={handlePerPageChange}
                       className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      aria-label="Select items per page"
                     >
                       <option value="10">10</option>
                       <option value="20">20</option>
@@ -448,6 +477,7 @@ const CandidateList = () => {
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}
+                    aria-label="Next page"
                   >
                     Next
                   </button>
@@ -455,11 +485,7 @@ const CandidateList = () => {
               )}
 
               {loading ? (
-                <div className="space-y-6">
-                  {[...Array(3)].map((_, i) => (
-                    <SkeletonLoader key={i} />
-                  ))}
-                </div>
+                <SkeletonLoader count={pagination.per_page} />
               ) : error ? (
                 <p className="text-red-600 text-center text-sm sm:text-base">{error}</p>
               ) : candidates.length === 0 ? (
@@ -468,11 +494,12 @@ const CandidateList = () => {
                 </p>
               ) : (
                 <div className="space-y-6">
-                   <Suspense fallback={<div>Loading filters...</div>}>
-                  {candidates.map((candidate, ind) => (
-                    <CandidateCard key={ind} candidate={candidate} />
+                  {candidates.map((candidate) => (
+                    <CandidateCard
+                      key={candidate.id || `${candidate.full_name}-${candidate.email}`}
+                      candidate={candidate}
+                    />
                   ))}
-                  </Suspense>
                 </div>
               )}
             </div>
@@ -480,7 +507,6 @@ const CandidateList = () => {
         </div>
       </div>
     </div>
-
   );
 };
 
