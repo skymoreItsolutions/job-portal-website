@@ -94,7 +94,7 @@ export default function Navbar() {
             localStorage.setItem("employerToken", sessionToken);
             setOtpSent(false);
             setShowModal(false);
-            window.location.href = "/employer/dashboard";
+            window.location.href = "employer/dashboard";
           } else {
             setOtpSent(false);
             setShowModal(false);
