@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter,usePathname } from "next/navigation";
 import { FaEnvelope, FaLock, FaSpinner, FaTimes, FaUserCircle } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { baseurl } from "./common";
@@ -21,31 +21,51 @@ export default function Navbar() {
   const [useOtpLogin, setUseOtpLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
-
+  const pathname = usePathname();
   // Check if user is logged in on mount
   useEffect(() => {
     const checkLogin = async () => {
       const token = localStorage.getItem("employerToken") || localStorage.getItem("port_tok");
-      if (!token) return;
+      if (!token) {
+        if (pathname !== "/") {
+          // router.push("/"); // Navigate only if not already on homepage
+        }
+        return;
+      }
 
       try {
-        const res = await axios.get(`${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/profile"}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          `${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/profile"}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.data && res.data.success) {
           setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          localStorage.removeItem("employerToken");
+          localStorage.removeItem("port_tok");
+          if (pathname !== "/") {
+            // router.push("/"); // Navigate only if not on homepage
+          }
         }
       } catch (err) {
         console.error("Not logged in or invalid token", err);
         setIsLoggedIn(false);
+        localStorage.removeItem("employerToken");
+        localStorage.removeItem("port_tok");
+        if (pathname !== "/") {
+          // router.push("/"); // Navigate only if not on homepage
+        }
       }
     };
 
     checkLogin();
-  }, []);
+  }, [router, pathname]);
 
   // Handle OTP sending
   const handleOtp = async () => {
@@ -105,7 +125,7 @@ export default function Navbar() {
           localStorage.setItem("port_tok", sessionToken);
           setShowModal(false);
           setOtpSent(false);
-          router.push("/candidate/dashboard");
+          router.push("/candidate/candidate-login");
         }
       } else {
         setError("Invalid OTP. Please try again.");
@@ -163,12 +183,12 @@ export default function Navbar() {
     try {
       const response = await axios.post(`${baseurl}/candidate/login`, { email, password });
       const responseData = await response.data;
-
+    
       if (responseData.success) {
         localStorage.setItem("port_tok", responseData.token);
         setShowModal(false);
         setLoginType("");
-        router.push("/candidate/dashboard");
+        router.push("/candidate/candidate-login");
       } else {
         setError(responseData.message || "Invalid credentials. Please try again.");
       }
