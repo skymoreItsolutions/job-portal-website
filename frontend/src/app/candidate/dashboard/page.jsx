@@ -80,7 +80,7 @@ const Dashboard = () => {
   };
 
   const addSkill = () => {
-    if (newSkill.trim() && tempData.skills.length < 10) {
+    if (newSkill.trim() && tempData?.skills?.length < 10) {
       setTempData({
         ...tempData,
         skills: [...tempData.skills, newSkill.trim()]
@@ -427,7 +427,7 @@ const Dashboard = () => {
                       <span className="text-sm font-medium text-gray-500">Skills</span>
                       {editMode && (
                         <span className="text-xs text-gray-500 ml-auto">
-                          {tempData.skills.length}/10
+                          {tempData?.skills?.length}/10
                         </span>
                       )}
                     </div>
@@ -444,14 +444,14 @@ const Dashboard = () => {
                           />
                           <button
                             onClick={addSkill}
-                            disabled={!newSkill.trim() || tempData.skills.length >= 10}
+                            disabled={!newSkill.trim() || tempData?.skills?.length >= 10}
                             className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300"
                           >
                             Add
                           </button>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {tempData.skills.map((skill, index) => (
+                          {tempData?.skills?.map((skill, index) => (
                             <div key={index} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
                               {skill}
                               <button

@@ -122,7 +122,7 @@ if(response.data.success){
       text: "You clicked the button!",
   icon: "success"
   })
-  router.push("/")
+  // router.push("/")
 
 }else{
    Swal.fire({
@@ -137,7 +137,7 @@ if(response.data.success){
 
 const getcondidate=async(token)=>{
   if(!token){
-      router.push("/")
+      // router.push("/")
 
   }
   else{
