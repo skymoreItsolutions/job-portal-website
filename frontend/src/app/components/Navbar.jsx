@@ -109,7 +109,7 @@ export default function Navbar() {
 
       if (response.data.success) {
         if (loginType === "Employer") {
-          const sessionToken = response.data.session_token;
+          const sessionToken = response.data.token;
           if (sessionToken) {
             localStorage.setItem("employerToken", sessionToken);
             setOtpSent(false);
@@ -122,6 +122,7 @@ export default function Navbar() {
           }
         } else {
           const sessionToken = response.data.token;
+          console.log("Session Token:", response.data.token);
           localStorage.setItem("port_tok", sessionToken);
           setShowModal(false);
           setOtpSent(false);

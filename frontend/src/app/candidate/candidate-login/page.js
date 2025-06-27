@@ -80,6 +80,7 @@ const handelgender=(gender)=>{
       gender: selectedGender,
       number,
     };
+    
    const token=  localStorage.getItem("port_tok")
 const response = await axios.post(`${baseurl}/candidate-educations/${token}`,userData)
   router.push("/candidate/educations");
@@ -95,6 +96,7 @@ setalldata({...alldata,[key]:value})
 const handelSubmit=async()=>{
 
 const formData= new FormData();
+
 
 Object.entries(alldata).forEach(([key, value]) => {
   if (value === undefined || value === null) {

@@ -247,7 +247,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
       location: formData.location,
       work_location_type: formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid',
       compensation: `${formData.minSalary}-${formData.maxSalary}`,
-      pay_type: formData.payType,
+      pay_type: formData.payType || 'Hourly',
       joining_fee: false,
       basic_requirements: formData.keyResponsibilities || 'null',
       additional_requirements: JSON.stringify(formData.requiredSkills),
@@ -257,7 +257,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
       other_job_titles: JSON.stringify(formData.preferredRoles),
       degree_specialization: JSON.stringify([formData.educationLevel]),
       job_description: formData.jobOverview,
-      job_expire_time: parseInt(formData.jobExpireTime),
+      job_expire_time: parseInt(formData.jobExpireTime) || 7,
       number_of_candidates_required: parseInt(formData.numberOfCandidatesRequired),
     };
 
