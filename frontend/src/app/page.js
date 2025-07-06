@@ -7,7 +7,7 @@ import Aboutsection from "./components/Aboutsection";
 import Trendingjob from "./components/Trendingjob";
 import Testimonial from "./components/Testimonial";
 import Popular from "./components/Popular";
-import FAQsection from "./components/FAQsection";
+// import FAQsection from "./components/FAQsection";
 import WantToHire from "./components/WantToHire";
 // import FAQSection from "./components/Faqsection";
 

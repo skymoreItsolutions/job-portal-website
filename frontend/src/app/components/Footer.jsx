@@ -2,9 +2,11 @@
 'use client'
 import React, { useState } from "react";
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
+import Chatbot1 from "./Chatbot1";
 
 const Footer = () => {
   const [isNewsletterSubmitted, setIsNewsletterSubmitted] = useState(false);
+ 
   const [email, setEmail] = useState("");
 
   const handleNewsletterSubmit = (e) => {
@@ -122,6 +124,8 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      <Chatbot1 />
     </footer>
   );
 };

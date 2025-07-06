@@ -94,7 +94,7 @@ export default function EmployerLogin() {
                 {employers.toLocaleString()} Lakhs +
               </h6>
               <p className="text-sm md:text-base text-gray-700">
-                Employers using apna
+                Employers using Hirebot
               </p>
             </div>
             <div className="text-center">
