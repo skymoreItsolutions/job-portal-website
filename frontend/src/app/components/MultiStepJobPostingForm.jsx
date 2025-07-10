@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { baseurl } from './common';
 import CreatableSelect from 'react-select/creatable';
+import debounce from 'lodash/debounce';
 
 const MultiStepJobPostingForm = ({ userdata, companies }) => {
   const skillsOptions = [
@@ -20,7 +21,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'Laravel', label: 'Laravel' },
     { value: 'MySQL', label: 'MySQL' },
     { value: 'MongoDB', label: 'MongoDB' },
-    // Programming Languages
     { value: 'Java', label: 'Java' },
     { value: 'C++', label: 'C++' },
     { value: 'C#', label: 'C#' },
@@ -31,7 +31,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'TypeScript', label: 'TypeScript' },
     { value: 'R', label: 'R' },
     { value: 'Scala', label: 'Scala' },
-    // Frameworks and Libraries
     { value: 'Angular', label: 'Angular' },
     { value: 'Vue.js', label: 'Vue.js' },
     { value: 'Express.js', label: 'Express.js' },
@@ -42,13 +41,11 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'jQuery', label: 'jQuery' },
     { value: 'TensorFlow', label: 'TensorFlow' },
     { value: 'PyTorch', label: 'PyTorch' },
-    // Databases
     { value: 'PostgreSQL', label: 'PostgreSQL' },
     { value: 'Oracle', label: 'Oracle' },
     { value: 'Redis', label: 'Redis' },
     { value: 'SQLite', label: 'SQLite' },
     { value: 'Cassandra', label: 'Cassandra' },
-    // Cloud Platforms and DevOps
     { value: 'AWS', label: 'AWS' },
     { value: 'Azure', label: 'Azure' },
     { value: 'Google Cloud', label: 'Google Cloud' },
@@ -59,7 +56,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'Ansible', label: 'Ansible' },
     { value: 'Git', label: 'Git' },
     { value: 'CI/CD', label: 'CI/CD' },
-    // Data Science and Analytics
     { value: 'SQL', label: 'SQL' },
     { value: 'Tableau', label: 'Tableau' },
     { value: 'Power BI', label: 'Power BI' },
@@ -67,19 +63,16 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'NumPy', label: 'NumPy' },
     { value: 'Hadoop', label: 'Hadoop' },
     { value: 'Spark', label: 'Spark' },
-    // Frontend and Design
     { value: 'Sass', label: 'Sass' },
     { value: 'Tailwind CSS', label: 'Tailwind CSS' },
     { value: 'Bootstrap', label: 'Bootstrap' },
     { value: 'Figma', label: 'Figma' },
     { value: 'Adobe XD', label: 'Adobe XD' },
-    // Soft Skills
     { value: 'Communication', label: 'Communication' },
     { value: 'Teamwork', label: 'Teamwork' },
     { value: 'Problem Solving', label: 'Problem Solving' },
     { value: 'Leadership', label: 'Leadership' },
     { value: 'Time Management', label: 'Time Management' },
-    // Miscellaneous
     { value: 'GraphQL', label: 'GraphQL' },
     { value: 'REST API', label: 'REST API' },
     { value: 'Web Security', label: 'Web Security' },
@@ -88,18 +81,18 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   ];
 
   const [allSkillsOptions, setAllSkillsOptions] = useState(skillsOptions);
-  console.log('userdata', userdata);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     companyName: userdata?.company_name || '',
     jobTitle: '',
     jobType: '',
-    location: '',
+    locations: [],
     payType: '',
     minSalary: '',
     maxSalary: '',
     educationLevel: '',
     experienceLevel: '',
+    experienceMax: '',
     genderPreference: 'No Preference',
     preferredRoles: [],
     jobOverview: '',
@@ -113,16 +106,56 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     contactPhone: '',
     interviewDate: '',
     interviewTime: '',
-    experienceMax: '',
     notEmail: false,
     viewedNumber: false,
+    joiningFee: false,
+    jobExpireTime: 7,
+    numberOfCandidatesRequired: 1,
   });
-
   const [errors, setErrors] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [locationInputs, setLocationInputs] = useState(['', '', '']);
+
+  // Debounced Nominatim search
+  const fetchLocationSuggestions = useCallback(
+    debounce(async (query, index) => {
+      if (!query || query.length < 3) {
+        setLocationSuggestions((prev) => {
+          const newSuggestions = [...prev];
+          newSuggestions[index] = [];
+          return newSuggestions;
+        });
+        return;
+      }
+
+      try {
+        const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+          params: {
+            format: 'json',
+            q: query,
+            addressdetails: 1,
+            limit: 5,
+          },
+          headers: {
+            'User-Agent': 'YourAppName/1.0 (contact@example.com)', // Replace with your app name and contact
+          },
+        });
+        setLocationSuggestions((prev) => {
+          const newSuggestions = [...prev];
+          newSuggestions[index] = response.data;
+          return newSuggestions;
+        });
+      } catch (error) {
+        console.error('Nominatim API error:', error);
+        setErrors((prev) => ({ ...prev, locations: 'Failed to fetch location suggestions' }));
+      }
+    }, 500),
+    [],
+  );
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -131,11 +164,8 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
 
       try {
         const res = await axios.get(`${baseurl}/employer/profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         if (res.data && res.data.success) {
           setIsLoggedIn(res.data.data);
         }
@@ -144,7 +174,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         setIsLoggedIn(false);
       }
     };
-
     checkLogin();
   }, []);
 
@@ -156,50 +185,127 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
       const thirtyMinutesInMs = 30 * 60 * 1000;
       if (now - timestamp <= thirtyMinutesInMs) {
         setFormData(data);
+        setLocationInputs(
+          data.locations.map((loc) => loc.address || '').concat(['', '', '']).slice(0, 3),
+        );
         const customSkills = data.requiredSkills
           .filter((skill) => !skillsOptions.some((opt) => opt.value === skill))
           .map((skill) => ({ value: skill, label: skill }));
         setAllSkillsOptions([...skillsOptions, ...customSkills]);
       } else {
-        localStorage.removeItem('jobPostingFormData'); // Clear expired data
+        localStorage.removeItem('jobPostingFormData');
       }
     }
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     if (type === 'checkbox') {
-      if (checked) {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: Array.isArray(prev[name]) ? [...prev[name], value] : [value],
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: Array.isArray(prev[name]) ? prev[name].filter((item) => item !== value) : [],
-        }));
-      }
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked
+          ? Array.isArray(prev[name])
+            ? [...prev[name], value]
+            : [value]
+          : Array.isArray(prev[name])
+          ? prev[name].filter((item) => item !== value)
+          : [],
+      }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+    localStorage.setItem(
+      'jobPostingFormData',
+      JSON.stringify({ data: { ...formData, [name]: value }, timestamp: new Date().getTime() }),
+    );
+  };
 
-    localStorage.setItem('jobPostingFormData', JSON.stringify(formData));
+  const handleLocationInputChange = (value, index) => {
+    setLocationInputs((prev) => {
+      const newInputs = [...prev];
+      newInputs[index] = value;
+      return newInputs;
+    });
+    setFormData((prev) => {
+      const newLocations = [...prev.locations];
+      newLocations[index] = { address: value, lat: null, lon: null };
+      return { ...prev, locations: newLocations.filter((loc) => loc.address) };
+    });
+    fetchLocationSuggestions(value, index);
+  };
+
+  const handleLocationSelect = (suggestion, index) => {
+    setFormData((prev) => {
+      const newLocations = [...prev.locations];
+      newLocations[index] = {
+        address: suggestion.display_name,
+        lat: parseFloat(suggestion.lat),
+        lon: parseFloat(suggestion.lon),
+      };
+      return { ...prev, locations: newLocations.filter((loc) => loc.address) };
+    });
+    setLocationInputs((prev) => {
+      const newInputs = [...prev];
+      newInputs[index] = suggestion.display_name;
+      return newInputs;
+    });
+    setLocationSuggestions((prev) => {
+      const newSuggestions = [...prev];
+      newSuggestions[index] = [];
+      return newSuggestions;
+    });
+    localStorage.setItem(
+      'jobPostingFormData',
+      JSON.stringify({
+        data: {
+          ...formData,
+          locations: formData.locations.map((loc, i) =>
+            i === index ? { address: suggestion.display_name, lat: parseFloat(suggestion.lat), lon: parseFloat(suggestion.lon) } : loc,
+          ),
+        },
+        timestamp: new Date().getTime(),
+      }),
+    );
+  };
+
+  const removeLocation = (index) => {
+    setFormData((prev) => {
+      const newLocations = prev.locations.filter((_, i) => i !== index);
+      return { ...prev, locations: newLocations };
+    });
+    setLocationInputs((prev) => {
+      const newInputs = [...prev];
+      newInputs[index] = '';
+      return newInputs;
+    });
+    setLocationSuggestions((prev) => {
+      const newSuggestions = [...prev];
+      newSuggestions[index] = [];
+      return newSuggestions;
+    });
+    localStorage.setItem(
+      'jobPostingFormData',
+      JSON.stringify({
+        data: { ...formData, locations: formData.locations.filter((_, i) => i !== index) },
+        timestamp: new Date().getTime(),
+      }),
+    );
   };
 
   const validateStep = (step) => {
     const newErrors = {};
-
     switch (step) {
       case 1:
         if (!formData.companyName) newErrors.companyName = 'Company name is required';
         if (!formData.jobTitle) newErrors.jobTitle = 'Job title is required';
-        if (!formData.location) newErrors.location = 'Location is required';
+        if (formData.locations.length === 0) newErrors.locations = 'At least one location is required';
         break;
       case 2:
         if (!formData.educationLevel) newErrors.educationLevel = 'Education level is required';
-        if (!formData.experienceLevel) newErrors.experienceLevel = 'Experience level is required';
+        if (!formData.experienceLevel) newErrors.experienceLevel = 'Minimum experience is required';
+        if (formData.experienceMax && parseInt(formData.experienceMax) < parseInt(formData.experienceLevel)) {
+          newErrors.experienceMax = 'Maximum experience must be greater than or equal to minimum';
+        }
         break;
       case 3:
         if (!formData.jobOverview) newErrors.jobOverview = 'Job overview is required';
@@ -213,13 +319,11 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
       default:
         break;
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = () => {
-    console.log(currentStep);
     if (validateStep(currentStep)) {
       if (currentStep < 4) {
         setCurrentStep((prev) => prev + 1);
@@ -235,50 +339,51 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     }
   };
 
-  console.log(isLoggedIn.id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
+    setIsSubmitting(true);
 
     const apiData = {
       employer_id: isLoggedIn.id,
       job_title: formData.jobTitle,
       job_type: formData.jobType,
-      location: formData.location,
+      location: formData.locations.map((loc) => loc.address).join('; '),
       work_location_type: formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid',
-      compensation: `${formData.minSalary}-${formData.maxSalary}`,
+      compensation: formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary}-${formData.maxSalary}`,
       pay_type: formData.payType || 'Hourly',
-      joining_fee: false,
+      joining_fee: formData.joiningFee,
       basic_requirements: formData.keyResponsibilities || 'null',
       additional_requirements: JSON.stringify(formData.requiredSkills),
       is_walkin_interview: formData.interviewMode === 'Walk-in',
       communication_preference: formData.contactPreference.includes('Phone') ? 'Call' : formData.contactPreference.includes('Email') ? 'Whatsapp' : 'No Preference',
-      total_experience_required: formData.experienceLevel === 'Entry Level' ? 0 : formData.experienceLevel === 'Mid Level' ? 3 : formData.experienceLevel === 'Senior Level' ? 7 : 10,
+      total_experience_required: parseInt(formData.experienceLevel) || 0,
+      total_experience_max: parseInt(formData.experienceMax) || null,
       other_job_titles: JSON.stringify(formData.preferredRoles),
       degree_specialization: JSON.stringify([formData.educationLevel]),
       job_description: formData.jobOverview,
       job_expire_time: parseInt(formData.jobExpireTime) || 7,
       number_of_candidates_required: parseInt(formData.numberOfCandidatesRequired),
+      latitude: formData.locations[0]?.lat || null,
+      longitude: formData.locations[0]?.lon || null,
     };
 
     try {
       const response = await axios.post(`${baseurl}/job-posts`, apiData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
-
       alert('Job posting submitted successfully!');
       setFormData({
         companyName: '',
         jobTitle: '',
         jobType: '',
-        location: '',
+        locations: [],
         payType: '',
         minSalary: '',
         maxSalary: '',
         educationLevel: '',
         experienceLevel: '',
+        experienceMax: '',
         genderPreference: 'No Preference',
         preferredRoles: [],
         jobOverview: '',
@@ -294,9 +399,11 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         interviewTime: '',
         joiningFee: false,
         jobExpireTime: 7,
-        numberOfCandidatesRequired: 1,
+        number_of_candidates_required: 1,
       });
       setAllSkillsOptions(skillsOptions);
+      setLocationInputs(['', '', '']);
+      setLocationSuggestions([]);
       setCurrentStep(1);
       setShowConfirmation(false);
       localStorage.removeItem('jobPostingFormData');
@@ -309,7 +416,32 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         setApiError(error.response?.data?.message || 'Failed to create job post');
       }
       console.error('API Error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleSkillsInputChange = (inputValue, actionMeta) => {
+    if (inputValue.includes(',')) {
+      const newSkill = inputValue.replace(',', '').trim();
+      if (newSkill) {
+        const newOption = { value: newSkill, label: newSkill };
+        setAllSkillsOptions((prev) => [...prev, newOption]);
+        setFormData((prev) => ({
+          ...prev,
+          requiredSkills: [...prev.requiredSkills, newSkill],
+        }));
+        localStorage.setItem(
+          'jobPostingFormData',
+          JSON.stringify({
+            data: { ...formData, requiredSkills: [...formData.requiredSkills, newSkill] },
+            timestamp: new Date().getTime(),
+          }),
+        );
+      }
+      return '';
+    }
+    return inputValue;
   };
 
   const renderStepContent = () => {
@@ -382,17 +514,50 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               {errors.jobType && <p className="mt-1 text-xs text-red-500">{errors.jobType}</p>}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Location *</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${
-                  errors.location ? 'border-red-500' : 'border-gray-300'
-                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-              />
-              {errors.location && <p className="mt-1 text-xs text-red-500">{errors.location}</p>}
+              <label className="block text-sm font-semibold text-gray-800">Office Address / Landmark * (Select up to 3)</label>
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="mt-2 relative">
+                  <input
+                    type="text"
+                    value={locationInputs[index]}
+                    onChange={(e) => handleLocationInputChange(e.target.value, index)}
+                    placeholder={`Enter location ${index + 1}`}
+                    className={`w-full rounded-lg border ${
+                      errors.locations ? 'border-red-500' : 'border-gray-300'
+                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                  />
+                  {formData.locations[index]?.address && (
+                    <button
+                      type="button"
+                      onClick={() => removeLocation(index)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500 hover:text-red-600"
+                    >
+                      <FaTimes />
+                    </button>
+                  )}
+                  {locationSuggestions[index]?.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-60 overflow-y-auto">
+                      {locationSuggestions[index].map((suggestion) => (
+                        <div
+                          key={suggestion.place_id}
+                          onClick={() => handleLocationSelect(suggestion, index)}
+                          className="px-4 py-2 cursor-pointer hover:bg-blue-50 transition-all duration-200"
+                        >
+                          {suggestion.display_name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {errors.locations && <p className="mt-1 text-xs text-red-500">{errors.locations}</p>}
+              {formData.locations.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600">
+                    Selected: {formData.locations.map((loc) => loc.address).join(', ')}
+                  </p>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -407,6 +572,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 >
                   <option value="">Select Pay Type</option>
                   <option value="Salary">Salary</option>
+                  <option value="Salary + Incentive">Salary + Incentive</option>
                   <option value="Fixed Salary">Fixed Salary</option>
                 </select>
                 {errors.payType && <p className="mt-1 text-xs text-red-500">{errors.payType}</p>}
@@ -496,78 +662,25 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               >
                 <option value="">Select Education Level</option>
-                <option value="High School">High School</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Master's Degree">Master's Degree</option>
-                <option value="PhD">PhD</option>
+                <option value="Graduation Not Required">Graduation Not Required</option>
+                <option value="Graduated">Graduated</option>
+                <option value="Masters">Masters</option>
+                <option value="Others">Others</option>
               </select>
               {errors.educationLevel && (
                 <p className="mt-1 text-xs text-red-500">{errors.educationLevel}</p>
               )}
             </div>
-            {['Bachelor\'s Degree', 'Master\'s Degree', 'PhD'].includes(formData.educationLevel) && (
-              <div className="mt-4">
-                <label className="block text-sm font-semibold text-gray-800">Course / Stream *</label>
-                <select
-                  name="courseStream"
-                  value={formData.courseStream}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
-                    errors.courseStream ? 'border-red-500' : 'border-gray-300'
-                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                >
-                  <option value="">Select Course / Stream</option>
-                  {formData.educationLevel === "Bachelor's Degree" && (
-                    <>
-                      <option value="B.Sc (Bachelor of Science)">B.Sc (Bachelor of Science)</option>
-                      <option value="B.Com (Bachelor of Commerce)">B.Com (Bachelor of Commerce)</option>
-                      <option value="B.Tech (Bachelor of Technology)">B.Tech (Bachelor of Technology)</option>
-                      <option value="BBA (Bachelor of Business Administration)">BBA (Bachelor of Business Administration)</option>
-                      <option value="BA (Bachelor of Arts)">BA (Bachelor of Arts)</option>
-                      <option value="BCA (Bachelor of Computer Applications)">BCA (Bachelor of Computer Applications)</option>
-                      <option value="B.Pharm (Bachelor of Pharmacy)">B.Pharm (Bachelor of Pharmacy)</option>
-                      <option value="B.Ed (Bachelor of Education)">B.Ed (Bachelor of Education)</option>
-                      <option value="LLB (Bachelor of Law)">LLB (Bachelor of Law)</option>
-                      <option value="B.Arch (Bachelor of Architecture)">B.Arch (Bachelor of Architecture)</option>
-                    </>
-                  )}
-                  {formData.educationLevel === "Master's Degree" && (
-                    <>
-                      <option value="M.Sc (Master of Science)">M.Sc (Master of Science)</option>
-                      <option value="M.Com (Master of Commerce)">M.Com (Master of Commerce)</option>
-                      <option value="M.Tech (Master of Technology)">M.Tech (Master of Technology)</option>
-                      <option value="MBA (Master of Business Administration)">MBA (Master of Business Administration)</option>
-                      <option value="MA (Master of Arts)">MA (Master of Arts)</option>
-                      <option value="MCA (Master of Computer Applications)">MCA (Master of Computer Applications)</option>
-                      <option value="M.Pharm (Master of Pharmacy)">M.Pharm (Master of Pharmacy)</option>
-                      <option value="M.Ed (Master of Education)">M.Ed (Master of Education)</option>
-                      <option value="LLM (Master of Law)">LLM (Master of Law)</option>
-                      <option value="M.Arch (Master of Architecture)">M.Arch (Master of Architecture)</option>
-                    </>
-                  )}
-                  {formData.educationLevel === "PhD" && (
-                    <>
-                      <option value="PhD in Computer Science">PhD in Computer Science</option>
-                      <option value="PhD in Management">PhD in Management</option>
-                      <option value="PhD in Chemistry">PhD in Chemistry</option>
-                    </>
-                  )}
-                </select>
-                {errors.courseStream && (
-                  <p className="mt-1 text-xs text-red-500">{errors.courseStream}</p>
-                )}
-              </div>
-            )}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-800">Minimum Experience (Years)</label>
+                <label className="block text-sm font-semibold text-gray-800">Minimum Experience (Years) *</label>
                 <input
                   type="number"
                   name="experienceLevel"
                   value={formData.experienceLevel}
                   onChange={handleInputChange}
                   className={`mt-2 w-full rounded-lg border ${
-                    errors.experienceMin ? 'border-red-500' : 'border-gray-300'
+                    errors.experienceLevel ? 'border-red-500' : 'border-gray-300'
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                   min="0"
                 />
@@ -651,7 +764,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               {errors.jobOverview && <p className="mt-1 text-xs text-red-500">{errors.jobOverview}</p>}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Required Skills *</label>
+              <label className="block text-sm font-semibold text-gray-800">Required Skills * (Type and add with comma)</label>
               <CreatableSelect
                 isMulti
                 name="requiredSkills"
@@ -663,20 +776,33 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   label: skill,
                 }))}
                 onChange={(selected) => {
-                  const values = selected
-                    ? selected.map((option) => option.value)
-                    : [];
+                  const values = selected ? selected.map((option) => option.value) : [];
                   setFormData((prev) => ({ ...prev, requiredSkills: values }));
+                  localStorage.setItem(
+                    'jobPostingFormData',
+                    JSON.stringify({ data: { ...formData, requiredSkills: values }, timestamp: new Date().getTime() }),
+                  );
                 }}
+                onInputChange={handleSkillsInputChange}
                 onCreateOption={(inputValue) => {
-                  const newOption = { value: inputValue, label: inputValue };
-                  setAllSkillsOptions((prev) => [...prev, newOption]);
-                  setFormData((prev) => ({
-                    ...prev,
-                    requiredSkills: [...prev.requiredSkills, inputValue],
-                  }));
+                  const newSkill = inputValue.trim();
+                  if (newSkill) {
+                    const newOption = { value: newSkill, label: newSkill };
+                    setAllSkillsOptions((prev) => [...prev, newOption]);
+                    setFormData((prev) => ({
+                      ...prev,
+                      requiredSkills: [...prev.requiredSkills, newSkill],
+                    }));
+                    localStorage.setItem(
+                      'jobPostingFormData',
+                      JSON.stringify({
+                        data: { ...formData, requiredSkills: [...formData.requiredSkills, newSkill] },
+                        timestamp: new Date().getTime(),
+                      }),
+                    );
+                  }
                 }}
-                placeholder="Select or type skills..."
+                placeholder="Select or type skills (add with comma)..."
                 formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
               />
               {errors.requiredSkills && (
@@ -955,19 +1081,17 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     <dd className="text-gray-600">{formData.jobTitle || 'Not specified'}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-gray-800">Location</dt>
-                    <dd className="text-gray-600">{formData.location || 'Not specified'}</dd>
+                    <dt className="font-semibold text-gray-800">Locations</dt>
+                    <dd className="text-gray-600">{formData.locations.map((loc) => loc.address).join(', ') || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Job Type</dt>
                     <dd className="text-gray-600">{formData.jobType || 'Not specified'}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-gray-800">Salary Range</dt>
+                    <dt className="font-semibold text-gray-800">Salary</dt>
                     <dd className="text-gray-600">
-                      {formData.minSalary && formData.maxSalary
-                        ? `${formData.minSalary} - ${formData.maxSalary} (${formData.payType || 'Not specified'})`
-                        : 'Not specified'}
+                      {formData.minSalary && (formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary} - ${formData.maxSalary}`)} {formData.payType || 'Not specified'}
                     </dd>
                   </div>
                   <div>
@@ -975,8 +1099,10 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     <dd className="text-gray-600">{formData.educationLevel || 'Not specified'}</dd>
                   </div>
                   <div>
-                    <dt className="font-semibold text-gray-800">Experience Level</dt>
-                    <dd className="text-gray-600">{formData.experienceLevel || 'Not specified'}</dd>
+                    <dt className="font-semibold text-gray-800">Experience</dt>
+                    <dd className="text-gray-600">
+                      {formData.experienceLevel} {formData.experienceMax ? ` - ${formData.experienceMax} years` : 'years'}
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Gender Preference</dt>

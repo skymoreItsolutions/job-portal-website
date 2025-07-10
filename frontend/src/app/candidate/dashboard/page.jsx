@@ -8,8 +8,10 @@ import {
   FaBuilding, FaClock, FaSun, FaMoon, FaHome, FaLaptop, FaLanguage, FaCode,
   FaLock, FaEdit, FaChartLine, FaUserTie, FaRegStar, FaStar, FaTimes
 } from 'react-icons/fa';
+import { IoIosDocument } from "react-icons/io";
 import { FiSettings, FiEdit2, FiSave, FiX } from 'react-icons/fi';
 import { IoMdNotificationsOutline } from 'react-icons/io';
+import CVGeneration from '../CVgenerationcandidate/CVGeneration.tsx'
 import Link from 'next/link';
 
 const Dashboard = () => {
@@ -189,6 +191,13 @@ const Dashboard = () => {
             className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
           >
             <FaChartLine className="mr-2" /> Statistics
+          </button>
+          <button
+            onClick={() => setActiveTab('CV-Builder')}
+            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            
+            <IoIosDocument className="mr-2" /> Build Your CV
           </button>
         </div>
 
@@ -518,6 +527,13 @@ const Dashboard = () => {
                 icon={<FaEdit className="text-green-500" />}
               />
             </div>
+          </div>
+        )}
+        {activeTab === 'CV-Builder' && (
+          <div className="bg-white rounded-xl shadow-sm ">
+            
+            
+            <CVGeneration/>
           </div>
         )}
       </main>

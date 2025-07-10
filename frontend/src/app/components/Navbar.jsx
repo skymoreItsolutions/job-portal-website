@@ -184,9 +184,9 @@ export default function Navbar() {
     try {
       const response = await axios.post(`${baseurl}/candidate/login`, { email, password });
       const responseData = await response.data;
-    
+      console.log(responseData.token)
       if (responseData.success) {
-        localStorage.setItem("port_tok", responseData.token);
+        localStorage.setItem("port_tok", responseData?.token);
         setShowModal(false);
         setLoginType("");
         router.push("/candidate/candidate-login");
