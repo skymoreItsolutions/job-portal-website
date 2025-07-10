@@ -14,9 +14,23 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 import JobCard from "./JobCard";
-import { baseurl } from "./common";
+import { baseurl } from "./common"
+import { useSearchParams } from "next/navigation";
+
 
 export default function Jobs() {
+
+
+  const searchparams=useSearchParams();
+  const categories = searchparams.get('categories')
+  const page = searchparams.get('page')
+  const job_type = searchparams.get('job_type')
+  const total_experience_required = searchparams.get('total_experience_required')
+  const work_location_type = searchparams.get('work_location_type')
+  const date_posted = searchparams.get('date_posted')
+  const job_title = searchparams.get('job_title')
+  
+  
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -76,8 +90,10 @@ export default function Jobs() {
   ];
 
   const jobTypes = [
-    { id: 1, label: "Full-time" },
-    { id: 2, label: "Part-time" }
+    { id: 1, label: "Full-time",value:"full_time" },
+    { id: 2, label: "Part-time" ,value:"part_time"},
+    { id: 3, label: "Freelance" ,value:"freelance"},
+    { id: 4, label: "Internship" ,value:"internship"},
   ];
 
   const experienceLevels = [
@@ -93,9 +109,9 @@ export default function Jobs() {
   ];
 
   const workLocationTypes = [
-    { id: 1, label: "Work from Home", value: "Work from Home" },
-    { id: 2, label: "Work from Office", value: "Work from Office" },
-    { id: 3, label: "Hybrid", value: "Hybrid" },
+    { id: 1, label: "Work from Home", value: "remote" },
+    { id: 2, label: "Work from Office", value: "onsite" },
+    { id: 3, label: "Hybrid", value: "hybrid" },
   ];
 
   const tags = [
@@ -111,7 +127,7 @@ export default function Jobs() {
   // Function to update URL with current filters and page
   const updateURL = (newFilters = filters, page = currentPage) => {
     const queryParams = new URLSearchParams();
-    queryParams.set("page", page.toString());
+    queryParams.set("page", page?.toString());
 
     if (newFilters.job_title) queryParams.set("job_title", newFilters.job_title);
     if (newFilters.location) queryParams.set("location", newFilters.location);
@@ -166,21 +182,34 @@ export default function Jobs() {
   const fetchJobs = async (page = 1) => {
     setLoading(true);
     try {
-      const params = {
-        page,
-        job_type: filters.job_type.join(",") || undefined,
-        location: filters.location || undefined,
-        work_location_type: filters.work_location_type.join(",") || undefined,
-        pay_type: filters.pay_type.join(",") || undefined,
-        is_walkin_interview: filters.is_walkin_interview || undefined,
-        total_experience_required: filters.total_experience_required.join(",") || undefined,
-        categories: filters.categories.join(",") || undefined,
-        date_posted: filters.date_posted || undefined,
-        salary_min: filters.salary_range[0] || undefined,
-        salary_max: filters.salary_range[1] || undefined,
+      // const params = {
+      //   page,
+      //   job_type: filters.job_type.join(",") || undefined,
+      //   location: filters.location || undefined,
+      //   work_location_type: filters.work_location_type.join(",") || undefined,
+      //   pay_type: filters.pay_type.join(",") || undefined,
+      //   is_walkin_interview: filters.is_walkin_interview || undefined,
+      //   total_experience_required: filters.total_experience_required.join(",") || undefined,
+      //   categories: filters.categories.join(",") || undefined,
+      //   date_posted: filters.date_posted || undefined,
+      //   salary_min: filters.salary_range[0] || undefined,
+      //   salary_max: filters.salary_range[1] || undefined,
+      // };
+      const  params={
+        	job_title:job_title,
+          job_type,
+          work_location_type,
+          date_posted,
+          total_experience_required,
+          categories,
+          page
       };
 
-      const response = await axios.get(`${baseurl}/jobs`, { params });
+
+      // console.log(`${baseurl}/jobs?${params}`)
+
+      const response = await axios.get(`${baseurl}/jobs`, {  params});
+      console.log(response.data)
       if (response.data.status === "success") {
         setJobs(response.data.data.data);
         setTotalPages(response.data.data.last_page);
@@ -200,8 +229,9 @@ export default function Jobs() {
 
   // Fetch jobs when page or filters change and update URL
   useEffect(() => {
-    fetchJobs(currentPage);
+    
     updateURL(filters, currentPage);
+    fetchJobs(currentPage);
   }, [currentPage, filters]);
 
   // Handle filter changes for text inputs and single-value filters
@@ -321,8 +351,8 @@ export default function Jobs() {
                         <input
                           type="checkbox"
                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          checked={filters.job_type.includes(elm.label.toLowerCase())}
-                          onChange={() => handleCheckboxChange("job_type", elm.label.toLowerCase())}
+                          checked={filters.job_type.includes(elm.value.toLowerCase())}
+                          onChange={() => handleCheckboxChange("job_type", elm.value.toLowerCase())}
                         />
                         <span className="text-gray-700">{elm.label}</span>
                       </div>
@@ -445,15 +475,15 @@ export default function Jobs() {
             <div>
               <div className="flex items-center justify-between">
                 <p>
-                  Showing {jobs.length} of {totalPages * 10} results
+                  Showing {jobs?.length} of {totalPages * 10} results
                 </p>
                 <button>Sort by latest</button>
               </div>
               <div className="mt-5 lg:mt-10 grid grid-cols-1 gap-y-5">
                 {loading ? (
                   <p>Loading...</p>
-                ) : jobs.length > 0 ? (
-                  jobs.map((job) => <JobCard key={job.id} jobcard={job} />)
+                ) : jobs?.length > 0 ? (
+                  jobs?.map((job) => <JobCard key={job.id} jobcard={job} />)
                 ) : (
                   <p>No jobs found.</p>
                 )}
