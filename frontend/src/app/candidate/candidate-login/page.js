@@ -115,17 +115,19 @@ Object.entries(alldata).forEach(([key, value]) => {
  if (resume) {
     formData.append("resume", resume); 
   }
- const token= localStorage.getItem("port_tok")
- console.log(formData.entries())
+
+ const token= localStorage.getItem("port_tok") || alldata?.token
+ console.log(alldata?.token,'this is token')
 const response= await axios.post(`${baseurl}/updatecandidate/${token}`,formData);
 if(response.data.success){
   Swal.fire({
     title:"Submit Success",
-      text: "You clicked the button!",
-  icon: "success"
+    text: "You clicked the button!",
+    icon: "success"
   })
-  // router.push("/")
-
+  
+  
+  
 }else{
    Swal.fire({
     title:"Submit Error",
