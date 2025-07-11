@@ -7,11 +7,11 @@ export const metadata = {
     "Discover top job opportunities with our advanced job portal. Connect with leading employers, apply with ease, and take the next step in your career. Start your job search today!",
 };
 
-export default function page() {
+export  default  async function page({searchParams}) {
 
   return (
     <div>
-      <Jobs/>
+      <Jobs searchParams={searchParams}/>
     </div>
   )
 }

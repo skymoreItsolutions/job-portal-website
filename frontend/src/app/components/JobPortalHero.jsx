@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaMapMarkerAlt, FaBriefcase, FaSearch } from "react-icons/fa";
 
@@ -26,13 +27,15 @@ const categories = [
 ];
 
 const JobPortalHero = () => {
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [locationDropdown, setLocationDropdown] = useState(false);
-  const [categoryDropdown, setCategoryDropdown] = useState(false);
+
+const route =useRouter();
+const [searchinput,setSearchInput]=useState("")
 
   const handleSearch = () => {
-    console.log("Searching:", { selectedLocation, selectedCategory });
+   if(!searchinput.trim()){
+    return;
+   }
+   route.push(`/jobs?page=1&job_title=${searchinput}`)
   };
 
   return (
@@ -62,70 +65,13 @@ const JobPortalHero = () => {
 
             <div className="relative flex-1">
 
-              <input type="text" placeholder="Job Title or Company" className="pl-5 w-full py-4  focus:outline-none focus:none " />
+              <input type="text" value={searchinput} onChange={(e)=>setSearchInput(e.target.value)} placeholder="Job Title or Company" className="pl-5 w-full py-4  focus:outline-none focus:none " />
 
             </div>
 
 
-            {/* <div className="relative flex-1">
-              <button
-                className="w-full flex items-center justify-between bg-white p-4 border border-gray-300 focus:outline-none focus:none"
-                onClick={() => setLocationDropdown(!locationDropdown)}
-                aria-label="Select Location"
-              >
-                <div className="flex items-center">
-                  <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                  {selectedLocation || "Select Location"}
-                </div>
-              </button>
-              
-              {locationDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 z-10 bg-white shadow-lg z-10 max-h-60 overflow-y-auto">
-                  {locations.map((location) => (
-                    <button
-                      key={location}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:outline-none "
-                      onClick={() => {
-                        setSelectedLocation(location);
-                        setLocationDropdown(false);
-                      }}
-                    >
-                      {location}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div> */}
-
-            <div className="relative flex-1">
-              <button
-                className="w-full flex items-center justify-between bg-white p-4 rounded-r-y-lg  border border-gray-300 focus:outline-none "
-                onClick={() => setCategoryDropdown(!categoryDropdown)}
-                aria-label="Select Category"
-              >
-                <div className="flex items-center">
-                  <FaBriefcase className="text-gray-500 mr-2" />
-                  {selectedCategory || "Select Category"}
-                </div>
-              </button>
-
-              {categoryDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setCategoryDropdown(false);
-                      }}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+           
+             
 
             <button
               className="flex-none rounded-r-lg bg-blue-600 hover:bg-blue-700 text-white px-8 py-4  font-medium transition-colors duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
