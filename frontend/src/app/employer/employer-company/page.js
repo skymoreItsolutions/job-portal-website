@@ -10,6 +10,7 @@ import Sidebar from '@/app/components/Sidebar';
 
 const ManageCompanies = () => {
   const router = useRouter();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [companyFormData, setCompanyFormData] = useState({
     name: '',
     company_location: '',
@@ -120,7 +121,7 @@ const ManageCompanies = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100">
-      <Sidebar />
+      <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}  />
       <div className="flex-1 p-6 md:p-8 lg:p-12">
         <div className="max-w-4xl mx-auto">
           {/* Companies Header */}

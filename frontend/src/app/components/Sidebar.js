@@ -1,17 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiBriefcase, FiDatabase, FiFileText, FiUsers } from 'react-icons/fi';
+import { FiBriefcase, FiDatabase, FiMenu, FiX } from 'react-icons/fi';
 
-const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const router = useRouter();
   const pathname = usePathname();
 
   const menuItems = [
-
-     {
+    {
       title: 'Dashboard',
       icon: <FiBriefcase />,
       route: '/employer/dashboard',
@@ -22,41 +19,44 @@ const Sidebar = () => {
       route: '/employer/candidate-database',
     },
     {
-      title: 'Job Post ',
+      title: 'Job Post',
       icon: <FiBriefcase />,
       route: '/employer/post-job',
     },
-
     {
       title: 'Manage Company',
       icon: <FiDatabase />,
       route: '/employer/employer-company',
     },
-
     {
       title: 'My Jobs',
       icon: <FiBriefcase />,
       route: '/employer/my-jobs',
     },
-   
-    // {
-    //   title: 'Applications',
-    //   icon: <FiFileText />,
-    //   route: '/database/profiles',
-    // },
-
-    //  {
-    //   title: 'Contact',
-    //   icon: <FiDatabase />,
-    //   route: '/contact',
-    // },
-   
   ];
 
+  const toggleSidebar = () => {
+    console.log('Toggling sidebar:', !isSidebarOpen); // Debug log
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className={`bg-white shadow-lg ${isSidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 h-screen`}>
-      <div className="p-4">
-        <h2 className="text-xl font-bold text-gray-800">{isSidebarOpen ? 'Dashboard' : 'D'}</h2>
+    <div
+      className={`bg-white shadow-lg ${
+        isSidebarOpen ? 'w-64' : 'w-20'
+      } transition-all duration-300 h-screen fixed top-0 left-0 z-50`}
+    >
+      <div className="p-4 flex justify-between items-center">
+        <h2 className={`text-xl font-bold text-gray-800 ${isSidebarOpen ? 'block' : 'hidden'}`}>
+          Dashboard
+        </h2>
+        <button
+          onClick={toggleSidebar}
+          className="text-gray-600 hover:text-gray-900 focus:outline-none"
+          aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+        >
+          {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
       </div>
       <nav className="mt-4">
         {menuItems.map((item) => (

@@ -22,6 +22,8 @@ const CandidatesDashboard = () => {
     experienceType: 'any', // Fresher, Experienced, Any
   });
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,7 +53,7 @@ const CandidatesDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <Sidebar />
+            <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-auto">

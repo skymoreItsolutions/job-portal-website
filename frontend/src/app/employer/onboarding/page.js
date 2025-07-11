@@ -7,6 +7,7 @@ import { baseurl } from "@/app/components/common";
 import Swal from 'sweetalert2';
 export default function Page() {
   const router = useRouter();
+  
   const employeeOptions = [
     { label: "0-50", value: "0-50" },
     { label: "51-100", value: "51-100" },

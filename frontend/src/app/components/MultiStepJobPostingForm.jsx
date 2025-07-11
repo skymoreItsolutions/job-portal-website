@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaChevronLeft, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { baseurl } from './common';
@@ -80,10 +80,85 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: 'Scrum', label: 'Scrum' },
   ];
 
+  const courseOptions = {
+    'Graduated': [
+      { value: 'BCA', label: 'BCA' },
+      { value: 'B.Tech', label: 'B.Tech' },
+      { value: 'B.Sc', label: 'B.Sc' },
+      { value: 'BBA', label: 'BBA' },
+      { value: 'BA', label: 'BA' },
+    ],
+    'Masters': [
+      { value: 'MCA', label: 'MCA' },
+      { value: 'M.Tech', label: 'M.Tech' },
+      { value: 'M.Sc', label: 'M.Sc' },
+      { value: 'MBA', label: 'MBA' },
+      { value: 'MA', label: 'MA' },
+    ],
+  };
+
+  const specializationOptions = {
+    'BCA': [
+      { value: 'Computer Science', label: 'Computer Science' },
+      { value: 'Information Technology', label: 'Information Technology' },
+      { value: 'Data Science', label: 'Data Science' },
+    ],
+    'B.Tech': [
+      { value: 'Computer Science', label: 'Computer Science' },
+      { value: 'Mechanical Engineering', label: 'Mechanical Engineering' },
+      { value: 'Electrical Engineering', label: 'Electrical Engineering' },
+      { value: 'Civil Engineering', label: 'Civil Engineering' },
+    ],
+    'B.Sc': [
+      { value: 'Physics', label: 'Physics' },
+      { value: 'Chemistry', label: 'Chemistry' },
+      { value: 'Mathematics', label: 'Mathematics' },
+      { value: 'Biology', label: 'Biology' },
+    ],
+    'BBA': [
+      { value: 'Marketing', label: 'Marketing' },
+      { value: 'Finance', label: 'Finance' },
+      { value: 'Human Resources', label: 'Human Resources' },
+    ],
+    'BA': [
+      { value: 'English', label: 'English' },
+      { value: 'History', label: 'History' },
+      { value: 'Economics', label: 'Economics' },
+    ],
+    'MCA': [
+      { value: 'Software Development', label: 'Software Development' },
+      { value: 'Data Science', label: 'Data Science' },
+      { value: 'Cybersecurity', label: 'Cybersecurity' },
+    ],
+    'M.Tech': [
+      { value: 'Computer Science', label: 'Computer Science' },
+      { value: 'Mechanical Engineering', label: 'Mechanical Engineering' },
+      { value: 'Electrical Engineering', label: 'Electrical Engineering' },
+    ],
+    'M.Sc': [
+      { value: 'Physics', label: 'Physics' },
+      { value: 'Chemistry', label: 'Chemistry' },
+      { value: 'Mathematics', label: 'Mathematics' },
+    ],
+    'MBA': [
+      { value: 'Marketing', label: 'Marketing' },
+      { value: 'Finance', label: 'Finance' },
+      { value: 'Operations', label: 'Operations' },
+    ],
+    'MA': [
+      { value: 'English', label: 'English' },
+      { value: 'History', label: 'History' },
+      { value: 'Sociology', label: 'Sociology' },
+    ],
+  };
+
   const [allSkillsOptions, setAllSkillsOptions] = useState(skillsOptions);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     companyName: userdata?.company_name || '',
+    newCompanyName: '',
+    panCard: null,
+    gstCertificate: null,
     jobTitle: '',
     jobType: '',
     locations: [],
@@ -91,6 +166,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     minSalary: '',
     maxSalary: '',
     educationLevel: '',
+    course: '',
+    specialization: '',
+    englishLevel: '',
     experienceLevel: '',
     experienceMax: '',
     genderPreference: 'No Preference',
@@ -119,8 +197,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [locationInputs, setLocationInputs] = useState(['', '', '']);
+  const [showNewCompanyFields, setShowNewCompanyFields] = useState(false);
 
-  // Debounced Nominatim search
+
   const fetchLocationSuggestions = useCallback(
     debounce(async (query, index) => {
       if (!query || query.length < 3) {
@@ -141,7 +220,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
             limit: 5,
           },
           headers: {
-            'User-Agent': 'YourAppName/1.0 (contact@example.com)', // Replace with your app name and contact
+            'User-Agent': 'YourAppName/1.0 (contact@example.com)',
           },
         });
         setLocationSuggestions((prev) => {
@@ -192,6 +271,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
           .filter((skill) => !skillsOptions.some((opt) => opt.value === skill))
           .map((skill) => ({ value: skill, label: skill }));
         setAllSkillsOptions([...skillsOptions, ...customSkills]);
+        setShowNewCompanyFields(!!data.newCompanyName);
       } else {
         localStorage.removeItem('jobPostingFormData');
       }
@@ -199,7 +279,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (type === 'checkbox') {
       setFormData((prev) => ({
         ...prev,
@@ -211,12 +291,31 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
           ? prev[name].filter((item) => item !== value)
           : [],
       }));
+    } else if (type === 'file') {
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        ...(name === 'educationLevel' && !['Graduated', 'Masters'].includes(value)
+          ? { course: '', specialization: '' }
+          : {}),
+        ...(name === 'course' ? { specialization: '' } : {}),
+      }));
     }
     localStorage.setItem(
       'jobPostingFormData',
-      JSON.stringify({ data: { ...formData, [name]: value }, timestamp: new Date().getTime() }),
+      JSON.stringify({
+        data: {
+          ...formData,
+          [name]: type === 'file' ? files[0] : value,
+          ...(name === 'educationLevel' && !['Graduated', 'Masters'].includes(value)
+            ? { course: '', specialization: '' }
+            : {}),
+          ...(name === 'course' ? { specialization: '' } : {}),
+        },
+        timestamp: new Date().getTime(),
+      }),
     );
   };
 
@@ -296,12 +395,31 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     const newErrors = {};
     switch (step) {
       case 1:
-        if (!formData.companyName) newErrors.companyName = 'Company name is required';
+        if (!formData.companyName && !formData.newCompanyName) {
+          newErrors.companyName = 'Either select a company or enter a new company name';
+        }
+        if (showNewCompanyFields) {
+          if (!formData.newCompanyName) newErrors.newCompanyName = 'New company name is required';
+          if (!formData.panCard) newErrors.panCard = 'PAN card is required';
+          if (!formData.gstCertificate) newErrors.gstCertificate = 'GST certificate is required';
+        }
         if (!formData.jobTitle) newErrors.jobTitle = 'Job title is required';
         if (formData.locations.length === 0) newErrors.locations = 'At least one location is required';
+        if (!formData.payType) newErrors.payType = 'Pay type is required';
+        if (!formData.minSalary) {
+          newErrors.minSalary = formData.payType === 'Salary + Incentive' ? 'Salary is required' : 'Minimum salary is required';
+        }
+        if (formData.payType !== 'Fixed Salary' && !formData.maxSalary) {
+          newErrors.maxSalary = formData.payType === 'Salary + Incentive' ? 'Incentive up to is required' : 'Maximum salary is required';
+        }
         break;
       case 2:
         if (!formData.educationLevel) newErrors.educationLevel = 'Education level is required';
+        if (['Graduated', 'Masters'].includes(formData.educationLevel)) {
+          if (!formData.course) newErrors.course = 'Course is required';
+          if (!formData.specialization) newErrors.specialization = 'Specialization is required';
+        }
+        if (!formData.englishLevel) newErrors.englishLevel = 'English level is required';
         if (!formData.experienceLevel) newErrors.experienceLevel = 'Minimum experience is required';
         if (formData.experienceMax && parseInt(formData.experienceMax) < parseInt(formData.experienceLevel)) {
           newErrors.experienceMax = 'Maximum experience must be greater than or equal to minimum';
@@ -344,37 +462,78 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     if (!validateStep(currentStep)) return;
     setIsSubmitting(true);
 
-    const apiData = {
-      employer_id: isLoggedIn.id,
-      job_title: formData.jobTitle,
-      job_type: formData.jobType,
-      location: formData.locations.map((loc) => loc.address).join('; '),
-      work_location_type: formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid',
-      compensation: formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary}-${formData.maxSalary}`,
-      pay_type: formData.payType || 'Hourly',
-      joining_fee: formData.joiningFee,
-      basic_requirements: formData.keyResponsibilities || 'null',
-      additional_requirements: JSON.stringify(formData.requiredSkills),
-      is_walkin_interview: formData.interviewMode === 'Walk-in',
-      communication_preference: formData.contactPreference.includes('Phone') ? 'Call' : formData.contactPreference.includes('Email') ? 'Whatsapp' : 'No Preference',
-      total_experience_required: parseInt(formData.experienceLevel) || 0,
-      total_experience_max: parseInt(formData.experienceMax) || null,
-      other_job_titles: JSON.stringify(formData.preferredRoles),
-      degree_specialization: JSON.stringify([formData.educationLevel]),
-      job_description: formData.jobOverview,
-      job_expire_time: parseInt(formData.jobExpireTime) || 7,
-      number_of_candidates_required: parseInt(formData.numberOfCandidatesRequired),
-      latitude: formData.locations[0]?.lat || null,
-      longitude: formData.locations[0]?.lon || null,
-    };
+    const apiData = new FormData();
+    apiData.append('employer_id', isLoggedIn.id);
+    apiData.append('job_title', formData.jobTitle);
+    apiData.append('job_type', formData.jobType);
+
+    apiData.append('work_location_type', formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid');
+
+
+    apiData.append('joining_fee', formData.joiningFee);
+    apiData.append('basic_requirements', formData.keyResponsibilities || 'null');
+  
+
+
+    apiData.append('total_experience_required', parseInt(formData.experienceLevel) || 0);
+    apiData.append('total_experience_max', parseInt(formData.experienceMax) || null);
+    apiData.append('other_job_titles', JSON.stringify(formData.preferredRoles));
+
+
+    apiData.append('job_expire_time', parseInt(formData.jobExpireTime) || 7);
+    apiData.append('number_of_candidates_required', parseInt(formData.numberOfCandidatesRequired));
+    apiData.append('latitude', formData.locations[0]?.lat || null);
+    apiData.append('longitude', formData.locations[0]?.lon || null);
+
+
+
+
+    apiData.append('location', formData.locations.map(loc => loc.address).join('; '));
+
+    apiData.append('work_location_type', formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid');
+    apiData.append('compensation', formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary}-${formData.maxSalary}`);
+    apiData.append('pay_type', formData.payType === 'Salary + Incentive' ? 'Salary' : formData.payType === 'Fixed Salary' ? 'Salary' : formData.payType); // Map to backend values
+
+
+    apiData.append('additional_requirements', JSON.stringify(formData.requiredSkills));
+    apiData.append('is_walkin_interview', formData.interviewMode === 'Walk-in');
+    apiData.append('communication_preference', formData.contactPreference[0] || 'No Preference');
+
+  
+    apiData.append('degree_specialization', JSON.stringify([formData.educationLevel, formData.course, formData.specialization]));
+    apiData.append('job_description', formData.jobOverview);
+   
+
+    apiData.append('english_level', formData.englishLevel);
+    apiData.append('gender_preference', formData.genderPreference);
+    apiData.append('perks', JSON.stringify(formData.perks));
+    apiData.append('interview_location', formData.interviewLocation);
+    apiData.append('contact_email', formData.contactEmail);
+    apiData.append('contact_phone', formData.contactPhone);
+    apiData.append('interview_date', formData.interviewDate);
+    apiData.append('interview_time', formData.interviewTime);
+    apiData.append('not_email', formData.notEmail);
+    apiData.append('viewed_number', formData.viewedNumber);
+
+
+    if (showNewCompanyFields && formData.newCompanyName) {
+      apiData.append('company_name', formData.newCompanyName);
+      if (formData.panCard) apiData.append('pan_card', formData.panCard);
+      if (formData.gstCertificate) apiData.append('gst_certificate', formData.gstCertificate);
+    } else {
+      apiData.append('company_name', formData.companyName);
+    }
 
     try {
       const response = await axios.post(`${baseurl}/job-posts`, apiData, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('Job posting submitted successfully!');
       setFormData({
         companyName: '',
+        newCompanyName: '',
+        panCard: null,
+        gstCertificate: null,
         jobTitle: '',
         jobType: '',
         locations: [],
@@ -382,6 +541,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         minSalary: '',
         maxSalary: '',
         educationLevel: '',
+        course: '',
+        specialization: '',
+        englishLevel: '',
         experienceLevel: '',
         experienceMax: '',
         genderPreference: 'No Preference',
@@ -399,13 +561,14 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         interviewTime: '',
         joiningFee: false,
         jobExpireTime: 7,
-        number_of_candidates_required: 1,
+        numberOfCandidatesRequired: 1,
       });
       setAllSkillsOptions(skillsOptions);
       setLocationInputs(['', '', '']);
       setLocationSuggestions([]);
       setCurrentStep(1);
       setShowConfirmation(false);
+      setShowNewCompanyFields(false);
       localStorage.removeItem('jobPostingFormData');
       setApiError(null);
     } catch (error) {
@@ -455,34 +618,106 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
             transition={{ duration: 0.3 }}
             className="space-y-6"
           >
-            <div>
+            <div className="relative">
               <label className="block text-sm font-semibold text-gray-800">Company Name *</label>
-              <select
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${
-                  errors.companyName ? 'border-red-500' : 'border-gray-300'
-                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-              >
-                <option value="">Select a company</option>
-                {userdata?.company_name && (
-                  <option key="userdata" value={userdata.company_name}>
-                    {userdata.company_name}
-                  </option>
-                )}
-                {companies?.map((company) => (
-                  <option
-                    key={company.id}
-                    value={company.name}
-                    disabled={!company.is_approved}
-                  >
-                    {company.name} {company.is_approved ? '' : '(Not Approved)'}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center space-x-2">
+                <select
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                  disabled={showNewCompanyFields}
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.companyName ? 'border-red-500' : 'border-gray-300'
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
+                    showNewCompanyFields ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
+                >
+                  <option value="">Select a company</option>
+                  {userdata?.company_name && (
+                    <option key="userdata" value={userdata.company_name}>
+                      {userdata.company_name}
+                    </option>
+                  )}
+                  {companies?.map((company) => (
+                    <option
+                      key={company.id}
+                      value={company.name}
+                      disabled={!company.is_approved}
+                    >
+                      {company.name} {company.is_approved ? '' : '(Not Approved)'}
+                    </option>
+                  ))}
+                </select>
+                <motion.button
+                  type="button"
+                  onClick={() => setShowNewCompanyFields(!showNewCompanyFields)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="mt-2 p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                  title={showNewCompanyFields ? 'Cancel New Company' : 'Hire for Another Company'}
+                >
+                  {showNewCompanyFields ? <FaTimes /> : <FaPlus />}
+                </motion.button>
+              </div>
               {errors.companyName && <p className="mt-1 text-xs text-red-500">{errors.companyName}</p>}
             </div>
+            <AnimatePresence>
+              {showNewCompanyFields && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800">New Company Name *</label>
+                    <input
+                      type="text"
+                      name="newCompanyName"
+                      value={formData.newCompanyName}
+                      onChange={handleInputChange}
+                      className={`mt-2 w-full rounded-lg border ${
+                        errors.newCompanyName ? 'border-red-500' : 'border-gray-300'
+                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    />
+                    {errors.newCompanyName && (
+                      <p className="mt-1 text-xs text-red-500">{errors.newCompanyName}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800">PAN Card *</label>
+                    <input
+                      type="file"
+                      name="panCard"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleInputChange}
+                      className={`mt-2 w-full rounded-lg border ${
+                        errors.panCard ? 'border-red-500' : 'border-gray-300'
+                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    />
+                    {errors.panCard && (
+                      <p className="mt-1 text-xs text-red-500">{errors.panCard}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800">GST Certificate *</label>
+                    <input
+                      type="file"
+                      name="gstCertificate"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleInputChange}
+                      className={`mt-2 w-full rounded-lg border ${
+                        errors.gstCertificate ? 'border-red-500' : 'border-gray-300'
+                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    />
+                    {errors.gstCertificate && (
+                      <p className="mt-1 text-xs text-red-500">{errors.gstCertificate}</p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div>
               <label className="block text-sm font-semibold text-gray-800">Job Title *</label>
               <input
@@ -594,7 +829,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               ) : (
                 <>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800">Minimum Salary *</label>
+                    <label className="block text-sm font-semibold text-gray-800">
+                      {formData.payType === 'Salary + Incentive' ? 'Salary *' : 'Minimum Salary *'}
+                    </label>
                     <input
                       type="number"
                       name="minSalary"
@@ -606,19 +843,23 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     />
                     {errors.minSalary && <p className="mt-1 text-xs text-red-500">{errors.minSalary}</p>}
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800">Maximum Salary *</label>
-                    <input
-                      type="number"
-                      name="maxSalary"
-                      value={formData.maxSalary || ''}
-                      onChange={handleInputChange}
-                      className={`mt-2 w-full rounded-lg border ${
-                        errors.maxSalary ? 'border-red-500' : 'border-gray-300'
-                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                    />
-                    {errors.maxSalary && <p className="mt-1 text-xs text-red-500">{errors.maxSalary}</p>}
-                  </div>
+                  {formData.payType && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800">
+                        {formData.payType === 'Salary + Incentive' ? 'Incentive Up To *' : 'Maximum Salary *'}
+                      </label>
+                      <input
+                        type="number"
+                        name="maxSalary"
+                        value={formData.maxSalary || ''}
+                        onChange={handleInputChange}
+                        className={`mt-2 w-full rounded-lg border ${
+                          errors.maxSalary ? 'border-red-500' : 'border-gray-300'
+                        } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                      />
+                      {errors.maxSalary && <p className="mt-1 text-xs text-red-500">{errors.maxSalary}</p>}
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -671,6 +912,82 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.educationLevel}</p>
               )}
             </div>
+            <AnimatePresence>
+              {['Graduated', 'Masters'].includes(formData.educationLevel) && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800">Course *</label>
+                    <select
+                      name="course"
+                      value={formData.course}
+                      onChange={handleInputChange}
+                      className={`mt-2 w-full rounded-lg border ${
+                        errors.course ? 'border-red-500' : 'border-gray-300'
+                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    >
+                      <option value="">Select Course</option>
+                      {courseOptions[formData.educationLevel]?.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.course && (
+                      <p className="mt-1 text-xs text-red-500">{errors.course}</p>
+                    )}
+                  </div>
+                  {formData.course && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800">Specialization *</label>
+                      <select
+                        name="specialization"
+                        value={formData.specialization}
+                        onChange={handleInputChange}
+                        className={`mt-2 w-full rounded-lg border ${
+                          errors.specialization ? 'border-red-500' : 'border-gray-300'
+                        } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                      >
+                        <option value="">Select Specialization</option>
+                        {specializationOptions[formData.course]?.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.specialization && (
+                        <p className="mt-1 text-xs text-red-500">{errors.specialization}</p>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">English Level Required *</label>
+              <select
+                name="englishLevel"
+                value={formData.englishLevel}
+                onChange={handleInputChange}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.englishLevel ? 'border-red-500' : 'border-gray-300'
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              >
+                <option value="">Select English Level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Fluent">Fluent</option>
+              </select>
+              {errors.englishLevel && (
+                <p className="mt-1 text-xs text-red-500">{errors.englishLevel}</p>
+              )}
+            </div>
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-800">Minimum Experience (Years) *</label>
@@ -719,26 +1036,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 ))}
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-800">Preferred Roles</label>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {['Software Engineer', 'Product Manager', 'Designer', 'Marketing Specialist', 'Sales Representative'].map(
-                  (role) => (
-                    <div key={role} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="preferredRoles"
-                        value={role}
-                        checked={formData.preferredRoles.includes(role)}
-                        onChange={handleInputChange}
-                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
-                      />
-                      <label className="ml-2 text-sm text-gray-700">{role}</label>
-                    </div>
-                  ),
-                )}
-              </div>
-            </div>
+            
           </motion.div>
         );
       case 3:
@@ -901,9 +1199,10 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <input
                   type="email"
                   name="contactEmail"
-                  value={formData.contactEmail}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
+                  disabled
+                  value={userdata?.contact_email}
+
+                  className={`mt-2 w-full rounded-lg bg-slate-200 border ${
                     errors.contact ? 'border-red-500' : 'border-gray-300'
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
@@ -925,9 +1224,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <input
                   type="tel"
                   name="contactPhone"
-                  value={formData.contactPhone}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
+                  value={userdata.contact_phone}
+                
+     className={`mt-2 w-full rounded-lg bg-slate-200 border ${
                     errors.contact ? 'border-red-500' : 'border-gray-300'
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                 />
@@ -975,6 +1274,8 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     }
   };
 
+
+  console.log('userdata?.company_name',userdata)
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -1074,8 +1375,20 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <div className="space-y-6">
                   <div>
                     <dt className="font-semibold text-gray-800">Company Name</dt>
-                    <dd className="text-gray-600">{formData.companyName || 'Not specified'}</dd>
+                    <dd className="text-gray-600">{formData.newCompanyName || formData.companyName || 'Not specified'}</dd>
                   </div>
+                  {showNewCompanyFields && (
+                    <>
+                      <div>
+                        <dt className="font-semibold text-gray-800">PAN Card</dt>
+                        <dd className="text-gray-600">{formData.panCard ? formData.panCard.name : 'Not specified'}</dd>
+                      </div>
+                      <div>
+                        <dt className="font-semibold text-gray-800">GST Certificate</dt>
+                        <dd className="text-gray-600">{formData.gstCertificate ? formData.gstCertificate.name : 'Not specified'}</dd>
+                      </div>
+                    </>
+                  )}
                   <div>
                     <dt className="font-semibold text-gray-800">Job Title</dt>
                     <dd className="text-gray-600">{formData.jobTitle || 'Not specified'}</dd>
@@ -1091,12 +1404,34 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   <div>
                     <dt className="font-semibold text-gray-800">Salary</dt>
                     <dd className="text-gray-600">
-                      {formData.minSalary && (formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary} - ${formData.maxSalary}`)} {formData.payType || 'Not specified'}
+                      {formData.minSalary && (
+                        formData.payType === 'Fixed Salary' ? 
+                        formData.minSalary : 
+                        formData.payType === 'Salary + Incentive' ? 
+                        `${formData.minSalary} (Salary) + Up to ${formData.maxSalary} (Incentive)` : 
+                        `${formData.minSalary} - ${formData.maxSalary}`
+                      )} {formData.payType || 'Not specified'}
                     </dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Education Level</dt>
                     <dd className="text-gray-600">{formData.educationLevel || 'Not specified'}</dd>
+                  </div>
+                  {formData.course && (
+                    <div>
+                      <dt className="font-semibold text-gray-800">Course</dt>
+                      <dd className="text-gray-600">{formData.course || 'Not specified'}</dd>
+                    </div>
+                  )}
+                  {formData.specialization && (
+                    <div>
+                      <dt className="font-semibold text-gray-800">Specialization</dt>
+                      <dd className="text-gray-600">{formData.specialization || 'Not specified'}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt className="font-semibold text-gray-800">English Level</dt>
+                    <dd className="text-gray-600">{formData.englishLevel || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Experience</dt>

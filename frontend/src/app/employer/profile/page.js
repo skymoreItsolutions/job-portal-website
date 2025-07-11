@@ -10,6 +10,7 @@ const EditEmployerProfile = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const router = useRouter();
+      const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profileFormData, setProfileFormData] = useState({
     name: '',
     company_name: '',
@@ -138,7 +139,7 @@ const EditEmployerProfile = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100">
-      <Sidebar />
+         <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}  />
       <div className="flex-1 p-6 md:p-8 lg:p-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white shadow-2xl rounded-xl p-8 mb-8">

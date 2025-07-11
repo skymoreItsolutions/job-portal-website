@@ -9,7 +9,8 @@ import { parseISO, addDays, isAfter } from 'date-fns';
 import axios from 'axios';
 import {useRouter} from 'next/navigation';
 const MyJobs = () => {
-      const router = useRouter();
+  const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -125,8 +126,10 @@ const MyJobs = () => {
   // Render the full dashboard if verified
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 overflow-auto">
+           <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}  />
+      <div className={`flex-1 p-6 transition-all duration-300 ${
+            isSidebarOpen ? 'ml-64' : 'ml-20'
+          }`} >
       
         <div className="mb-8 px-[2%] py-5">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Job Postings</h2>
