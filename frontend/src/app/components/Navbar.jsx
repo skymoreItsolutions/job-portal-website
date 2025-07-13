@@ -26,16 +26,17 @@ export default function Navbar() {
   useEffect(() => {
     const checkLogin = async () => {
       const token = localStorage.getItem("employerToken") || localStorage.getItem("port_tok");
+      console.log(token)
       if (!token) {
         if (pathname !== "/") {
-          // router.push("/"); // Navigate only if not already on homepage
+          
         }
         return;
       }
 
       try {
         const res = await axios.get(
-          `${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/profile"}`,
+          `${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/dashboard"}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,7 +49,7 @@ export default function Navbar() {
         } else {
           setIsLoggedIn(false);
           localStorage.removeItem("employerToken");
-          localStorage.removeItem("port_tok");
+          // localStorage.removeItem("port_tok");
           if (pathname !== "/") {
             // router.push("/"); // Navigate only if not on homepage
           }
@@ -57,7 +58,7 @@ export default function Navbar() {
         console.error("Not logged in or invalid token", err);
         setIsLoggedIn(false);
         localStorage.removeItem("employerToken");
-        localStorage.removeItem("port_tok");
+        // localStorage.removeItem("port_tok");
         if (pathname !== "/") {
           // router.push("/"); // Navigate only if not on homepage
         }
@@ -203,7 +204,7 @@ export default function Navbar() {
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("employerToken");
-    localStorage.removeItem("port_tok");
+    // localStorage.removeItem("port_tok");
     setIsLoggedIn(false);
     router.push("/");
   };
