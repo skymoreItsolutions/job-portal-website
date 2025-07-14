@@ -34,7 +34,7 @@ import Link from "next/link";
 
 const Dashboard = () => {
   const router = useRouter();
-  
+
   const [userData, setUserData] = useState({
     full_name: "",
     dob: "",
@@ -58,6 +58,7 @@ const Dashboard = () => {
     password: "",
   });
   const [ViewModel, setViewModel] = useState(false);
+  const [CvBuilder, setCvBuilder] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
@@ -652,14 +653,36 @@ const Dashboard = () => {
           </div>
         )}
         {activeTab === "CV-Builder" && (
-          <div className="bg-white rounded-xl shadow-sm ">
+          <div className="bg-white rounded-xl shadow-sm  p-4">
             {userData?.resume ? (
               <>
-                <iframe
-                  src="http://127.0.0.1:8000/storage/pdf/qcUtUhAaO43fIzUhfnuWfMlhaQJUEYla5UCkLxa2.pdf"
-                  width="100%"
-                  height="600px"
-                ></iframe>
+                {!CvBuilder && (
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setViewModel(true)}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition"
+                    >
+                      Open PDF
+                    </button>
+                    <button
+                      onClick={() => setCvBuilder(true)}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition"
+                    >
+                      Build Your CV
+                    </button>
+                  </div>
+                )}
+                {CvBuilder && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setCvBuilder(false)}
+                      className=" absolute right-4 top-4 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition mb-4 float-right "
+                    >
+                      Close CV Builder
+                    </button>
+                    <CVGeneration />
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -669,8 +692,27 @@ const Dashboard = () => {
           </div>
         )}
       </main>
-
-      
+      {ViewModel && (
+        <div className="fixed inset-0 z-[99] flex items-center justify-center bg-[rgba(0,0,0,0.75)] px-4">
+          <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
+            <button
+              onClick={() => setViewModel(false)}
+              className="absolute top-[14px] right-2  text-gray-600 hover:text-red-500 text-xl font-bold z-10"
+            >
+              X
+            </button>
+            {/* PDF iframe */}
+            <div className="w-full h-[90vh]">
+              <iframe
+                src="http://127.0.0.1:8000/storage/pdf/qcUtUhAaO43fIzUhfnuWfMlhaQJUEYla5UCkLxa2.pdf"
+                width="100%"
+                height="100%"
+                className="rounded-b-lg"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
