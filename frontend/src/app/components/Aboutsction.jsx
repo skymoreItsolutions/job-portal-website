@@ -35,7 +35,7 @@ const AboutSection = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <button
-              className="flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="flex items-center justify-center px-8 py-3 bg-[#02325a] text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               aria-label="Search for jobs"
             >
               <FaBriefcase className="mr-2" />
@@ -43,7 +43,7 @@ const AboutSection = () => {
             </button>
 
             <button
-              className="flex items-center justify-center px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="flex items-center justify-center px-8 py-3 border-2 border-[#02325a] text-[#02325a] rounded-lg hover:bg-blue-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               aria-label="Learn more about our services"
             >
               Learn More

@@ -103,7 +103,7 @@ const MyJobs = () => {
             <div className="flex justify-center gap-4">
               <a
                 href="/employer/verify-status" // Replace with your verification status page URL
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
+                className="px-6 py-3 bg-[#02325a] text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300"
               >
                 Check Verification Status
               </a>
@@ -152,7 +152,7 @@ const MetricCard = ({ title, value, change, isPositive }) => {
       <h3 className="text-gray-600 text-sm mb-2">{title}</h3>
       <div className="flex items-center justify-between">
         <span className="text-2xl font-bold">{value}</span>
-        <div className={`flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+        <div className={`flex items-center ${isPositive ? 'text-[#02325a]' : 'text-red-500'}`}>
           {isPositive ? <BiTrendingUp size={24} /> : <BiTrendingDown size={24} />}
           <span className="ml-1">{Math.abs(change)}%</span>
         </div>

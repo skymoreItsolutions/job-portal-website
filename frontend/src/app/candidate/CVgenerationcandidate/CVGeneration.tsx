@@ -78,13 +78,13 @@ class CVGeneration extends React.Component {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-4 mx-auto animate-pulse">
+            <div className="w-16 h-16 bg-[#02325a] rounded-xl flex items-center justify-center mb-4 mx-auto animate-pulse">
               <FileText className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Bolt CV Builder</h1>
             <p className="text-gray-600">Loading your professional CV builder...</p>
             <div className="mt-4 w-48 h-2 bg-gray-200 rounded-full mx-auto overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-pulse"></div>
+              <div className="h-full bg-gradient-to-r from-[#02325a] to-purple-600 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ class CVGeneration extends React.Component {
             <div className="max-w-7xl mx-auto px-6 py-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl shadow-lg">
+                  <div className="bg-gradient-to-r from-[#02325a] to-purple-600 p-3 rounded-xl shadow-lg">
                     <FileText className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -108,11 +108,11 @@ class CVGeneration extends React.Component {
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-blue-600">
+                  <div className="flex items-center gap-2 text-[#02325a]">
                     <Sparkles className="w-5 h-5" />
                     <span className="font-medium">AI-Powered</span>
                   </div>
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-[#00223f]">
                     <Zap className="w-5 h-5" />
                     <span className="font-medium">Fast & Easy</span>
                   </div>
@@ -126,7 +126,7 @@ class CVGeneration extends React.Component {
           </div> */}
 
           
-          {/* <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
+          {/* <div className="bg-gradient-to-r from-[#02325a] to-purple-600 text-white py-8">
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
                 <div className="flex flex-col items-center">

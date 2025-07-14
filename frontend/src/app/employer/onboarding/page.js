@@ -314,8 +314,8 @@ const handleSubmit = async (e) => {
         />
         <label className="text-gray-600 text-sm">
           I agree to Hire Bot{" "}
-          <span className="text-blue-600 underline">Terms of Service</span> and{" "}
-          <span className="text-blue-600 underline">Privacy Policy</span>
+          <span className="text-[#02325a] underline">Terms of Service</span> and{" "}
+          <span className="text-[#02325a] underline">Privacy Policy</span>
         </label>
       </div>
 

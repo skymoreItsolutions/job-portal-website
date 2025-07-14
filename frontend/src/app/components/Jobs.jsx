@@ -321,7 +321,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                           checked={filters.categories.includes(elm.label)}
                           onChange={() => handleCheckboxChange("categories", elm.label)}
                         />
@@ -350,7 +350,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                           checked={filters.job_type.includes(elm.value.toLowerCase())}
                           onChange={() => handleCheckboxChange("job_type", elm.value.toLowerCase())}
                         />
@@ -371,7 +371,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                           checked={filters.total_experience_required.includes(elm.value)}
                           onChange={() => handleCheckboxChange("total_experience_required", elm.value)}
                         />
@@ -392,7 +392,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                           checked={filters.work_location_type.includes(elm.value)}
                           onChange={() => handleCheckboxChange("work_location_type", elm.value)}
                         />
@@ -413,7 +413,7 @@ export default function Jobs() {
                       <div className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="radio"
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                           checked={filters.date_posted === elm.value}
                           onChange={() => handleFilterChange("date_posted", elm.value)}
                         />
@@ -434,7 +434,7 @@ export default function Jobs() {
                       type="range"
                       min="0"
                       max="9999"
-                      className="w-full h-2 bg-green-300 rounded-lg appearance-none cursor-pointer accent-green-500"
+                      className="w-full h-2 bg-green-300 rounded-lg appearance-none cursor-pointer accent-[#02325a]"
                       value={filters.salary_range[1]}
                       onChange={handleSalaryChange}
                     />

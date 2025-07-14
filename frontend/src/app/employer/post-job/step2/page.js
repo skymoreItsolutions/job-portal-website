@@ -41,7 +41,7 @@ export default function Page() {
             <span>Post a Job</span>
           </div>
           <div className="flex items-center gap-5 text-sm md:text-base font-medium text-gray-700">
-            <button className="flex items-center gap-2 hover:text-blue-600 transition">
+            <button className="flex items-center gap-2 hover:text-[#02325a] transition">
               <HiQuestionMarkCircle className="text-lg" />
               Support
             </button>

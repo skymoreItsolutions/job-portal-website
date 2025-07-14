@@ -2,7 +2,9 @@
 
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuBriefcaseBusiness, FaMapMarkerAlt, FaSearch } from "react-icons/fa";
+import { LuBriefcaseBusiness } from "react-icons/lu";
+
+import {  FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { motion } from 'framer-motion';
 import Autosuggest from 'react-autosuggest';
 import { TypeAnimation } from 'react-type-animation';
@@ -84,7 +86,7 @@ const Herosection = () => {
   };
 
   return (
-    <div className='w-full min-h-[70vh] flex items-center justify-center bg-[#fff9f3] add-img-bg py-12 px-4 sm:px-6 lg:px-10'>
+    <div className='w-full min-h-[70vh] flex items-center justify-center bg-[#3093aa1c] add-img-bg py-12 px-4 sm:px-6 lg:px-10'>
       <motion.div 
         className='content relative z-30 flex flex-col justify-center items-center w-full max-w-5xl'
         initial={{ opacity: 0, y: 50 }}
@@ -114,7 +116,7 @@ const Herosection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <div className='relative w-full sm:w-[40%]'>
+          <div className='relative w-full sm:w-[80%]'>
             <Autosuggest
               suggestions={suggestions}
               onSuggestionsFetchRequested={fetchJobSuggestions}
@@ -154,7 +156,7 @@ const Herosection = () => {
               </div>
             )}
           </div>
-          <div className='relative w-full sm:w-[40%]'>
+          {/* <div className='relative w-full sm:w-[40%]'>
             <Autosuggest
               suggestions={locationSuggestions}
               onSuggestionsFetchRequested={fetchLocationSuggestions}
@@ -173,7 +175,7 @@ const Herosection = () => {
             <span className='absolute top-1/2 left-3 transform -translate-y-1/2'>
               <FaMapMarkerAlt className='text-xl text-slate-500' />
             </span>
-          </div>
+          </div> */}
           <div className='w-full sm:w-[20%]'>
             <motion.button 
               className='w-full px-4 py-3 text-lg md:text-xl text-white font-semibold bg-[#02325a] hover:bg-[#54428b] rounded-md transition-all duration-300 flex items-center justify-center'
@@ -181,7 +183,7 @@ const Herosection = () => {
               whileTap={{ scale: 0.95 }}
               onClick={handleSearch}
             >
-              <FaSearch className='mr-2' />
+            
               Find Now
             </motion.button>
           </div>

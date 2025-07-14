@@ -106,7 +106,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                   {data.personalInfo.website && (
                     <div className="flex items-center gap-1">
                       <Globe className="w-4 h-4" />
-                      <a href={data.personalInfo.website} className="text-blue-600 hover:underline">
+                      <a href={data.personalInfo.website} className="text-[#02325a] hover:underline">
                         Website
                       </a>
                     </div>
@@ -114,7 +114,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                   {data.personalInfo.linkedin && (
                     <div className="flex items-center gap-1">
                       <Linkedin className="w-4 h-4" />
-                      <a href={data.personalInfo.linkedin} className="text-blue-600 hover:underline">
+                      <a href={data.personalInfo.linkedin} className="text-[#02325a] hover:underline">
                         LinkedIn
                       </a>
                     </div>
@@ -146,7 +146,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                 {data.personalInfo.website && (
                   <div className="flex items-center gap-1 justify-end">
                     <Globe className="w-4 h-4" />
-                    <a href={data.personalInfo.website} className="text-blue-600 hover:underline">
+                    <a href={data.personalInfo.website} className="text-[#02325a] hover:underline">
                       Website
                     </a>
                   </div>
@@ -154,7 +154,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                 {data.personalInfo.linkedin && (
                   <div className="flex items-center gap-1 justify-end">
                     <Linkedin className="w-4 h-4" />
-                    <a href={data.personalInfo.linkedin} className="text-blue-600 hover:underline">
+                    <a href={data.personalInfo.linkedin} className="text-[#02325a] hover:underline">
                       LinkedIn
                     </a>
                   </div>
@@ -260,7 +260,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                               {project.name}
                               {project.url && (
-                                <a href={project.url} target="_blank" rel="noopener noreferrer" className="text-blue-600">
+                                <a href={project.url} target="_blank" rel="noopener noreferrer" className="text-[#02325a]">
                                   <ExternalLink className="w-4 h-4" />
                                 </a>
                               )}

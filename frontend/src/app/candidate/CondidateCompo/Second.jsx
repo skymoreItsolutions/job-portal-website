@@ -19,7 +19,7 @@ const Second=({alldata,handelinputs})=> {
   {/* Header with Icon */}
   <div className="flex items-center mb-6">
     <div className="bg-blue-100 p-3 rounded-lg mr-4">
-      <FiBook className="text-blue-600 text-xl" />
+      <FiBook className="text-[#02325a] text-xl" />
     </div>
     <div>
       <h2 className="text-2xl font-bold text-gray-800">Education Details</h2>

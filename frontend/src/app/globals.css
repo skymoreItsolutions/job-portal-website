@@ -25,6 +25,56 @@
 }
 
 
+.add-img-bg{
+  position: relative;
+}
+
+.add-img-bg::after{
+  content: '';
+     height: 351px;
+    width: 400px;
+    position: absolute;
+    bottom: 40px;
+    left: 69px;
+
+  background: url('../../public/img/designer.svg') no-repeat 0px 0px;
+background-size:contain;
+}
+
+
+.add-img-bg::before{
+  content: '';
+    height: 351px;
+    width: 400px;
+    position: absolute;
+    bottom: 40px;
+    right: 76px;
+
+  background: url('../../public/img/working.svg') no-repeat 0px 0px;
+background-size:contain;
+}
+
+.dot-img-add{
+  position: relative;
+}
+
+.dot-img-add::after{
+    content: '';
+
+       height: 100%;
+    width: 31%;
+    position: absolute;
+    top: -34px;
+    right: -71px;
+
+
+  background: url('../../public/img/bg-dot.svg') no-repeat 0px 0px;
+background-size:contain;
+}
+
+
+
+
 .swal2-popup {
   font-family: 'Inter', sans-serif; /* Match your app's font */
   border-radius: 12px;
@@ -50,3 +100,28 @@ h1,h2,h3,h4,h5,h6{
 
 }
 
+
+
+
+@media (max-width:456px) {
+  .add-img-bg::after{
+   display: none;
+}
+
+
+.add-img-bg::before{
+ /* display: none; */
+
+    height: 351px;
+    width: 300px;
+    bottom: 40px;
+    right: 76px;
+    opacity: 0.5;
+
+}
+
+.dot-img-add::after{
+  display: none;
+}
+
+}

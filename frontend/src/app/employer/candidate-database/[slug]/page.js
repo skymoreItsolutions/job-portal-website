@@ -20,7 +20,7 @@ import { baseurl } from '@/app/components/common';
 
 const ProfileDetails = ({ icon, label, value }) => (
   <div className="flex items-center gap-3">
-    <div className="text-blue-600">{icon}</div>
+    <div className="text-[#02325a]">{icon}</div>
     <div>
       <p className="text-sm font-medium text-gray-600">{label}</p>
       <p className="text-gray-800">{value || 'N/A'}</p>
@@ -128,7 +128,7 @@ const CandidateCard = ({ candidate }) => {
         <div className="flex gap-4">
           <button
             onClick={() => setShowPhone(!showPhone)}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-[#02325a] text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
           >
             <FaPhone />
             {showPhone ? candidate.number || 'N/A' : 'View Phone Number'}
@@ -390,7 +390,7 @@ const CandidateList = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  className="w-full bg-[#02325a] text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
                   Search
                 </button>
@@ -407,7 +407,7 @@ const CandidateList = () => {
                 </h2>
                 <button
                   onClick={exportToExcel}
-                  className="py-2 px-4 bg-green-600 text-white rounded-lg text-sm sm:text-base hover:bg-green-700 transition-colors"
+                  className="py-2 px-4 bg-[#00223f] text-white rounded-lg text-sm sm:text-base hover:bg-green-700 transition-colors"
                 >
                   Export as Excel
                 </button>
@@ -422,7 +422,7 @@ const CandidateList = () => {
                     className={`py-2 px-4 rounded-lg text-sm sm:text-base ${
                       !pagination.prev_page_url
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-[#02325a] text-white hover:bg-blue-700'
                     }`}
                   >
                     Previous
@@ -448,7 +448,7 @@ const CandidateList = () => {
                     className={`py-2 px-4 rounded-lg text-sm sm:text-base ${
                       !pagination.next_page_url
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-[#02325a] text-white hover:bg-blue-700'
                     }`}
                   >
                     Next

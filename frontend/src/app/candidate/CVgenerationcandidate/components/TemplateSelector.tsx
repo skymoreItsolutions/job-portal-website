@@ -194,7 +194,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               </span>
             )}
             {template.features.includes("ATS-Friendly") && (
-              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+              <span className="bg-[#02325a] text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                 ATS-Friendly
               </span>
             )}
@@ -491,7 +491,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     type="checkbox"
                     checked={showPremiumOnly}
                     onChange={(e) => setShowPremiumOnly(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
                     <Crown className="w-4 h-4 text-yellow-500" />
@@ -504,7 +504,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     type="checkbox"
                     checked={showFeatured}
                     onChange={(e) => setShowFeatured(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500" />
@@ -524,7 +524,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     onClick={() => setViewMode("grid")}
                     className={`p-2 rounded-lg ${
                       viewMode === "grid"
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#02325a] text-white"
                         : "bg-white text-gray-600"
                     }`}
                   >
@@ -534,7 +534,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     onClick={() => setViewMode("list")}
                     className={`p-2 rounded-lg ${
                       viewMode === "list"
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#02325a] text-white"
                         : "bg-white text-gray-600"
                     }`}
                   >
@@ -567,7 +567,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                 setShowPremiumOnly(false);
                 setShowFeatured(false);
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-[#02325a] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Clear All Filters
             </button>
@@ -595,7 +595,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           <div className="fixed bottom-6 right-6 z-50">
             <button
               onClick={onNext}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-3"
+              className="bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-3"
             >
               <Zap className="w-5 h-5" />
               Start Building Your CV
@@ -609,13 +609,13 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-3xl font-bold text-[#02325a]">
                 {templates.length}
               </div>
               <div className="text-gray-600">Total Templates</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-green-600">
+              <div className="text-3xl font-bold text-[#00223f]">
                 {getFreeTemplates().length}
               </div>
               <div className="text-gray-600">Free Templates</div>

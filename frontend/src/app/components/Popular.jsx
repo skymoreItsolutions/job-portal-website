@@ -8,11 +8,11 @@ const Popular = () => {
                 <div className="w-full lg:w-1/2">
                     <h3
                         className="font-manrope text-5xl text-gray-900 leading-[4rem] mb-7 text-center lg:text-left">
-                        Popular Searches on Hirebot</h3>
+                        Popular Searches on HireBoat</h3>
                     <p className="text-lg text-gray-500 mb-16 text-center lg:text-left">
                         Explore the most requestd job type and find the best one for you.
                     </p>
-                    {/* <button className="cursor-pointer py-3 px-8 w-60 bg-indigo-600 text-white text-base font-semibold transition-all duration-500 block text-center rounded-full hover:bg-indigo-700 mx-auto lg:mx-0">Join
+                    {/* <button className="cursor-pointer py-3 px-8 w-60 bg-[#02325a] text-white text-base font-semibold transition-all duration-500 block text-center rounded-full hover:bg-indigo-700 mx-auto lg:mx-0">Join
                         our team</button> */}
                 </div>
                 <div className="w-full lg:w-1/2 lg:mt-0 md:mt-40 mt-16 max-lg:max-w-2xl">

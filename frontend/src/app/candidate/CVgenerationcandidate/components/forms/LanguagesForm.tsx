@@ -81,7 +81,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
       {/* Add New Language */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Globe className="w-5 h-5 text-blue-600" />
+          <Globe className="w-5 h-5 text-[#02325a]" />
           Add New Language
         </h3>
         
@@ -141,7 +141,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
         <button
           onClick={addLanguage}
           disabled={!newLanguage.name.trim()}
-          className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full bg-[#02325a] text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           <Plus className="w-4 h-4" />
           Add Language
@@ -162,7 +162,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Languages className="w-4 h-4 text-blue-600" />
+                      <Languages className="w-4 h-4 text-[#02325a]" />
                     </div>
                     <div>
                       <input

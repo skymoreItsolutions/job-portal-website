@@ -153,7 +153,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
       case 'saving':
         return <Clock className="w-4 h-4 animate-spin" />;
       case 'saved':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-[#02325a]" />;
       default:
         return <Save className="w-4 h-4 text-gray-400" />;
     }
@@ -182,7 +182,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
                   <span>{completionPercentage}% Complete</span>
                   <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+                      className="h-full bg-gradient-to-r from-blue-500 to-[#02325a] transition-all duration-300"
                       style={{ width: `${completionPercentage}%` }}
                     />
                   </div>
@@ -227,7 +227,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
 
               <button
                 onClick={() => setShowExportModal(true)}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg"
+                className="flex items-center gap-2 bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg"
               >
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Export</span>
@@ -260,8 +260,8 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
                       onClick={() => handleStepClick(index)}
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                        isCurrent ? 'bg-blue-600 text-white shadow-lg' : 
-                        isCompleted ? 'bg-green-500 text-white' : 
+                        isCurrent ? 'bg-[#02325a] text-white shadow-lg' : 
+                        isCompleted ? 'bg-[#02325a] text-white' : 
                         'bg-gray-100 text-gray-400'
                       }`}>
                         {isCompleted && !isCurrent ? (
@@ -272,8 +272,8 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
                       </div>
                       <div className="hidden md:block">
                         <span className={`font-medium text-sm ${
-                          isCurrent ? 'text-blue-600' : 
-                          isCompleted ? 'text-green-600' : 'text-gray-400'
+                          isCurrent ? 'text-[#02325a]' : 
+                          isCompleted ? 'text-[#00223f]' : 'text-gray-400'
                         }`}>
                           {step.label}
                         </span>
@@ -289,7 +289,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
               <div className="relative">
                 <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-200">
                   <div 
-                    className="h-full bg-gradient-to-r from-blue-600 to-green-500 transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-[#02325a] to-[#02325a] transition-all duration-500 ease-out"
                     style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
                   />
                 </div>
@@ -337,7 +337,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
                   {currentStep === steps.length - 1 ? (
                     <button
                       onClick={() => setShowExportModal(true)}
-                      className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+                      className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-gradient-to-r from-[#00223f] to-[#02325a] text-white hover:from-green-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
                     >
                       <Zap className="w-4 h-4" />
                       Finish & Export
@@ -345,7 +345,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
                   ) : (
                     <button
                       onClick={handleNext}
-                      className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
+                      className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-[#02325a] text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
                     >
                       Next
                       <ArrowRight className="w-4 h-4" />

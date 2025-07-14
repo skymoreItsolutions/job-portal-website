@@ -27,7 +27,7 @@ export default function Page() {
             <span>Post a Job</span>
           </div>
           <div className="flex items-center gap-5 text-sm md:text-base font-medium text-gray-700">
-            <button className="flex items-center gap-2 hover:text-blue-600 transition">
+            <button className="flex items-center gap-2 hover:text-[#02325a] transition">
               <HiQuestionMarkCircle className="text-lg" />
               Support
             </button>
@@ -92,7 +92,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="yes"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="yes" className="text-sm">
                   Yes
@@ -103,7 +103,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="no"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
                   No
@@ -132,7 +132,7 @@ export default function Page() {
     <path d="M0 0h24v24H0z" fill="none" />
   </svg>
   <p className="text-sm text-gray-800">
-    Leads information will be accessible on Hirebot portal and can be{' '}
+    Leads information will be accessible on HireBoat portal and can be{' '}
     <strong className="font-semibold text-black">downloaded in excel</strong>{' '}
     format.
   </p>
@@ -147,7 +147,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="yes"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="yes" className="text-sm">
                 Yes, to myself
@@ -158,7 +158,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="no"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
                 Yes, to other recruiter
@@ -168,7 +168,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="no"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
                 No, I will contact candidates first
@@ -198,7 +198,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="yes"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="yes" className="text-sm">
                 Yes, to myself
@@ -209,7 +209,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="no"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
                 Yes, to other recruiter
@@ -219,7 +219,7 @@ export default function Page() {
                 <input
                   type="checkbox"
                   id="no"
-                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-green-600 checked:border-transparent"
+                  className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
                 No, I will contact candidates first

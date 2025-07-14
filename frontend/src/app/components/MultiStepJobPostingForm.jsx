@@ -154,6 +154,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
 
   const [allSkillsOptions, setAllSkillsOptions] = useState(skillsOptions);
   const [currentStep, setCurrentStep] = useState(1);
+  console.log('userdata?.contact_email', userdata?.contact_email);
   const [formData, setFormData] = useState({
     companyName: userdata?.company_name || '',
     newCompanyName: '',
@@ -180,8 +181,8 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     interviewMode: 'Online',
     contactPreference: [],
     interviewLocation: '',
-    contactEmail: '',
-    contactPhone: '',
+    contactEmail: userdata?.contact_email || '',
+    contactPhone: userdata?.contact_phone || '',
     interviewDate: '',
     interviewTime: '',
     notEmail: false,
@@ -199,7 +200,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   const [locationInputs, setLocationInputs] = useState(['', '', '']);
   const [showNewCompanyFields, setShowNewCompanyFields] = useState(false);
 
-
   const fetchLocationSuggestions = useCallback(
     debounce(async (query, index) => {
       if (!query || query.length < 3) {
@@ -216,7 +216,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
           params: {
             format: 'json',
             q: query,
-            addressdetails: 1,
             limit: 5,
           },
           headers: {
@@ -280,7 +279,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    if (type === 'checkbox') {
+    if (type === 'checkbox' && name !== 'contactPreference') {
       setFormData((prev) => ({
         ...prev,
         [name]: checked
@@ -430,8 +429,14 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         if (formData.requiredSkills.length === 0) newErrors.requiredSkills = 'At least one skill is required';
         break;
       case 4:
-        if (!formData.contactEmail && !formData.contactPhone) {
-          newErrors.contact = 'Either email or phone is required';
+        if (
+          formData.contactPreference.includes('Email') && !formData.contactEmail ||
+          formData.contactPreference.includes('Phone') && !formData.contactPhone
+        ) {
+          newErrors.contact = 'Selected contact preference requires a valid email or phone';
+        }
+        if (formData.interviewMode !== 'Online' && !formData.interviewLocation) {
+          newErrors.interviewLocation = 'Interview location is required for Walk-in or Hybrid mode';
         }
         break;
       default:
@@ -459,51 +464,51 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('employerToken');
+    if (!token) return;
+
     if (!validateStep(currentStep)) return;
     setIsSubmitting(true);
 
+    console.log('formData.contactPreference', formData.contactPreference);
     const apiData = new FormData();
     apiData.append('employer_id', isLoggedIn.id);
+
+    // Determine company_id based on selected company or new company
+    if (showNewCompanyFields && formData.newCompanyName) {
+      // For new company, backend will create a new company and assign an ID
+      apiData.append('company_name', formData.newCompanyName);
+      if (formData.panCard) apiData.append('pan_card', formData.panCard);
+      if (formData.gstCertificate) apiData.append('gst_certificate', formData.gstCertificate);
+    } else {
+      // For existing company, find the company_id from companies array
+      const selectedCompany = companies?.find(
+        (company) => company.name === formData.companyName
+      );
+      apiData.append('company_id', selectedCompany ? selectedCompany.id : '');
+      apiData.append('company_name', formData.companyName);
+    }
+
     apiData.append('job_title', formData.jobTitle);
     apiData.append('job_type', formData.jobType);
-
     apiData.append('work_location_type', formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid');
-
-
-    apiData.append('joining_fee', formData.joiningFee);
+    apiData.append('joining_fee', formData.joiningFee ? '1' : '0');
     apiData.append('basic_requirements', formData.keyResponsibilities || 'null');
-  
-
-
     apiData.append('total_experience_required', parseInt(formData.experienceLevel) || 0);
     apiData.append('total_experience_max', parseInt(formData.experienceMax) || null);
     apiData.append('other_job_titles', JSON.stringify(formData.preferredRoles));
-
-
     apiData.append('job_expire_time', parseInt(formData.jobExpireTime) || 7);
     apiData.append('number_of_candidates_required', parseInt(formData.numberOfCandidatesRequired));
     apiData.append('latitude', formData.locations[0]?.lat || null);
     apiData.append('longitude', formData.locations[0]?.lon || null);
-
-
-
-
     apiData.append('location', formData.locations.map(loc => loc.address).join('; '));
-
-    apiData.append('work_location_type', formData.interviewMode === 'Online' ? 'Work from Home' : formData.interviewMode === 'Walk-in' ? 'Work from Office' : 'Hybrid');
     apiData.append('compensation', formData.payType === 'Fixed Salary' ? formData.minSalary : `${formData.minSalary}-${formData.maxSalary}`);
-    apiData.append('pay_type', formData.payType === 'Salary + Incentive' ? 'Salary' : formData.payType === 'Fixed Salary' ? 'Salary' : formData.payType); // Map to backend values
-
-
+    apiData.append('pay_type', formData.payType === 'Salary + Incentive' ? 'Salary' : formData.payType === 'Fixed Salary' ? 'Salary' : formData.payType);
     apiData.append('additional_requirements', JSON.stringify(formData.requiredSkills));
-    apiData.append('is_walkin_interview', formData.interviewMode === 'Walk-in');
-    apiData.append('communication_preference', formData.contactPreference[0] || 'No Preference');
-
-  
+    apiData.append('is_walkin_interview', formData.interviewMode === 'Walk-in' ? '1' : '0');
+    apiData.append('communication_preference', 'call');
     apiData.append('degree_specialization', JSON.stringify([formData.educationLevel, formData.course, formData.specialization]));
     apiData.append('job_description', formData.jobOverview);
-   
-
     apiData.append('english_level', formData.englishLevel);
     apiData.append('gender_preference', formData.genderPreference);
     apiData.append('perks', JSON.stringify(formData.perks));
@@ -512,21 +517,12 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     apiData.append('contact_phone', formData.contactPhone);
     apiData.append('interview_date', formData.interviewDate);
     apiData.append('interview_time', formData.interviewTime);
-    apiData.append('not_email', formData.notEmail);
-    apiData.append('viewed_number', formData.viewedNumber);
-
-
-    if (showNewCompanyFields && formData.newCompanyName) {
-      apiData.append('company_name', formData.newCompanyName);
-      if (formData.panCard) apiData.append('pan_card', formData.panCard);
-      if (formData.gstCertificate) apiData.append('gst_certificate', formData.gstCertificate);
-    } else {
-      apiData.append('company_name', formData.companyName);
-    }
+    apiData.append('not_email', formData.notEmail ? '1' : '0');
+    apiData.append('viewed_number', formData.viewedNumber ? '1' : '0');
 
     try {
       const response = await axios.post(`${baseurl}/job-posts`, apiData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
       });
       alert('Job posting submitted successfully!');
       setFormData({
@@ -653,7 +649,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   onClick={() => setShowNewCompanyFields(!showNewCompanyFields)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="mt-2 p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                  className="mt-2 p-3 bg-[#02325a] text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
                   title={showNewCompanyFields ? 'Cancel New Company' : 'Hire for Another Company'}
                 >
                   {showNewCompanyFields ? <FaTimes /> : <FaPlus />}
@@ -1029,14 +1025,13 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                       value={option}
                       checked={formData.genderPreference === option}
                       onChange={handleInputChange}
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                      className="h-5 w-5 text-[#02325a] focus:ring-blue-500 transition-all duration-300"
                     />
                     <label className="ml-2 text-sm text-gray-700">{option}</label>
                   </div>
                 ))}
               </div>
             </div>
-            
           </motion.div>
         );
       case 3:
@@ -1123,7 +1118,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                       value={perk}
                       checked={formData.perks.includes(perk)}
                       onChange={handleInputChange}
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                      className="h-5 w-5 text-[#02325a] focus:ring-blue-500 transition-all duration-300"
                     />
                     <label className="ml-2 text-sm text-gray-700">{perk}</label>
                   </div>
@@ -1152,7 +1147,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                       value={mode}
                       checked={formData.interviewMode === mode}
                       onChange={handleInputChange}
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                      className="h-5 w-5 text-[#02325a] focus:ring-blue-500 transition-all duration-300"
                     />
                     <label className="ml-2 text-sm text-gray-700">{mode}</label>
                   </div>
@@ -1162,21 +1157,21 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
             <div>
               <label className="block text-sm font-semibold text-gray-800">Contact Preference *</label>
               <div className="mt-3 grid grid-cols-3 gap-4">
-                {['Email', 'Phone', 'LinkedIn'].map((preference) => (
+                {['Email', 'Phone', 'LinkedIn', 'No Preference'].map((preference) => (
                   <div key={preference} className="flex items-center">
                     <input
-                      type="checkbox"
+                      type="radio"
                       name="contactPreference"
                       value={preference}
-                      checked={formData.contactPreference.includes(preference)}
-                      onChange={handleInputChange}
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 transition-all duration-300"
+                      checked={formData.contactPreference === preference}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, contactPreference: e.target.value }))}
+                      className="h-5 w-5 text-[#02325a] focus:ring-blue-500 transition-all duration-300"
                     />
                     <label className="ml-2 text-sm text-gray-700">{preference}</label>
                   </div>
                 ))}
               </div>
-              {errors.contactPreference && <p className="mt-1 text-xs text-red-500">{errors.contactPreference}</p>}
+              {errors.contact && <p className="mt-1 text-xs text-red-500">{errors.contact}</p>}
             </div>
             {formData.interviewMode !== 'Online' && (
               <div>
@@ -1199,12 +1194,12 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <input
                   type="email"
                   name="contactEmail"
-                  disabled
-                  value={userdata?.contact_email}
-
-                  className={`mt-2 w-full rounded-lg bg-slate-200 border ${
+                  value={formData.contactEmail}
+                  onChange={handleInputChange}
+                  className={`mt-2 w-full rounded-lg border ${
                     errors.contact ? 'border-red-500' : 'border-gray-300'
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                  placeholder="Enter contact email"
                 />
                 <div className="mt-2">
                   <label className="flex items-center text-sm text-gray-800">
@@ -1224,11 +1219,12 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <input
                   type="tel"
                   name="contactPhone"
-                  value={userdata.contact_phone}
-                
-     className={`mt-2 w-full rounded-lg bg-slate-200 border ${
+                  value={formData.contactPhone}
+                  onChange={handleInputChange}
+                  className={`mt-2 w-full rounded-lg border ${
                     errors.contact ? 'border-red-500' : 'border-gray-300'
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                  placeholder="Enter contact phone"
                 />
                 <div className="mt-2">
                   <label className="flex items-center text-sm text-gray-800">
@@ -1274,8 +1270,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     }
   };
 
-
-  console.log('userdata?.company_name',userdata)
+  console.log('userdata?.company_name', userdata);
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -1307,7 +1302,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     <div key={index} className="text-center">
                       <div
                         className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-sm font-semibold ${
-                          currentStep >= index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
+                          currentStep >= index + 1 ? 'bg-[#02325a] text-white' : 'bg-gray-200 text-gray-500'
                         } transition-all duration-300`}
                       >
                         {index + 1}
@@ -1346,7 +1341,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 className={`flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
                   isSubmitting
                     ? 'bg-gray-400 text-white cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
+                    : 'bg-gradient-to-r from-[#02325a] to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
                 }`}
               >
                 {isSubmitting ? 'Submitting...' : currentStep === 4 ? 'Review' : 'Next'}
@@ -1481,7 +1476,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Contact Preference</dt>
-                    <dd className="text-gray-600">{formData.contactPreference.join(', ') || 'Not specified'}</dd>
+                    <dd className="text-gray-600">{formData.contactPreference || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="font-semibold text-gray-800">Interview Date & Time</dt>
@@ -1524,7 +1519,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     className={`flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
                       isSubmitting
                         ? 'bg-gray-400 text-white cursor-not-allowed'
-                        : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700'
+                        : 'bg-gradient-to-r from-[#00223f] to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700'
                     }`}
                   >
                     <FaCheck className="mr-2" />

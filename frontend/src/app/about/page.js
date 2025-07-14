@@ -6,10 +6,10 @@ import { motion } from "framer-motion";
 
 export default function page() {
   const features = [
-    { icon: <FaRobot className="text-4xl text-blue-600" />, title: "AI-Driven Matching", description: "Smart algorithms to match your skills with the perfect job" },
-    { icon: <FaUsers className="text-4xl text-blue-600" />, title: "Verified Employers", description: "Network of pre-screened and verified hiring companies" },
-    { icon: <FaBell className="text-4xl text-blue-600" />, title: "Real-time Alerts", description: "Instant notifications for relevant job opportunities" },
-    { icon: <FaCheckCircle className="text-4xl text-blue-600" />, title: "Easy Applications", description: "Streamlined process to apply with just a few clicks" }
+    { icon: <FaRobot className="text-4xl text-[#02325a]" />, title: "AI-Driven Matching", description: "Smart algorithms to match your skills with the perfect job" },
+    { icon: <FaUsers className="text-4xl text-[#02325a]" />, title: "Verified Employers", description: "Network of pre-screened and verified hiring companies" },
+    { icon: <FaBell className="text-4xl text-[#02325a]" />, title: "Real-time Alerts", description: "Instant notifications for relevant job opportunities" },
+    { icon: <FaCheckCircle className="text-4xl text-[#02325a]" />, title: "Easy Applications", description: "Streamlined process to apply with just a few clicks" }
   ];
 
   const workflowSteps = [
@@ -72,7 +72,7 @@ export default function page() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300"
+            className="bg-[#02325a] text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
             Start Your Journey
           </motion.button>
@@ -147,7 +147,7 @@ export default function page() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#02325a] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
                   {step.number}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
@@ -176,7 +176,7 @@ export default function page() {
                   alt={testimonial.name}
                   className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
                 />
-                <FaQuoteRight className="text-blue-600 text-2xl mb-4 mx-auto" />
+                <FaQuoteRight className="text-[#02325a] text-2xl mb-4 mx-auto" />
                 <p className="text-gray-600 mb-4">{testimonial.quote}</p>
                 <h4 className="font-semibold">{testimonial.name}</h4>
                 <p className="text-sm text-gray-500">{testimonial.position}</p>

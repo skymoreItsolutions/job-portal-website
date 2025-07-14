@@ -219,7 +219,7 @@ const addskilles = (skill) => {
     {/* Right Section - Form */}
     <div className="w-full lg:w-1/2 bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
       {/* Form Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+      <div className="bg-gradient-to-r from-[#02325a] to-indigo-600 p-6 text-white">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Application Form</h1>
           <div className="flex space-x-2">
@@ -273,7 +273,7 @@ const addskilles = (skill) => {
         {nextlen < 5 ? (
           <button
             onClick={() => setnextlen(nextlen + 1)}
-            className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center px-6 py-3 bg-[#02325a] text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Next
             <FiChevronRight className="w-5 h-5 ml-2" />
@@ -281,7 +281,7 @@ const addskilles = (skill) => {
         ) : (
           <button
             onClick={handelSubmit}
-            className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 animate-pulse transition-all"
+            className="flex items-center px-6 py-3 bg-[#00223f] text-white rounded-lg font-medium hover:bg-green-700 animate-pulse transition-all"
           >
             Submit Application
             <FiCheck className="w-5 h-5 ml-2" />

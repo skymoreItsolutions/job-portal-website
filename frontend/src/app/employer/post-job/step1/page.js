@@ -198,7 +198,7 @@ export default function Page() {
             <span>Post a Job</span>
           </div>
           <div className="flex items-center gap-5 text-sm md:text-base font-medium text-gray-700">
-            <button className="flex items-center gap-2 hover:text-blue-600 transition">
+            <button className="flex items-center gap-2 hover:text-[#02325a] transition">
               <HiQuestionMarkCircle className="text-lg" />
               Support
             </button>
@@ -269,7 +269,7 @@ export default function Page() {
               Company you belong to{" "}
               <span className="font-semibold">dummy Pro</span> (Consultancy)
             </h6>
-            <button className="text-green-600 font-medium text-sm hover:underline">
+            <button className="text-[#00223f] font-medium text-sm hover:underline">
               Change
             </button>
           </div>
@@ -773,7 +773,7 @@ export default function Page() {
             ) : (
               <button
                 onClick={() => setaddPerk(true)}
-                className="flex mt-4 items-center gap-x-2 text-green-600 text-sm font-semibold"
+                className="flex mt-4 items-center gap-x-2 text-[#00223f] text-sm font-semibold"
               >
                 {" "}
                 <FaPlus /> Add Other perks

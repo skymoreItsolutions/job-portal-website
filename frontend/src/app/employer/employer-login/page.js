@@ -54,7 +54,7 @@ export default function Page() {
             <h6 className="text-2xl lg:text-3xl font-bold text-green-800">
               {employers.toLocaleString()} Lakhs +
             </h6>
-            <p className="text-sm md:text-base text-gray-700">Employers using Hirebot</p>
+            <p className="text-sm md:text-base text-gray-700">Employers using HireBoat</p>
           </div>
           <div className="text-center">
             <h6 className="text-2xl lg:text-3xl font-bold text-green-800">

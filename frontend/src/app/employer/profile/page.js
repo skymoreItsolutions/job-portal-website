@@ -157,7 +157,7 @@ const EditEmployerProfile = () => {
                 className={`flex items-center cursor-pointer h-10 space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   isEditMode
                     ? 'bg-red-500 hover:bg-red-600 text-white'
-                    : 'bg-white text-blue-600 hover:bg-gray-50'
+                    : 'bg-white text-[#02325a] hover:bg-gray-50'
                 }`}
               >
                 {isEditMode ? (
@@ -436,7 +436,7 @@ const EditEmployerProfile = () => {
                         className={`flex-1 flex items-center justify-center space-x-2 py-3 px-6 rounded-xl font-medium transition-all duration-200 ${
                           loading
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                            : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-[#02325a] hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                         }`}
                       >
                         {loading ? (

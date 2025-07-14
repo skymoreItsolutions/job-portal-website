@@ -36,7 +36,7 @@ const FAQSection = () => {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-extrabold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Frequently Asked Questions</h2>
+        <h2 className="text-4xl font-extrabold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#02325a] to-purple-600">Frequently Asked Questions</h2>
         <p className="text-center text-gray-600 mb-12 text-lg">Everything you need to know about our services</p>
         <div className="space-y-6">
           {faqs.map((faq, index) => (
@@ -71,13 +71,13 @@ const FAQSection = () => {
         </div>
 
         {/* Added CTA Section */}
-        {/* <div className="mt-20 relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 shadow-2xl">
+        {/* <div className="mt-20 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#02325a] via-indigo-600 to-purple-600 p-8 shadow-2xl">
           <div className="absolute inset-0 bg-grid-white/15 [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] pointer-events-none"></div>
           <div className="relative z-10">
             <h3 className="text-3xl font-bold text-white mb-4"></h3>
             <p className="text-lg text-white/90 mb-8">Join thousands of satisfied customers who trust our services.</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors duration-300 shadow-lg">
+              <button className="px-8 py-3 bg-white text-[#02325a] font-semibold rounded-lg hover:bg-blue-50 transition-colors duration-300 shadow-lg">
                 Start Free Trial
               </button>
               <button className="px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors duration-300">

@@ -131,7 +131,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
           <div className="flex items-end">
             <button
               onClick={addSkill}
-              className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[#02325a] text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Skill
@@ -146,7 +146,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
         return (
           <div key={category} className="border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Icon className="w-6 h-6 text-blue-600" />
+              <Icon className="w-6 h-6 text-[#02325a]" />
               <h3 className="text-lg font-semibold text-gray-900">{category} Skills</h3>
               <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-sm">
                 {skills.length}

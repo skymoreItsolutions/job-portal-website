@@ -132,7 +132,7 @@ const ManageCompanies = () => {
               </h1>
               <button
                 onClick={toggleAddCompanyModal}
-                className="py-2 px-4 rounded-lg shadow-md text-white font-medium text-sm bg-green-600 hover:bg-green-700 transition duration-200"
+                className="py-2 px-4 rounded-lg shadow-md text-white font-medium text-sm bg-[#00223f] hover:bg-green-700 transition duration-200"
               >
                 Add Company
               </button>
@@ -189,7 +189,7 @@ const ManageCompanies = () => {
                           <td className="py-3 px-4 text-sm">
                             <span
                               className={`font-semibold ${
-                                company.is_approved ? 'text-green-600' : 'text-yellow-600'
+                                company.is_approved ? 'text-[#00223f]' : 'text-yellow-600'
                               }`}
                             >
                               {company.is_approved ? 'Approved' : 'Pending'}
@@ -313,7 +313,7 @@ const ManageCompanies = () => {
                   type="submit"
                   disabled={loading}
                   className={`py-2 px-4 rounded-lg shadow-md text-white font-medium text-sm transition duration-200 ${
-                    loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                    loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-[#00223f] hover:bg-green-700'
                   }`}
                 >
                   {loading ? 'Adding...' : 'Add Company'}

@@ -97,7 +97,7 @@ const CandidatesDashboard = () => {
                       value="fresher"
                       checked={formData.experienceType === 'fresher'}
                       onChange={handleInputChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-[#02325a] focus:ring-blue-500 border-gray-300"
                     />
                     <label
                       htmlFor="fresher"
@@ -114,7 +114,7 @@ const CandidatesDashboard = () => {
                       value="experienced"
                       checked={formData.experienceType === 'experienced'}
                       onChange={handleInputChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-[#02325a] focus:ring-blue-500 border-gray-300"
                     />
                     <label
                       htmlFor="experienced"
@@ -131,7 +131,7 @@ const CandidatesDashboard = () => {
                       value="any"
                       checked={formData.experienceType === 'any'}
                       onChange={handleInputChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-[#02325a] focus:ring-blue-500 border-gray-300"
                     />
                     <label
                       htmlFor="any"
@@ -218,7 +218,7 @@ const CandidatesDashboard = () => {
                   id="active"
                   checked={formData.active}
                   onChange={handleInputChange}
-                  className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 sm:h-5 w-4 sm:w-5 text-[#02325a] focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label
                   htmlFor="active"
@@ -232,7 +232,7 @@ const CandidatesDashboard = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-2 sm:py-3 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+                  className="w-full py-2 sm:py-3 px-4 rounded-lg bg-[#02325a] text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
                 >
                   Search Candidates
                 </button>

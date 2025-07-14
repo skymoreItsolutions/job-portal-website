@@ -22,7 +22,7 @@ ss
             <input
               type="text"
               placeholder="Enter full name"
-              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00223f]"
             />
           </div>
 
@@ -31,7 +31,7 @@ ss
             <input
               type="text"
               placeholder="Choose date"
-              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00223f]"
             />
             <SlCalender className="absolute right-4 top-12 text-gray-500" />
           </div>
@@ -44,7 +44,7 @@ ss
                 onClick={() => setSelectedGender("Male")}
                 className={`px-6 py-2 border rounded-full transition ${
                   selectedGender === "Male"
-                    ? "bg-[#309689] text-white border-green-500"
+                    ? "bg-[#309689] text-white border-[#02325a]"
                     : "border-[#309689] text-[#309689]"
                 }`}
               >
@@ -54,7 +54,7 @@ ss
                 onClick={() => setSelectedGender("Female")}
                 className={`px-6 py-2 border rounded-full transition ${
                   selectedGender === "Female"
-                    ? "bg-[#309689] text-white border-green-500"
+                    ? "bg-[#309689] text-white border-[#02325a]"
                     : "border-[#309689] text-[#309689]"
                 }`}
               >
@@ -70,7 +70,7 @@ ss
             <input
               type="email"
               placeholder="Enter email address"
-              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00223f]"
             />
           </div>
 
@@ -79,7 +79,7 @@ ss
             onClick={() => setIsChecked(!isChecked)}
           >
             {isChecked ? (
-              <MdCheckBox className="text-green-600 text-lg" />
+              <MdCheckBox className="text-[#00223f] text-lg" />
             ) : (
               <MdCheckBoxOutlineBlank className="text-gray-500 text-lg" />
             )}

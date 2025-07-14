@@ -156,7 +156,7 @@ export default function page() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center"
+                className="w-full bg-[#02325a] text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center"
               >
                 {isLoading ? (
                   <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></span>
@@ -173,7 +173,7 @@ export default function page() {
               <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
               <div className="space-y-6">
                 <div className="flex items-center">
-                  <FaPhone className="text-blue-600 text-xl mr-4" />
+                  <FaPhone className="text-[#02325a] text-xl mr-4" />
                   <div>
                     <h3 className="font-semibold">Phone Support</h3>
                     <p>+1 (555) 123-4567</p>
@@ -181,7 +181,7 @@ export default function page() {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <FaEnvelope className="text-blue-600 text-xl mr-4" />
+                  <FaEnvelope className="text-[#02325a] text-xl mr-4" />
                   <div>
                     <h3 className="font-semibold">Email Support</h3>
                     <p>support@jobportal.com</p>
@@ -189,7 +189,7 @@ export default function page() {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <MdLocationOn className="text-blue-600 text-xl mr-4" />
+                  <MdLocationOn className="text-[#02325a] text-xl mr-4" />
                   <div>
                     <h3 className="font-semibold">Office Location</h3>
                     <p>123 Business Avenue</p>
@@ -197,7 +197,7 @@ export default function page() {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <FaClock className="text-blue-600 text-xl mr-4" />
+                  <FaClock className="text-[#02325a] text-xl mr-4" />
                   <div>
                     <h3 className="font-semibold">Business Hours</h3>
                     <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
@@ -212,7 +212,7 @@ export default function page() {
               <h2 className="text-2xl font-bold mb-6">Connect With Us</h2>
               <div className="flex space-x-4">
                 <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition duration-300">
-                  <FaLinkedin className="text-2xl text-blue-600" />
+                  <FaLinkedin className="text-2xl text-[#02325a]" />
                 </a>
                 <a href="#" target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition duration-300">
                   <FaTwitter className="text-2xl text-blue-400" />
@@ -263,10 +263,10 @@ export default function page() {
         </div>
 
         {/* CTA Section */}
-        {/* <div className="mt-16 bg-blue-600 rounded-lg p-8 text-center text-white">
+        {/* <div className="mt-16 bg-[#02325a] rounded-lg p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
           <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+            <button className="bg-white text-[#02325a] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
               Find a Job
             </button>
             <button className="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition duration-300">

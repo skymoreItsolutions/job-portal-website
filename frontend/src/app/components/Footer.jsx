@@ -58,7 +58,7 @@ const Footer = () => {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                      className="text-gray-600 hover:text-[#02325a] transition-colors duration-200"
                     >
                       {link}
                     </a>
@@ -72,7 +72,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <h3 className="text-gray-900 font-semibold mb-4">Stay Updated</h3>
             {isNewsletterSubmitted ? (
-              <p className="text-green-600">Thank you for subscribing!</p>
+              <p className="text-[#00223f]">Thank you for subscribing!</p>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="mt-2">
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -86,7 +86,7 @@ const Footer = () => {
                   />
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
+                    className="bg-[#02325a] text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
                   >
                     Subscribe
                   </button>
@@ -105,7 +105,7 @@ const Footer = () => {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                  className="text-gray-600 hover:text-[#02325a] transition-colors duration-200"
                 >
                   <social.icon className="w-6 h-6" />
                 </a>
@@ -116,9 +116,9 @@ const Footer = () => {
             <div className="text-gray-600 text-sm">
               © {currentYear} Your Company. All rights reserved.
               <div className="flex space-x-4 mt-2 sm:mt-0 sm:inline-block sm:ml-4">
-                <a href="#" className="hover:text-blue-600 transition-colors duration-200">Privacy Policy</a>
+                <a href="#" className="hover:text-[#02325a] transition-colors duration-200">Privacy Policy</a>
                 <span className="hidden sm:inline">·</span>
-                <a href="#" className="hover:text-blue-600 transition-colors duration-200">Terms of Service</a>
+                <a href="#" className="hover:text-[#02325a] transition-colors duration-200">Terms of Service</a>
               </div>
             </div>
           </div>

@@ -10,8 +10,8 @@ import Popular from "./components/Popular";
 // import FAQsection from "./components/FAQsection";
 import WantToHire from "./components/WantToHire";
 // import FAQSection from "./components/Faqsection";
-
-
+import Herosection from './components/Herosection';
+import Aboutsectionnew from './components/Aboutsectionnew'
 
 export default function Home() {
   return (
@@ -19,7 +19,8 @@ export default function Home() {
 
     <>
 
-   <JobPortalHero/>
+   <Herosection/>
+   <Aboutsectionnew/>
 
    {/* <AboutSection/> */}
 

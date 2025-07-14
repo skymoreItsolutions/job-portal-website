@@ -92,51 +92,67 @@ export default function Navbar() {
   };
 
   // Handle OTP verification
+  
   const handleSendOtp = async () => {
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
 
-    if (otp.length !== 6) {
-      setError("Please enter a 6-digit OTP.");
-      setLoading(false);
-      return;
-    }
+  if (otp.length !== 6) {
+    setError("Please enter a 6-digit OTP.");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const endpoint = loginType === "Employer" ? "employer/verify-otp" : "verify-otp";
-      const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
-      const response = await axios.post(`${baseurl}/${endpoint}`, payload);
+  try {
+    const endpoint = loginType === "Employer" ? "employer/verify-otp" : "verify-otp";
+    const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
+    const response = await axios.post(`${baseurl}/${endpoint}`, payload);
 
-      if (response.data.success) {
-        if (loginType === "Employer") {
-          const sessionToken = response.data.token;
-          if (sessionToken) {
-            localStorage.setItem("employerToken", sessionToken);
-            setOtpSent(false);
-            setShowModal(false);
-            window.location.href = "employer/dashboard";
-          } else {
-            setOtpSent(false);
-            setShowModal(false);
-            router.push("/employer/onboarding");
-          }
-        } else {
-          const sessionToken = response.data.token;
-          console.log("Session Token:", response.data.token);
-          localStorage.setItem("port_tok", sessionToken);
-          setShowModal(false);
+    console.log('response',response);
+    if (response.data.success) {
+      if (loginType === "Employer") {
+        const sessionToken = response.data.session_token;
+        console.log(sessionToken);
+        if (sessionToken) {
+          localStorage.setItem("employerToken", sessionToken);
           setOtpSent(false);
-          router.push("/candidate/candidate-login");
+          setShowModal(false);
+          window.location.href = "/employer/dashboard";
+        } else {
+          setOtpSent(false);
+          setShowModal(false);
+          router.push("/employer/onboarding");
         }
+      } else {
+        const sessionToken = response.data.user.token;
+        console.log("Session Token:", response.data);
+        localStorage.setItem("port_tok", sessionToken);
+        setShowModal(false);
+        setOtpSent(false);
+        router.push("/candidate/candidate-login");
+      }
+    } else {
+      // Check for specific error message
+      if (
+        loginType === "Employer" &&
+        response.data.message === "No employer found with this email"
+      ) {
+        setOtpSent(false);
+        setShowModal(false);
+        router.push("/employer/onboarding");
       } else {
         setError("Invalid OTP. Please try again.");
       }
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      setError("Failed to verify OTP. Please try again.");
     }
-    setLoading(false);
-  };
+  } catch (error) {
+
+      setOtpSent(false);
+        setShowModal(false);
+        router.push("/employer/onboarding");
+    setError("Failed to verify OTP. Please try again.");
+  }
+  setLoading(false);
+};
 
   // Handle Employer password login
   const handleEmployerLogin = async () => {
@@ -214,7 +230,12 @@ export default function Navbar() {
       <nav className="bg-white p-4 shadow-md sticky top-0 z-50 px-[8%]">
         <div className="mx-auto flex justify-between items-center">
           <div className="text-black text-2xl font-bold">
-            <Link href="/">MyCompany</Link>
+            <Link className={`flex items-center ${isLoggedIn ? 'ml-[100px]' : ' '} `} href="/">
+            <img  className="h-[80px]" src='/img/logo-rm-boat.png' />
+              <span className="text-2xl ml-2  uppercase leading-1">
+                HireBoat
+              </span>
+            </Link>
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
@@ -237,7 +258,7 @@ export default function Navbar() {
                     setLoginType("Employer");
                     setShowModal(true);
                   }}
-                  className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg hover:bg-green-50 transition"
+                  className="text-black font-semibold border-2 border-[#02325a] px-4 py-2 rounded-lg hover:bg-green-50 transition"
                 >
                   Employer Login
                 </button>
@@ -246,7 +267,7 @@ export default function Navbar() {
                     setLoginType("Candidate");
                     setShowModal(true);
                   }}
-                  className="text-white font-semibold bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                  className="text-white font-semibold bg-[#02325a] px-4 py-2 rounded-lg hover:bg-[#00223f] transition"
                 >
                   Candidate Login
                 </button>
@@ -257,7 +278,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
                 <Link href={loginType == "Employer" ? "/candidate/dashboard" : "/employer/profile"}>
-                  <FaUserCircle className="text-2xl text-green-600" />
+                  <FaUserCircle className="text-2xl text-[#00223f]" />
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -319,7 +340,7 @@ export default function Navbar() {
                     setLoginType("Employer");
                     setShowModal(true);
                   }}
-                  className="text-black font-semibold border-2 border-green-500 px-4 py-2 rounded-lg"
+                  className="text-black font-semibold border-2 border-[#02325a] px-4 py-2 rounded-lg"
                 >
                   Employer Login
                 </button>
@@ -328,7 +349,7 @@ export default function Navbar() {
                     setLoginType("Candidate");
                     setShowModal(true);
                   }}
-                  className="text-white bg-green-500 px-4 py-2 rounded-lg"
+                  className="text-white bg-[#02325a] px-4 py-2 rounded-lg"
                 >
                   Candidate Login
                 </button>
@@ -455,7 +476,7 @@ export default function Navbar() {
                   Cancel
                 </button>
                 <button
-                  className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex items-center bg-[#02325a] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                   onClick={
                     otpSent
                       ? handleSendOtp

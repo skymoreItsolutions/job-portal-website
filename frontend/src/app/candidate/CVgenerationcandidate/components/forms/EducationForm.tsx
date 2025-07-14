@@ -93,7 +93,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-[#02325a] hover:text-blue-700 font-medium"
               >
                 {expandedIndex === index ? 'Collapse' : 'Expand'}
               </button>
@@ -226,7 +226,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                 ))}
                 <button
                   onClick={() => addAchievement(index)}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  className="flex items-center gap-2 text-[#02325a] hover:text-blue-700 font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   Add Achievement
@@ -239,7 +239,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
 
       <button
         onClick={addEducation}
-        className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-300 hover:text-[#02325a] transition-colors"
       >
         <Plus className="w-5 h-5" />
         Add Education

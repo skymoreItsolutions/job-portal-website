@@ -126,7 +126,7 @@ const Dashboard = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-            <FaUserTie className="mr-2 text-blue-600" /> Candidate Portal
+            <FaUserTie className="mr-2 text-[#02325a]" /> Candidate Portal
           </h1>
           <div className="flex items-center space-x-4">
             <button className="p-2 rounded-full hover:bg-gray-100 text-gray-600">
@@ -145,7 +145,7 @@ const Dashboard = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 mb-8 text-white shadow-lg">
+        <div className="bg-gradient-to-r from-[#02325a] to-blue-800 rounded-xl p-6 mb-8 text-white shadow-lg">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <h2 className="text-2xl font-bold mb-2">
@@ -157,7 +157,7 @@ const Dashboard = () => {
               <div className="flex space-x-2 mt-4 md:mt-0">
                 <button 
                   onClick={saveChanges}
-                  className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+                  className="bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
                 >
                   <FiSave className="mr-2" /> Save Changes
                 </button>
@@ -171,7 +171,7 @@ const Dashboard = () => {
             ) : (
               <button 
                 onClick={() => setEditMode(true)}
-                className="mt-4 md:mt-0 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+                className="mt-4 md:mt-0 bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
               >
                 <FiEdit2 className="mr-2" /> Edit Profile
               </button>
@@ -182,19 +182,19 @@ const Dashboard = () => {
         <div className="flex border-b border-gray-200 mb-6">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'profile' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'profile' ? 'text-[#02325a] border-b-2 border-[#02325a]' : 'text-gray-500 hover:text-gray-700'}`}
           >
             <FaUser className="mr-2" /> Profile
           </button>
           <button
             onClick={() => setActiveTab('stats')}
-            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-[#02325a] border-b-2 border-[#02325a]' : 'text-gray-500 hover:text-gray-700'}`}
           >
             <FaChartLine className="mr-2" /> Statistics
           </button>
           <button
             onClick={() => setActiveTab('CV-Builder')}
-            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 py-2 font-medium text-sm flex items-center ${activeTab === 'stats' ? 'text-[#02325a] border-b-2 border-[#02325a]' : 'text-gray-500 hover:text-gray-700'}`}
           >
             
             <IoIosDocument className="mr-2" /> Build Your CV
@@ -337,7 +337,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={tempData.prefers_day_shift}
                         onChange={() => handleCheckboxChange("prefers_day_shift")}
-                        className="h-5 w-5 text-blue-600 rounded"
+                        className="h-5 w-5 text-[#02325a] rounded"
                       />
                     ) : (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.prefers_day_shift ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -355,7 +355,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={tempData.prefers_night_shift}
                         onChange={() => handleCheckboxChange("prefers_night_shift")}
-                        className="h-5 w-5 text-blue-600 rounded"
+                        className="h-5 w-5 text-[#02325a] rounded"
                       />
                     ) : (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.prefers_night_shift ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -365,7 +365,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <FaHome className="text-green-500 mr-3" />
+                      <FaHome className="text-[#02325a] mr-3" />
                       <span>Work From Home</span>
                     </div>
                     {editMode ? (
@@ -373,7 +373,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={tempData.work_from_home}
                         onChange={() => handleCheckboxChange("work_from_home")}
-                        className="h-5 w-5 text-blue-600 rounded"
+                        className="h-5 w-5 text-[#02325a] rounded"
                       />
                     ) : (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.work_from_home ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -391,7 +391,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={tempData.work_from_office}
                         onChange={() => handleCheckboxChange("work_from_office")}
-                        className="h-5 w-5 text-blue-600 rounded"
+                        className="h-5 w-5 text-[#02325a] rounded"
                       />
                     ) : (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.work_from_office ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -409,7 +409,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={tempData.field_job}
                         onChange={() => handleCheckboxChange("field_job")}
-                        className="h-5 w-5 text-blue-600 rounded"
+                        className="h-5 w-5 text-[#02325a] rounded"
                       />
                     ) : (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${userData.field_job ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -454,7 +454,7 @@ const Dashboard = () => {
                           <button
                             onClick={addSkill}
                             disabled={!newSkill.trim() || tempData?.skills?.length >= 10}
-                            className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300"
+                            className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-[#02325a] disabled:bg-gray-300"
                           >
                             Add
                           </button>
@@ -465,7 +465,7 @@ const Dashboard = () => {
                               {skill}
                               <button
                                 onClick={() => removeSkill(index)}
-                                className="ml-1 text-blue-600 hover:text-blue-800"
+                                className="ml-1 text-[#02325a] hover:text-blue-800"
                               >
                                 <FaTimes size={12} />
                               </button>
@@ -524,7 +524,7 @@ const Dashboard = () => {
               <StatCard
                 title="Last Updated"
                 value="Just now"
-                icon={<FaEdit className="text-green-500" />}
+                icon={<FaEdit className="text-[#02325a]" />}
               />
             </div>
           </div>
@@ -597,7 +597,7 @@ const StatCard = ({ title, value, icon, progress }) => (
     {progress && (
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
-          className="bg-blue-600 h-2 rounded-full"
+          className="bg-[#02325a] h-2 rounded-full"
           style={{ width: `${progress}%` }}
         ></div>
       </div>

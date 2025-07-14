@@ -130,7 +130,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.75)] bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold">Export Your CV</h2>
             <p className="text-blue-100">Choose your preferred format and settings</p>
@@ -174,7 +174,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-3">
-                            <Icon className={`w-5 h-5 ${isSelected ? 'text-blue-600' : 'text-gray-600'}`} />
+                            <Icon className={`w-5 h-5 ${isSelected ? 'text-[#02325a]' : 'text-gray-600'}`} />
                             <span className="font-medium">{option.label}</span>
                           </div>
                           {isPremium && (
@@ -261,7 +261,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                       type="checkbox"
                       checked={exportOptions.includeColors}
                       onChange={(e) => setExportOptions({ ...exportOptions, includeColors: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
                     />
                     <div>
                       <span className="font-medium text-gray-900">Include Colors</span>
@@ -348,7 +348,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
           <div className="text-sm text-gray-600">
             {isExporting ? (
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-[#02325a] border-t-transparent rounded-full animate-spin"></div>
                 Exporting... {exportProgress}%
               </div>
             ) : (
@@ -367,7 +367,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
             <button
               onClick={handleExport}
               disabled={isExporting || isFormatPremium(exportOptions.format)}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isExporting ? (
                 <>
@@ -388,7 +388,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
         {isExporting && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200">
             <div 
-              className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[#02325a] to-purple-600 transition-all duration-300"
               style={{ width: `${exportProgress}%` }}
             />
           </div>

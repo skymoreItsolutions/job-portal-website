@@ -66,15 +66,15 @@ export default function Page() {
               {/* Benefits List */}
               <div className="mt-4 lg:mt-6 space-y-3">
                 <p className="flex items-center gap-x-2 text-sm">
-                  <IoMdCheckmarkCircle className="text-green-600" />
+                  <IoMdCheckmarkCircle className="text-[#00223f]" />
                   Unlock jobs from top companies faster
                 </p>
                 <p className="flex items-center gap-x-2 text-sm">
-                  <IoMdCheckmarkCircle className="text-green-600" />
+                  <IoMdCheckmarkCircle className="text-[#00223f]" />
                   Get direct calls from top HRs
                 </p>
                 <p className="flex items-center gap-x-2 text-sm">
-                  <IoMdCheckmarkCircle className="text-green-600" />
+                  <IoMdCheckmarkCircle className="text-[#00223f]" />
                   Get jobs specifically suited for your role and experience level
                 </p>
               </div>
