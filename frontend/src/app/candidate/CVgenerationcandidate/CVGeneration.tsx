@@ -1,79 +1,239 @@
-import React from 'react';
-import TemplateSelector from './components/TemplateSelector.tsx';
-import CVBuilder from './components/CVBuilder.tsx';
-import { FileText, Sparkles, Zap, Users, Award, Globe } from 'lucide-react';
+import React from "react";
+import TemplateSelector from "./components/TemplateSelector";
+import CVBuilder from "./components/CVBuilder";
+import { FileText, Sparkles } from "lucide-react";
 
-const initialCVData = {
+interface CVData {
   personalInfo: {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    location: '',
-    linkedin: '',
-    website: '',
-    summary: '',
-    profileImage: '',
-    title: ''
-  },
-  experience: [],
-  education: [],
-  skills: [],
-  certifications: [],
-  languages: [],
-  projects: [],
-  awards: [],
-  volunteerWork: [],
-  publications: [],
-  customSections: []
-};
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    location: string;
+    linkedin: string;
+    website: string;
+    summary: string;
+    profileImage: string;
+    title: string;
+  };
+  experience: Array<{
+    company: string;
+    position: string;
+    startDate: string;
+    endDate: string;
+    description: string[];
+  }>;
+  education: Array<{
+    institution: string;
+    degree: string;
+    field: string;
+    startDate: string;
+    endDate: string;
+  }>;
+  skills: string[];
+  certifications: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+  }>;
+  languages: string[];
+  projects: Array<{
+    name: string;
+    description: string;
+    technologies: string[];
+    url?: string;
+  }>;
+  awards: Array<{
+    title: string;
+    issuer: string;
+    date: string;
+  }>;
+  volunteerWork: Array<{
+    organization: string;
+    role: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }>;
+  publications: Array<{
+    title: string;
+    publisher: string;
+    date: string;
+    url?: string;
+  }>;
+  customSections: Array<{
+    title: string;
+    content: string[];
+  }>;
+}
 
-class CVGeneration extends React.Component {
-  constructor(props) {
+interface State {
+  currentStep: "templates" | "builder" | "preview";
+  selectedTemplate: string | null;
+  cvData: CVData;
+  isLoading: boolean;
+  error: string | null;
+}
+
+interface Props {}
+
+class CVGeneration extends React.Component<Props, State> {
+  private timer: NodeJS.Timeout | null = null;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
-      currentStep: 'templates',
+      currentStep: "templates",
       selectedTemplate: null,
-      cvData: initialCVData,
-      isLoading: true
+      cvData: this.loadFromLocalStorage() || {
+        personalInfo: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          location: "",
+          linkedin: "",
+          website: "",
+          summary: "",
+          profileImage: "",
+          title: "",
+        },
+        experience: [],
+        education: [],
+        skills: [],
+        certifications: [],
+        languages: [],
+        projects: [],
+        awards: [],
+        volunteerWork: [],
+        publications: [],
+        customSections: [],
+      },
+      isLoading: true,
+      error: null,
     };
 
-    // Bind methods to ensure correct 'this' context
     this.handleTemplateSelect = this.handleTemplateSelect.bind(this);
     this.handleStartBuilding = this.handleStartBuilding.bind(this);
     this.handleBackToTemplates = this.handleBackToTemplates.bind(this);
     this.handleDataChange = this.handleDataChange.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   componentDidMount() {
-    // Simulate app initialization
     this.timer = setTimeout(() => {
       this.setState({ isLoading: false });
+      this.trackEvent("app_initialized");
     }, 1000);
   }
 
-  componentWillUnmount() {
-    // Clear timer to prevent memory leaks
-    clearTimeout(this.timer);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    this.setState({ error: error.message });
+    this.trackEvent("error_occurred", { error: error.message });
   }
 
-  handleTemplateSelect(template) {
+  componentWillUnmount() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+  }
+
+  private loadFromLocalStorage(): CVData | null {
+    try {
+      const savedData = localStorage.getItem("cvData");
+      return savedData ? JSON.parse(savedData) : null;
+    } catch (error) {
+      console.error("Error loading from localStorage:", error);
+      return null;
+    }
+  }
+
+  private saveToLocalStorage(data: CVData) {
+    try {
+      localStorage.setItem("cvData", JSON.stringify(data));
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
+    }
+  }
+
+  private trackEvent(eventName: string, data: any = {}) {
+    // Placeholder for analytics tracking
+    console.log(`Tracking event: ${eventName}`, data);
+  }
+
+  handleTemplateSelect(template: string) {
     this.setState({ selectedTemplate: template });
+    this.trackEvent("template_selected", { template });
   }
 
   handleStartBuilding() {
-    this.setState({ currentStep: 'builder' });
+    if (!this.state.selectedTemplate) {
+      this.setState({ error: "Please select a template first" });
+      return;
+    }
+    this.setState({ currentStep: "builder", error: null });
+    this.trackEvent("start_building");
   }
 
   handleBackToTemplates() {
-    this.setState({ currentStep: 'templates', selectedTemplate: null });
+    this.setState({ currentStep: "templates", selectedTemplate: null });
+    this.trackEvent("back_to_templates");
   }
 
-  handleDataChange(data) {
+  handleDataChange(data: CVData) {
     this.setState({ cvData: data });
+    this.saveToLocalStorage(data);
+    this.trackEvent("data_updated");
+  }
+
+  handleReset() {
+    const resetData: CVData = {
+      personalInfo: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        location: "",
+        linkedin: "",
+        website: "",
+        summary: "",
+        profileImage: "",
+        title: "",
+      },
+      experience: [],
+      education: [],
+      skills: [],
+      certifications: [],
+      languages: [],
+      projects: [],
+      awards: [],
+      volunteerWork: [],
+      publications: [],
+      customSections: [],
+    };
+    this.setState({ cvData: resetData, currentStep: "templates", selectedTemplate: null });
+    this.saveToLocalStorage(resetData);
+    this.trackEvent("cv_reset");
   }
 
   render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+          <div className="text-center p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold text-red-600 mb-2">Error</h2>
+            <p className="text-gray-600 mb-4">{this.state.error}</p>
+            <button
+              onClick={this.handleReset}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              Reset and Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     if (this.state.isLoading) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
@@ -81,8 +241,12 @@ class CVGeneration extends React.Component {
             <div className="w-16 h-16 bg-[#02325a] rounded-xl flex items-center justify-center mb-4 mx-auto animate-pulse">
               <FileText className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Bolt CV Builder</h1>
-            <p className="text-gray-600">Loading your professional CV builder...</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome to CV Builder
+            </h1>
+            <p className="text-gray-600">
+              Loading your professional CV builder...
+            </p>
             <div className="mt-4 w-48 h-2 bg-gray-200 rounded-full mx-auto overflow-hidden">
               <div className="h-full bg-gradient-to-r from-[#02325a] to-purple-600 rounded-full animate-pulse"></div>
             </div>
@@ -91,76 +255,9 @@ class CVGeneration extends React.Component {
       );
     }
 
-    if (this.state.currentStep === 'templates') {
+    if (this.state.currentStep === "templates") {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-          
-          {/* <div className="bg-white shadow-sm border-b">
-            <div className="max-w-7xl mx-auto px-6 py-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="bg-gradient-to-r from-[#02325a] to-purple-600 p-3 rounded-xl shadow-lg">
-                    <FileText className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Bolt CV Builder</h1>
-                    <p className="text-gray-600 text-lg">Create professional resumes in minutes with AI-powered assistance</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-[#02325a]">
-                    <Sparkles className="w-5 h-5" />
-                    <span className="font-medium">AI-Powered</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[#00223f]">
-                    <Zap className="w-5 h-5" />
-                    <span className="font-medium">Fast & Easy</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-purple-600">
-                    <Award className="w-5 h-5" />
-                    <span className="font-medium">Professional</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
-          
-          {/* <div className="bg-gradient-to-r from-[#02325a] to-purple-600 text-white py-8">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-3">
-                    <FileText className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold mb-1">20+ Templates</h3>
-                  <p className="text-blue-100 text-sm">Professional designs for every industry</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-3">
-                    <Zap className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold mb-1">Real-time Preview</h3>
-                  <p className="text-blue-100 text-sm">See changes instantly as you type</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-3">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold mb-1">ATS-Friendly</h3>
-                  <p className="text-blue-100 text-sm">Optimized for applicant tracking systems</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mb-3">
-                    <Globe className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold mb-1">Multiple Formats</h3>
-                  <p className="text-blue-100 text-sm">Export to PDF, Word, and more</p>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
           <TemplateSelector
             selectedTemplate={this.state.selectedTemplate}
             onTemplateSelect={this.handleTemplateSelect}
@@ -171,12 +268,15 @@ class CVGeneration extends React.Component {
     }
 
     return (
-      <CVBuilder
-        template={this.state.selectedTemplate}
-        onBack={this.handleBackToTemplates}
-        cvData={this.state.cvData}
-        onDataChange={this.handleDataChange}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <CVBuilder
+          template={this.state.selectedTemplate}
+          onBack={this.handleBackToTemplates}
+          cvData={this.state.cvData}
+          onDataChange={this.handleDataChange}
+          onReset={this.handleReset}
+        />
+      </div>
     );
   }
 }
