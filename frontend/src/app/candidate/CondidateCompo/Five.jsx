@@ -309,10 +309,10 @@ const Five = ({
     }),
     multiValueRemove: (provided) => ({
       ...provided,
-      color: "#065f46",
-      "&:hover": {
-        backgroundColor: "#059669",
-        color: "white",
+      color: '#065f46',
+      '&:hover': {
+        backgroundColor: '#059669',
+        color: 'white',
       },
     }),
     placeholder: (provided) => ({
