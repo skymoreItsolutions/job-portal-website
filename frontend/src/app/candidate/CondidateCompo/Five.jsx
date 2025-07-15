@@ -293,7 +293,6 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
       '&:hover': {
         backgroundColor: '#059669',
         color: 'white',
-valt
       },
     }),
     placeholder: (provided) => ({
