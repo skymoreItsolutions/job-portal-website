@@ -1,291 +1,311 @@
 "use client";
-import React, { useState } from 'react';
-import Select from 'react-select';
-import { FiUploadCloud, FiFileText, FiCheckCircle, FiX, FiEye, FiEyeOff } from 'react-icons/fi';
+import React, { useState } from "react";
+import Select from "react-select";
+import {
+  FiUploadCloud,
+  FiFileText,
+  FiCheckCircle,
+  FiX,
+  FiEye,
+  FiEyeOff,
+} from "react-icons/fi";
 
-const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalldata }) => {
+const Five = ({
+  alldata,
+  handelinputs,
+  handelresume,
+  resume,
+  addskilles,
+  setalldata,
+}) => {
   const [showpassword, setShowpassword] = useState(false);
 
   const languageOptions = [
-    { value: 'Afrikaans', label: 'Afrikaans' },
-    { value: 'Albanian', label: 'Albanian' },
-    { value: 'Amharic', label: 'Amharic' },
-    { value: 'Arabic', label: 'Arabic' },
-    { value: 'Armenian', label: 'Armenian' },
-    { value: 'Azerbaijani', label: 'Azerbaijani' },
-    { value: 'Basque', label: 'Basque' },
-    { value: 'Belarusian', label: 'Belarusian' },
-    { value: 'Bengali', label: 'Bengali' },
-    { value: 'Bosnian', label: 'Bosnian' },
-    { value: 'Bulgarian', label: 'Bulgarian' },
-    { value: 'Catalan', label: 'Catalan' },
-    { value: 'Cebuano', label: 'Cebuano' },
-    { value: 'Chichewa', label: 'Chichewa' },
-    { value: 'Chinese (Mandarin)', label: 'Chinese (Mandarin)' },
-    { value: 'Chinese (Cantonese)', label: 'Chinese (Cantonese)' },
-    { value: 'Corsican', label: 'Corsican' },
-    { value: 'Croatian', label: 'Croatian' },
-    { value: 'Czech', label: 'Czech' },
-    { value: 'Danish', label: 'Danish' },
-    { value: 'Dutch', label: 'Dutch' },
-    { value: 'English', label: 'English' },
-    { value: 'Esperanto', label: 'Esperanto' },
-    { value: 'Estonian', label: 'Estonian' },
-    { value: 'Filipino', label: 'Filipino' },
-    { value: 'Finnish', label: 'Finnish' },
-    { value: 'French', label: 'French' },
-    { value: 'Frisian', label: 'Frisian' },
-    { value: 'Galician', label: 'Galician' },
-    { value: 'Georgian', label: 'Georgian' },
-    { value: 'German', label: 'German' },
-    { value: 'Greek', label: 'Greek' },
-    { value: 'Gujarati', label: 'Gujarati' },
-    { value: 'Haitian Creole', label: 'Haitian Creole' },
-    { value: 'Hausa', label: 'Hausa' },
-    { value: 'Hebrew', label: 'Hebrew' },
-    { value: 'Hindi', label: 'Hindi' },
-    { value: 'Hmong', label: 'Hmong' },
-    { value: 'Hungarian', label: 'Hungarian' },
-    { value: 'Icelandic', label: 'Icelandic' },
-    { value: 'Igbo', label: 'Igbo' },
-    { value: 'Indonesian', label: 'Indonesian' },
-    { value: 'Irish', label: 'Irish' },
-    { value: 'Italian', label: 'Italian' },
-    { value: 'Japanese', label: 'Japanese' },
-    { value: 'Javanese', label: 'Javanese' },
-    { value: 'Kannada', label: 'Kannada' },
-    { value: 'Kazakh', label: 'Kazakh' },
-    { value: 'Khmer', label: 'Khmer' },
-    { value: 'Korean', label: 'Korean' },
-    { value: 'Kurdish', label: 'Kurdish' },
-    { value: 'Kyrgyz', label: 'Kyrgyz' },
-    { value: 'Lao', label: 'Lao' },
-    { value: 'Latvian', label: 'Latvian' },
-    { value: 'Lithuanian', label: 'Lithuanian' },
-    { value: 'Luxembourgish', label: 'Luxembourgish' },
-    { value: 'Macedonian', label: 'Macedonian' },
-    { value: 'Malagasy', label: 'Malagasy' },
-    { value: 'Malay', label: 'Malay' },
-    { value: 'Malayalam', label: 'Malayalam' },
-    { value: 'Maltese', label: 'Maltese' },
-    { value: 'Maori', label: 'Maori' },
-    { value: 'Marathi', label: 'Marathi' },
-    { value: 'Mongolian', label: 'Mongolian' },
-    { value: 'Nepali', label: 'Nepali' },
-    { value: 'Norwegian', label: 'Norwegian' },
-    { value: 'Pashto', label: 'Pashto' },
-    { value: 'Persian', label: 'Persian' },
-    { value: 'Polish', label: 'Polish' },
-    { value: 'Portuguese', label: 'Portuguese' },
-    { value: 'Punjabi', label: 'Punjabi' },
-    { value: 'Romanian', label: 'Romanian' },
-    { value: 'Russian', label: 'Russian' },
-    { value: 'Samoan', label: 'Samoan' },
-    { value: 'Serbian', label: 'Serbian' },
-    { value: 'Shona', label: 'Shona' },
-    { value: 'Sindhi', label: 'Sindhi' },
-    { value: 'Sinhala', label: 'Sinhala' },
-    { value: 'Slovak', label: 'Slovak' },
-    { value: 'Slovenian', label: 'Slovenian' },
-    { value: 'Somali', label: 'Somali' },
-    { value: 'Spanish', label: 'Spanish' },
-    { value: 'Sundanese', label: 'Sundanese' },
-    { value: 'Swahili', label: 'Swahili' },
-    { value: 'Swedish', label: 'Swedish' },
-    { value: 'Tajik', label: 'Tajik' },
-    { value: 'Tamil', label: 'Tamil' },
-    { value: 'Telugu', label: 'Telugu' },
-    { value: 'Thai', label: 'Thai' },
-    { value: 'Turkish', label: 'Turkish' },
-    { value: 'Ukrainian', label: 'Ukrainian' },
-    { value: 'Urdu', label: 'Urdu' },
-    { value: 'Uzbek', label: 'Uzbek' },
-    { value: 'Vietnamese', label: 'Vietnamese' },
-    { value: 'Welsh', label: 'Welsh' },
-    { value: 'Xhosa', label: 'Xhosa' },
-    { value: 'Yiddish', label: 'Yiddish' },
-    { value: 'Yoruba', label: 'Yoruba' },
-    { value: 'Zulu', label: 'Zulu' },
-    { value: 'Other', label: 'Other' },
+    { value: "Afrikaans", label: "Afrikaans" },
+    { value: "Albanian", label: "Albanian" },
+    { value: "Amharic", label: "Amharic" },
+    { value: "Arabic", label: "Arabic" },
+    { value: "Armenian", label: "Armenian" },
+    { value: "Azerbaijani", label: "Azerbaijani" },
+    { value: "Basque", label: "Basque" },
+    { value: "Belarusian", label: "Belarusian" },
+    { value: "Bengali", label: "Bengali" },
+    { value: "Bosnian", label: "Bosnian" },
+    { value: "Bulgarian", label: "Bulgarian" },
+    { value: "Catalan", label: "Catalan" },
+    { value: "Cebuano", label: "Cebuano" },
+    { value: "Chichewa", label: "Chichewa" },
+    { value: "Chinese (Mandarin)", label: "Chinese (Mandarin)" },
+    { value: "Chinese (Cantonese)", label: "Chinese (Cantonese)" },
+    { value: "Corsican", label: "Corsican" },
+    { value: "Croatian", label: "Croatian" },
+    { value: "Czech", label: "Czech" },
+    { value: "Danish", label: "Danish" },
+    { value: "Dutch", label: "Dutch" },
+    { value: "English", label: "English" },
+    { value: "Esperanto", label: "Esperanto" },
+    { value: "Estonian", label: "Estonian" },
+    { value: "Filipino", label: "Filipino" },
+    { value: "Finnish", label: "Finnish" },
+    { value: "French", label: "French" },
+    { value: "Frisian", label: "Frisian" },
+    { value: "Galician", label: "Galician" },
+    { value: "Georgian", label: "Georgian" },
+    { value: "German", label: "German" },
+    { value: "Greek", label: "Greek" },
+    { value: "Gujarati", label: "Gujarati" },
+    { value: "Haitian Creole", label: "Haitian Creole" },
+    { value: "Hausa", label: "Hausa" },
+    { value: "Hebrew", label: "Hebrew" },
+    { value: "Hindi", label: "Hindi" },
+    { value: "Hmong", label: "Hmong" },
+    { value: "Hungarian", label: "Hungarian" },
+    { value: "Icelandic", label: "Icelandic" },
+    { value: "Igbo", label: "Igbo" },
+    { value: "Indonesian", label: "Indonesian" },
+    { value: "Irish", label: "Irish" },
+    { value: "Italian", label: "Italian" },
+    { value: "Japanese", label: "Japanese" },
+    { value: "Javanese", label: "Javanese" },
+    { value: "Kannada", label: "Kannada" },
+    { value: "Kazakh", label: "Kazakh" },
+    { value: "Khmer", label: "Khmer" },
+    { value: "Korean", label: "Korean" },
+    { value: "Kurdish", label: "Kurdish" },
+    { value: "Kyrgyz", label: "Kyrgyz" },
+    { value: "Lao", label: "Lao" },
+    { value: "Latvian", label: "Latvian" },
+    { value: "Lithuanian", label: "Lithuanian" },
+    { value: "Luxembourgish", label: "Luxembourgish" },
+    { value: "Macedonian", label: "Macedonian" },
+    { value: "Malagasy", label: "Malagasy" },
+    { value: "Malay", label: "Malay" },
+    { value: "Malayalam", label: "Malayalam" },
+    { value: "Maltese", label: "Maltese" },
+    { value: "Maori", label: "Maori" },
+    { value: "Marathi", label: "Marathi" },
+    { value: "Mongolian", label: "Mongolian" },
+    { value: "Nepali", label: "Nepali" },
+    { value: "Norwegian", label: "Norwegian" },
+    { value: "Pashto", label: "Pashto" },
+    { value: "Persian", label: "Persian" },
+    { value: "Polish", label: "Polish" },
+    { value: "Portuguese", label: "Portuguese" },
+    { value: "Punjabi", label: "Punjabi" },
+    { value: "Romanian", label: "Romanian" },
+    { value: "Russian", label: "Russian" },
+    { value: "Samoan", label: "Samoan" },
+    { value: "Serbian", label: "Serbian" },
+    { value: "Shona", label: "Shona" },
+    { value: "Sindhi", label: "Sindhi" },
+    { value: "Sinhala", label: "Sinhala" },
+    { value: "Slovak", label: "Slovak" },
+    { value: "Slovenian", label: "Slovenian" },
+    { value: "Somali", label: "Somali" },
+    { value: "Spanish", label: "Spanish" },
+    { value: "Sundanese", label: "Sundanese" },
+    { value: "Swahili", label: "Swahili" },
+    { value: "Swedish", label: "Swedish" },
+    { value: "Tajik", label: "Tajik" },
+    { value: "Tamil", label: "Tamil" },
+    { value: "Telugu", label: "Telugu" },
+    { value: "Thai", label: "Thai" },
+    { value: "Turkish", label: "Turkish" },
+    { value: "Ukrainian", label: "Ukrainian" },
+    { value: "Urdu", label: "Urdu" },
+    { value: "Uzbek", label: "Uzbek" },
+    { value: "Vietnamese", label: "Vietnamese" },
+    { value: "Welsh", label: "Welsh" },
+    { value: "Xhosa", label: "Xhosa" },
+    { value: "Yiddish", label: "Yiddish" },
+    { value: "Yoruba", label: "Yoruba" },
+    { value: "Zulu", label: "Zulu" },
+    { value: "Other", label: "Other" },
   ];
 
   const skillOptions = [
-    { value: 'HTML', label: 'HTML' },
-    { value: 'CSS', label: 'CSS' },
-    { value: 'JavaScript', label: 'JavaScript' },
-    { value: 'React', label: 'React' },
-    { value: 'Angular', label: 'Angular' },
-    { value: 'Vue.js', label: 'Vue.js' },
-    { value: 'Node.js', label: 'Node.js' },
-    { value: 'Express.js', label: 'Express.js' },
-    { value: 'Python', label: 'Python' },
-    { value: 'Java', label: 'Java' },
-    { value: 'C++', label: 'C++' },
-    { value: 'C#', label: 'C#' },
-    { value: 'PHP', label: 'PHP' },
-    { value: 'Ruby', label: 'Ruby' },
-    { value: 'Go', label: 'Go' },
-    { value: 'Swift', label: 'Swift' },
-    { value: 'Kotlin', label: 'Kotlin' },
-    { value: 'TypeScript', label: 'TypeScript' },
-    { value: 'SQL', label: 'SQL' },
-    { value: 'NoSQL', label: 'NoSQL' },
-    { value: 'MongoDB', label: 'MongoDB' },
-    { value: 'MySQL', label: 'MySQL' },
-    { value: 'PostgreSQL', label: 'PostgreSQL' },
-    { value: 'SQLite', label: 'SQLite' },
-    { value: 'Firebase', label: 'Firebase' },
-    { value: 'GraphQL', label: 'GraphQL' },
-    { value: 'REST API', label: 'REST API' },
-    { value: 'Django', label: 'Django' },
-    { value: 'Flask', label: 'Flask' },
-    { value: 'Spring Boot', label: 'Spring Boot' },
-    { value: '.NET', label: '.NET' },
-    { value: 'Laravel', label: 'Laravel' },
-    { value: 'Ruby on Rails', label: 'Ruby on Rails' },
-    { value: 'Accountant', label: 'Accountant' },
-    { value: 'Financial Analysis', label: 'Financial Analysis' },
-    { value: 'Bookkeeping', label: 'Bookkeeping' },
-    { value: 'Tax Preparation', label: 'Tax Preparation' },
-    { value: 'Auditing', label: 'Auditing' },
-    { value: 'Cost Accounting', label: 'Cost Accounting' },
-    { value: 'Budgeting', label: 'Budgeting' },
-    { value: 'Payroll Management', label: 'Payroll Management' },
-    { value: 'Financial Forecasting', label: 'Financial Forecasting' },
-    { value: 'Data Analysis', label: 'Data Analysis' },
-    { value: 'Data Visualization', label: 'Data Visualization' },
-    { value: 'Machine Learning', label: 'Machine Learning' },
-    { value: 'Deep Learning', label: 'Deep Learning' },
-    { value: 'Artificial Intelligence', label: 'Artificial Intelligence' },
-    { value: 'Natural Language Processing', label: 'Natural Language Processing' },
-    { value: 'Computer Vision', label: 'Computer Vision' },
-    { value: 'Data Science', label: 'Data Science' },
-    { value: 'Big Data', label: 'Big Data' },
-    { value: 'Hadoop', label: 'Hadoop' },
-    { value: 'Spark', label: 'Spark' },
-    { value: 'Tableau', label: 'Tableau' },
-    { value: 'Power BI', label: 'Power BI' },
-    { value: 'R Programming', label: 'R Programming' },
-    { value: 'Pandas', label: 'Pandas' },
-    { value: 'NumPy', label: 'NumPy' },
-    { value: 'SciPy', label: 'SciPy' },
-    { value: 'TensorFlow', label: 'TensorFlow' },
-    { value: 'PyTorch', label: 'PyTorch' },
-    { value: 'Project Management', label: 'Project Management' },
-    { value: 'Agile Methodology', label: 'Agile Methodology' },
-    { value: 'Scrum', label: 'Scrum' },
-    { value: 'Kanban', label: 'Kanban' },
-    { value: 'PMP Certification', label: 'PMP Certification' },
-    { value: 'Risk Management', label: 'Risk Management' },
-    { value: 'Stakeholder Management', label: 'Stakeholder Management' },
-    { value: 'Graphic Design', label: 'Graphic Design' },
-    { value: 'UI/UX Design', label: 'UI/UX Design' },
-    { value: 'Adobe Photoshop', label: 'Adobe Photoshop' },
-    { value: 'Adobe Illustrator', label: 'Adobe Illustrator' },
-    { value: 'Figma', label: 'Figma' },
-    { value: 'Sketch', label: 'Sketch' },
-    { value: 'Invision', label: 'Invision' },
-    { value: 'Digital Marketing', label: 'Digital Marketing' },
-    { value: 'SEO', label: 'SEO' },
-    { value: 'SEM', label: 'SEM' },
-    { value: 'Content Marketing', label: 'Content Marketing' },
-    { value: 'Social Media Marketing', label: 'Social Media Marketing' },
-    { value: 'Email Marketing', label: 'Email Marketing' },
-    { value: 'Google Analytics', label: 'Google Analytics' },
-    { value: 'Google Ads', label: 'Google Ads' },
-    { value: 'Content Writing', label: 'Content Writing' },
-    { value: 'Copywriting', label: 'Copywriting' },
-    { value: 'Technical Writing', label: 'Technical Writing' },
-    { value: 'Creative Writing', label: 'Creative Writing' },
-    { value: 'Cybersecurity', label: 'Cybersecurity' },
-    { value: 'Ethical Hacking', label: 'Ethical Hacking' },
-    { value: 'Penetration Testing', label: 'Penetration Testing' },
-    { value: 'Network Security', label: 'Network Security' },
-    { value: 'Cloud Computing', label: 'Cloud Computing' },
-    { value: 'AWS', label: 'AWS' },
-    { value: 'Azure', label: 'Azure' },
-    { value: 'Google Cloud', label: 'Google Cloud' },
-    { value: 'DevOps', label: 'DevOps' },
-    { value: 'Docker', label: 'Docker' },
-    { value: 'Kubernetes', label: 'Kubernetes' },
-    { value: 'CI/CD', label: 'CI/CD' },
-    { value: 'Jenkins', label: 'Jenkins' },
-    { value: 'Ansible', label: 'Ansible' },
-    { value: 'Terraform', label: 'Terraform' },
-    { value: 'Mobile App Development', label: 'Mobile App Development' },
-    { value: 'iOS Development', label: 'iOS Development' },
-    { value: 'Android Development', label: 'Android Development' },
-    { value: 'Flutter', label: 'Flutter' },
-    { value: 'React Native', label: 'React Native' },
-    { value: 'Game Development', label: 'Game Development' },
-    { value: 'Unity', label: 'Unity' },
-    { value: 'Unreal Engine', label: 'Unreal Engine' },
-    { value: 'Blockchain', label: 'Blockchain' },
-    { value: 'Smart Contracts', label: 'Smart Contracts' },
-    { value: 'Web3', label: 'Web3' },
-    { value: 'Database Administration', label: 'Database Administration' },
-    { value: 'Business Analysis', label: 'Business Analysis' },
-    { value: 'Product Management', label: 'Product Management' },
-    { value: 'Customer Relationship Management', label: 'Customer Relationship Management' },
-    { value: 'Salesforce', label: 'Salesforce' },
-    { value: 'ERP Systems', label: 'ERP Systems' },
-    { value: 'SAP', label: 'SAP' },
-    { value: 'Oracle', label: 'Oracle' },
-    { value: 'Quality Assurance', label: 'Quality Assurance' },
-    { value: 'Software Testing', label: 'Software Testing' },
-    { value: 'Automation Testing', label: 'Automation Testing' },
-    { value: 'Selenium', label: 'Selenium' },
-    { value: 'Customer Support', label: 'Customer Support' },
-    { value: 'Technical Support', label: 'Technical Support' },
-    { value: 'Human Resources', label: 'Human Resources' },
-    { value: 'Recruitment', label: 'Recruitment' },
-    { value: 'Training and Development', label: 'Training and Development' },
-    { value: 'Event Planning', label: 'Event Planning' },
-    { value: 'Public Relations', label: 'Public Relations' },
-    { value: 'Supply Chain Management', label: 'Supply Chain Management' },
-    { value: 'Logistics', label: 'Logistics' },
-    { value: 'Inventory Management', label: 'Inventory Management' },
-    { value: 'Video Editing', label: 'Video Editing' },
-    { value: 'Adobe Premiere', label: 'Adobe Premiere' },
-    { value: 'Final Cut Pro', label: 'Final Cut Pro' },
-    { value: 'Photography', label: 'Photography' },
-    { value: '3D Modeling', label: '3D Modeling' },
-    { value: 'Blender', label: 'Blender' },
-    { value: 'AutoCAD', label: 'AutoCAD' },
-    { value: 'Embedded Systems', label: 'Embedded Systems' },
-    { value: 'IoT', label: 'IoT' },
-    { value: 'Robotics', label: 'Robotics' },
-    { value: 'Arduino', label: 'Arduino' },
-    { value: 'Raspberry Pi', label: 'Raspberry Pi' },
-    { value: 'Virtual Reality', label: 'Virtual Reality' },
-    { value: 'Augmented Reality', label: 'Augmented Reality' },
-    { value: 'Other', label: 'Other' },
+    { value: "HTML", label: "HTML" },
+    { value: "CSS", label: "CSS" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "React", label: "React" },
+    { value: "Angular", label: "Angular" },
+    { value: "Vue.js", label: "Vue.js" },
+    { value: "Node.js", label: "Node.js" },
+    { value: "Express.js", label: "Express.js" },
+    { value: "Python", label: "Python" },
+    { value: "Java", label: "Java" },
+    { value: "C++", label: "C++" },
+    { value: "C#", label: "C#" },
+    { value: "PHP", label: "PHP" },
+    { value: "Ruby", label: "Ruby" },
+    { value: "Go", label: "Go" },
+    { value: "Swift", label: "Swift" },
+    { value: "Kotlin", label: "Kotlin" },
+    { value: "TypeScript", label: "TypeScript" },
+    { value: "SQL", label: "SQL" },
+    { value: "NoSQL", label: "NoSQL" },
+    { value: "MongoDB", label: "MongoDB" },
+    { value: "MySQL", label: "MySQL" },
+    { value: "PostgreSQL", label: "PostgreSQL" },
+    { value: "SQLite", label: "SQLite" },
+    { value: "Firebase", label: "Firebase" },
+    { value: "GraphQL", label: "GraphQL" },
+    { value: "REST API", label: "REST API" },
+    { value: "Django", label: "Django" },
+    { value: "Flask", label: "Flask" },
+    { value: "Spring Boot", label: "Spring Boot" },
+    { value: ".NET", label: ".NET" },
+    { value: "Laravel", label: "Laravel" },
+    { value: "Ruby on Rails", label: "Ruby on Rails" },
+    { value: "Accountant", label: "Accountant" },
+    { value: "Financial Analysis", label: "Financial Analysis" },
+    { value: "Bookkeeping", label: "Bookkeeping" },
+    { value: "Tax Preparation", label: "Tax Preparation" },
+    { value: "Auditing", label: "Auditing" },
+    { value: "Cost Accounting", label: "Cost Accounting" },
+    { value: "Budgeting", label: "Budgeting" },
+    { value: "Payroll Management", label: "Payroll Management" },
+    { value: "Financial Forecasting", label: "Financial Forecasting" },
+    { value: "Data Analysis", label: "Data Analysis" },
+    { value: "Data Visualization", label: "Data Visualization" },
+    { value: "Machine Learning", label: "Machine Learning" },
+    { value: "Deep Learning", label: "Deep Learning" },
+    { value: "Artificial Intelligence", label: "Artificial Intelligence" },
+    {
+      value: "Natural Language Processing",
+      label: "Natural Language Processing",
+    },
+    { value: "Computer Vision", label: "Computer Vision" },
+    { value: "Data Science", label: "Data Science" },
+    { value: "Big Data", label: "Big Data" },
+    { value: "Hadoop", label: "Hadoop" },
+    { value: "Spark", label: "Spark" },
+    { value: "Tableau", label: "Tableau" },
+    { value: "Power BI", label: "Power BI" },
+    { value: "R Programming", label: "R Programming" },
+    { value: "Pandas", label: "Pandas" },
+    { value: "NumPy", label: "NumPy" },
+    { value: "SciPy", label: "SciPy" },
+    { value: "TensorFlow", label: "TensorFlow" },
+    { value: "PyTorch", label: "PyTorch" },
+    { value: "Project Management", label: "Project Management" },
+    { value: "Agile Methodology", label: "Agile Methodology" },
+    { value: "Scrum", label: "Scrum" },
+    { value: "Kanban", label: "Kanban" },
+    { value: "PMP Certification", label: "PMP Certification" },
+    { value: "Risk Management", label: "Risk Management" },
+    { value: "Stakeholder Management", label: "Stakeholder Management" },
+    { value: "Graphic Design", label: "Graphic Design" },
+    { value: "UI/UX Design", label: "UI/UX Design" },
+    { value: "Adobe Photoshop", label: "Adobe Photoshop" },
+    { value: "Adobe Illustrator", label: "Adobe Illustrator" },
+    { value: "Figma", label: "Figma" },
+    { value: "Sketch", label: "Sketch" },
+    { value: "Invision", label: "Invision" },
+    { value: "Digital Marketing", label: "Digital Marketing" },
+    { value: "SEO", label: "SEO" },
+    { value: "SEM", label: "SEM" },
+    { value: "Content Marketing", label: "Content Marketing" },
+    { value: "Social Media Marketing", label: "Social Media Marketing" },
+    { value: "Email Marketing", label: "Email Marketing" },
+    { value: "Google Analytics", label: "Google Analytics" },
+    { value: "Google Ads", label: "Google Ads" },
+    { value: "Content Writing", label: "Content Writing" },
+    { value: "Copywriting", label: "Copywriting" },
+    { value: "Technical Writing", label: "Technical Writing" },
+    { value: "Creative Writing", label: "Creative Writing" },
+    { value: "Cybersecurity", label: "Cybersecurity" },
+    { value: "Ethical Hacking", label: "Ethical Hacking" },
+    { value: "Penetration Testing", label: "Penetration Testing" },
+    { value: "Network Security", label: "Network Security" },
+    { value: "Cloud Computing", label: "Cloud Computing" },
+    { value: "AWS", label: "AWS" },
+    { value: "Azure", label: "Azure" },
+    { value: "Google Cloud", label: "Google Cloud" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "Docker", label: "Docker" },
+    { value: "Kubernetes", label: "Kubernetes" },
+    { value: "CI/CD", label: "CI/CD" },
+    { value: "Jenkins", label: "Jenkins" },
+    { value: "Ansible", label: "Ansible" },
+    { value: "Terraform", label: "Terraform" },
+    { value: "Mobile App Development", label: "Mobile App Development" },
+    { value: "iOS Development", label: "iOS Development" },
+    { value: "Android Development", label: "Android Development" },
+    { value: "Flutter", label: "Flutter" },
+    { value: "React Native", label: "React Native" },
+    { value: "Game Development", label: "Game Development" },
+    { value: "Unity", label: "Unity" },
+    { value: "Unreal Engine", label: "Unreal Engine" },
+    { value: "Blockchain", label: "Blockchain" },
+    { value: "Smart Contracts", label: "Smart Contracts" },
+    { value: "Web3", label: "Web3" },
+    { value: "Database Administration", label: "Database Administration" },
+    { value: "Business Analysis", label: "Business Analysis" },
+    { value: "Product Management", label: "Product Management" },
+    {
+      value: "Customer Relationship Management",
+      label: "Customer Relationship Management",
+    },
+    { value: "Salesforce", label: "Salesforce" },
+    { value: "ERP Systems", label: "ERP Systems" },
+    { value: "SAP", label: "SAP" },
+    { value: "Oracle", label: "Oracle" },
+    { value: "Quality Assurance", label: "Quality Assurance" },
+    { value: "Software Testing", label: "Software Testing" },
+    { value: "Automation Testing", label: "Automation Testing" },
+    { value: "Selenium", label: "Selenium" },
+    { value: "Customer Support", label: "Customer Support" },
+    { value: "Technical Support", label: "Technical Support" },
+    { value: "Human Resources", label: "Human Resources" },
+    { value: "Recruitment", label: "Recruitment" },
+    { value: "Training and Development", label: "Training and Development" },
+    { value: "Event Planning", label: "Event Planning" },
+    { value: "Public Relations", label: "Public Relations" },
+    { value: "Supply Chain Management", label: "Supply Chain Management" },
+    { value: "Logistics", label: "Logistics" },
+    { value: "Inventory Management", label: "Inventory Management" },
+    { value: "Video Editing", label: "Video Editing" },
+    { value: "Adobe Premiere", label: "Adobe Premiere" },
+    { value: "Final Cut Pro", label: "Final Cut Pro" },
+    { value: "Photography", label: "Photography" },
+    { value: "3D Modeling", label: "3D Modeling" },
+    { value: "Blender", label: "Blender" },
+    { value: "AutoCAD", label: "AutoCAD" },
+    { value: "Embedded Systems", label: "Embedded Systems" },
+    { value: "IoT", label: "IoT" },
+    { value: "Robotics", label: "Robotics" },
+    { value: "Arduino", label: "Arduino" },
+    { value: "Raspberry Pi", label: "Raspberry Pi" },
+    { value: "Virtual Reality", label: "Virtual Reality" },
+    { value: "Augmented Reality", label: "Augmented Reality" },
+    { value: "Other", label: "Other" },
   ];
 
   // Custom styles for react-select to match existing form styling
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      border: '1px solid #d1d5db',
-      borderRadius: '0.5rem',
-      padding: '0.5rem',
-      boxShadow: 'none',
-      '&:hover': {
-        borderColor: '#10b981',
+      border: "1px solid #d1d5db",
+      borderRadius: "0.5rem",
+      padding: "0.5rem",
+      boxShadow: "none",
+      "&:hover": {
+        borderColor: "#10b981",
       },
-      '&:focus-within': {
-        borderColor: '#10b981',
-        boxShadow: '0 0 0 2px rgba(16, 185, ibb128, 0.5)',
+      "&:focus-within": {
+        borderColor: "#10b981",
+        boxShadow: "0 0 0 2px rgba(16, 185, ibb128, 0.5)",
       },
     }),
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: '#d1fae5',
-      color: '#065f46',
+      backgroundColor: "#d1fae5",
+      color: "#065f46",
     }),
     multiValueLabel: (provided) => ({
       ...provided,
-      color: '#065f46',
+      color: "#065f46",
     }),
     multiValueRemove: (provided) => ({
       ...provided,
@@ -297,7 +317,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#9ca3af',
+      color: "#9ca3af",
     }),
     menu: (provided) => ({
       ...provided,
@@ -307,13 +327,17 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
 
   // Handle language selection
   const handleLanguageChange = (selectedOptions) => {
-    const selectedLanguages = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    const selectedLanguages = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
     setalldata({ ...alldata, preferred_languages: selectedLanguages });
   };
 
   // Handle skill selection
   const handleSkillChange = (selectedOptions) => {
-    const selectedSkills = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    const selectedSkills = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
     setalldata({ ...alldata, skills: selectedSkills.slice(0, 10) }); // Limit to 10 skills
   };
 
@@ -322,7 +346,9 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800">Profile Details</h2>
-        <p className="text-gray-500 text-sm">Complete your professional profile</p>
+        <p className="text-gray-500 text-sm">
+          Complete your professional profile
+        </p>
       </div>
 
       <div className="space-y-6">
@@ -330,13 +356,17 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Preferred Languages
-            <span className="text-xs text-gray-500 ml-1">(Search and select multiple)</span>
+            <span className="text-xs text-gray-500 ml-1">
+              (Search and select multiple)
+            </span>
           </label>
           <Select
             isMulti
             name="preferred_languages"
             options={languageOptions}
-            value={languageOptions.filter(option => alldata?.preferred_languages?.includes(option.value))}
+            value={languageOptions.filter((option) =>
+              alldata?.preferred_languages?.includes(option.value)
+            )}
             onChange={handleLanguageChange}
             styles={customStyles}
             placeholder="Search and select languages..."
@@ -350,13 +380,17 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Skills
-            <span className="text-xs text-gray-500 ml-1">(Search and select up to 10 skills)</span>
+            <span className="text-xs text-gray-500 ml-1">
+              (Search and select up to 10 skills)
+            </span>
           </label>
           <Select
             isMulti
             name="skills"
             options={skillOptions}
-            value={skillOptions.filter(option => alldata?.skills?.includes(option.value))}
+            value={skillOptions.filter((option) =>
+              alldata?.skills?.includes(option.value)
+            )}
             onChange={handleSkillChange}
             styles={customStyles}
             placeholder="Search and select skills..."
@@ -379,7 +413,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
               type={showpassword ? "text" : "password"}
               placeholder="Enter your password"
               name="password"
-              value={alldata.password || ''}
+              value={alldata.password || ""}
               minLength={6}
               onChange={handelinputs}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 pr-10"
@@ -410,7 +444,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
               onChange={handelresume}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
-            
+
             {/* Styled upload area */}
             <label
               htmlFor="resume-upload"
@@ -427,7 +461,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
                     <FiFileText className="w-10 h-10 text-emerald-500" />
                     <FiCheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-white bg-emerald-500 rounded-full p-0.5" />
                   </div>
-                  
+
                   <div className="w-full text-center">
                     <p className="text-sm font-medium text-gray-800 truncate max-w-xs">
                       {resume.name}
@@ -436,7 +470,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
                       {(resume.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
-                  
+
                   <button
                     type="button"
                     onClick={(e) => {
@@ -453,13 +487,18 @@ const Five = ({ alldata, handelinputs, handelresume, resume, addskilles, setalld
                 <>
                   <FiUploadCloud className="w-8 h-8 text-gray-400 mb-2 group-hover:text-emerald-500 transition-colors" />
                   <p className="text-sm text-gray-600 text-center">
-                    <span className="font-medium text-emerald-600">Click to upload</span> or drag and drop
+                    <span className="font-medium text-emerald-600">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">PDF, DOCX (Max. 5MB)</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    PDF, DOCX (Max. 5MB)
+                  </p>
                 </>
               )}
             </label>
-            
+
             {/* Animated border effect */}
             {!resume && (
               <div className="absolute inset-0 border-2 border-transparent rounded-xl pointer-events-none group-hover:border-emerald-200 transition-all duration-300" />

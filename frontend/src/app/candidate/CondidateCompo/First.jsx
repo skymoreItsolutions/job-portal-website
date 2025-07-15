@@ -4,12 +4,12 @@ import { MdCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { FiCalendar } from "react-icons/fi";
 
 const First = ({ alldata, handelinputs, handelgender }) => {
+
+  console.log(alldata)
   const isChecked = true;
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
-      {/* Form Content */}
       <div className="p-6 space-y-6">
-        {/* Full Name Field */}
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Full Name
@@ -19,14 +19,14 @@ const First = ({ alldata, handelinputs, handelgender }) => {
               type="text"
               placeholder="John Doe"
               name="full_name"
-              value={alldata.full_name}
+              value={alldata.full_name || ""}
               onChange={handelinputs}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
             />
           </div>
         </div>
 
-        {/* Date of Birth Field */}
+        
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Date of Birth
@@ -35,7 +35,7 @@ const First = ({ alldata, handelinputs, handelgender }) => {
             <input
               type="date"
               name="dob"
-              value={alldata.dob}
+              value={alldata.dob  || ""}
               onChange={handelinputs}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 appearance-none"
             />
@@ -43,7 +43,7 @@ const First = ({ alldata, handelinputs, handelgender }) => {
           </div>
         </div>
 
-        {/* Gender Selection */}
+        
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Gender
@@ -74,7 +74,7 @@ const First = ({ alldata, handelinputs, handelgender }) => {
             type="tel"
             placeholder="+91 (___) ___-____"
             name="number"
-            value={alldata.number}
+            value={alldata.number  || ""}
             onChange={handelinputs}
             minLength={10}
             maxLength={15}
