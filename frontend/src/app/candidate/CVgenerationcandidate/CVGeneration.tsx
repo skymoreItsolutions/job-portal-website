@@ -1,10 +1,17 @@
 import React from "react";
+<<<<<<< Updated upstream
 import TemplateSelector from "./components/TemplateSelector";
 import CVBuilder from "./components/CVBuilder";
 import { FileText, Sparkles } from "lucide-react";
+=======
+import TemplateSelector from "./components/TemplateSelector.tsx";
+import CVBuilder from "./components/CVBuilder.tsx";
+import { FileText, Sparkles, Zap, Users, Award, Globe } from "lucide-react";
+>>>>>>> Stashed changes
 
 interface CVData {
   personalInfo: {
+<<<<<<< Updated upstream
     firstName: string;
     lastName: string;
     email: string;
@@ -66,6 +73,30 @@ interface CVData {
     content: string[];
   }>;
 }
+=======
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    linkedin: "",
+    website: "",
+    summary: "",
+    profileImage: "",
+    title: "",
+  },
+  experience: [],
+  education: [],
+  skills: [],
+  certifications: [],
+  languages: [],
+  projects: [],
+  awards: [],
+  volunteerWork: [],
+  publications: [],
+  customSections: [],
+};
+>>>>>>> Stashed changes
 
 interface State {
   currentStep: "templates" | "builder" | "preview";
@@ -85,6 +116,7 @@ class CVGeneration extends React.Component<Props, State> {
     this.state = {
       currentStep: "templates",
       selectedTemplate: null,
+<<<<<<< Updated upstream
       cvData: this.loadFromLocalStorage() || {
         personalInfo: {
           firstName: "",
@@ -111,6 +143,10 @@ class CVGeneration extends React.Component<Props, State> {
       },
       isLoading: true,
       error: null,
+=======
+      cvData: initialCVData,
+      isLoading: true,
+>>>>>>> Stashed changes
     };
 
     this.handleTemplateSelect = this.handleTemplateSelect.bind(this);
@@ -167,17 +203,24 @@ class CVGeneration extends React.Component<Props, State> {
   }
 
   handleStartBuilding() {
+<<<<<<< Updated upstream
     if (!this.state.selectedTemplate) {
       this.setState({ error: "Please select a template first" });
       return;
     }
     this.setState({ currentStep: "builder", error: null });
     this.trackEvent("start_building");
+=======
+    this.setState({ currentStep: "builder" });
+>>>>>>> Stashed changes
   }
 
   handleBackToTemplates() {
     this.setState({ currentStep: "templates", selectedTemplate: null });
+<<<<<<< Updated upstream
     this.trackEvent("back_to_templates");
+=======
+>>>>>>> Stashed changes
   }
 
   handleDataChange(data: CVData) {
@@ -242,7 +285,11 @@ class CVGeneration extends React.Component<Props, State> {
               <FileText className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
+<<<<<<< Updated upstream
               Welcome to CV Builder
+=======
+              Welcome To CV Builder
+>>>>>>> Stashed changes
             </h1>
             <p className="text-gray-600">
               Loading your professional CV builder...
