@@ -18,6 +18,7 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
     "colors"
   );
 
+  
   const colorPresets = [
     {
       name: "Professional Blue",

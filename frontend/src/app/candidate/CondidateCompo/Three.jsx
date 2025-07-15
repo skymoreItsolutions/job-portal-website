@@ -179,29 +179,17 @@ const Three = ({ alldata, handelinputs }) => {
         </div>
 
         <div className="animate-fade-in">
-          <h6 className="text-sm font-medium text-gray-700 mb-3">Job Roles</h6>
-          <Select
-            isMulti
-            isSearchable
-            options={jobRolesOptions}
-            value={jobRolesOptions.filter((role) =>
-              alldata.job_roles?.includes(role.value)
-            )}
-            onChange={(selectedOptions) =>
-              handelinputs({
-                target: {
-                  name: "job_roles",
-                  value: selectedOptions.map((option) => option.value),
-                },
-              })
-            }
-            className="w-full"
-            classNamePrefix="select"
-            placeholder="Select or search job roles"
+          <h6 className="text-sm font-medium text-gray-700 mb-3">Job Title</h6>
+          <input
+            type="text"
+            placeholder="e.g. Senior Software Engineer"
+            name="job_roles"
+            value={alldata.job_roles}
+            onChange={handelinputs}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
           />
         </div>
 
-        {/* Job Role */}
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3">Job Role</h6>
           <input
@@ -217,7 +205,6 @@ const Three = ({ alldata, handelinputs }) => {
           </p>
         </div>
 
-        {/* Company Name */}
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3">
             Company Name
