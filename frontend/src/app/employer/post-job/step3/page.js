@@ -132,7 +132,7 @@ export default function Page() {
     <path d="M0 0h24v24H0z" fill="none" />
   </svg>
   <p className="text-sm text-gray-800">
-    Leads information will be accessible on HireBoat portal and can be{' '}
+    Leads information will be accessible on Hiring Boat portal and can be{' '}
     <strong className="font-semibold text-black">downloaded in excel</strong>{' '}
     format.
   </p>

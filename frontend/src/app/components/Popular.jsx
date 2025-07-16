@@ -8,7 +8,7 @@ const Popular = () => {
                 <div className="w-full lg:w-1/2">
                     <h3
                         className="font-manrope text-5xl text-gray-900 leading-[4rem] mb-7 text-center lg:text-left">
-                        Popular Searches on HireBoat</h3>
+                        Popular Searches on Hiring Boat</h3>
                     <p className="text-lg text-gray-500 mb-16 text-center lg:text-left">
                         Explore the most requestd job type and find the best one for you.
                     </p>

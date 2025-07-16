@@ -101,7 +101,7 @@ const response = await ai.models.generateContent({
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='p-4 bg-[#00C951] rounded-t-2xl'>
-            <p className='text-white text-xl font-bold uppercase'>HireBoat</p>
+            <p className='text-white text-xl font-bold uppercase'>Hiring Boat</p>
             <p className='text-white text-sm'>How can I help you today?</p>
           </div>
 
