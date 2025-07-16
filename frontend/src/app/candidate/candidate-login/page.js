@@ -111,7 +111,12 @@ export default function Page() {
     console.log(alldata?.token, "this is token");
     const response = await axios.post(
       `${baseurl}/updatecandidate/${token}`,
-      formData
+      formData,
+      {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+      }
     );
     if (response.data.success) {
       Swal.fire({
@@ -119,6 +124,11 @@ export default function Page() {
         text: "You clicked the button!",
         icon: "success",
       });
+
+
+
+      router.push('/candidate/dashboard')
+    
     } else {
       Swal.fire({
         title: "Submit Error",

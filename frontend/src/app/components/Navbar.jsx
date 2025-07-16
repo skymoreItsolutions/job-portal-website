@@ -26,7 +26,7 @@ export default function Navbar() {
   useEffect(() => {
     const checkLogin = async () => {
       const token = localStorage.getItem("employerToken") || localStorage.getItem("port_tok");
-      console.log(token)
+      console.log('wrefrf3f34',token)
       if (!token) {
         if (pathname !== "/") {
           
@@ -36,7 +36,7 @@ export default function Navbar() {
 
       try {
         const res = await axios.get(
-          `${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidate/dashboard"}`,
+          `${baseurl}/${localStorage.getItem("employerToken") ? "employer/profile" : "candidateprofile"}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ export default function Navbar() {
           router.push("/employer/onboarding");
         }
       } else {
-        const sessionToken = response.data.user.token;
+        const sessionToken = response.data.token;
         console.log("Session Token:", response.data);
         localStorage.setItem("port_tok", sessionToken);
         setShowModal(false);

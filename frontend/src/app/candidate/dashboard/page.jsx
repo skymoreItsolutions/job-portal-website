@@ -44,7 +44,7 @@ const Dashboard = () => {
     college_name: "",
     passing_marks: "",
     experience_years: "",
-    job_roles: "",
+    job_roles: [], // Changed to array to match JSON column
     job_title: "",
     experience_months: "",
     company_name: "",
@@ -57,34 +57,44 @@ const Dashboard = () => {
     skills: [],
     password: "",
   });
+  const [tempData, setTempData] = useState(userData); // Initialize with userData
   const [ViewModel, setViewModel] = useState(false);
   const [CvBuilder, setCvBuilder] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const [newSkill, setNewSkill] = useState("");
-  const [tempData, setTempData] = useState({});
+  const [newJobRole, setNewJobRole] = useState(""); // Added for job_roles input
+  const [error, setError] = useState(""); // Added for error handling
 
-  const fetchData = async (token) => {
-    if (!token) {
-      router.push("/");
-    } else {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${baseurl}/candidateinfo/${token}`);
-        if (response.data.success) {
-          setUserData(response.data.candidate);
-          setTempData(response.data.candidate);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
+const fetchData = async (token) => {
+  if (!token) {
+    router.push("/");
+  } else {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${baseurl}/candidateprofile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Log raw response data for debugging
+      console.log('datasss', response.data);
+
+     
+
+      console.log('candidateData', response.data);
+      setUserData(response.data);
+      setTempData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to load profile data. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  // console.log(userData);
+  }
+};
 
   useEffect(() => {
     const token = localStorage.getItem("port_tok");
@@ -101,7 +111,7 @@ const Dashboard = () => {
   };
 
   const addSkill = () => {
-    if (newSkill.trim() && tempData?.skills?.length < 10) {
+    if (newSkill.trim() && tempData.skills.length < 10) {
       setTempData({
         ...tempData,
         skills: [...tempData.skills, newSkill.trim()],
@@ -116,19 +126,40 @@ const Dashboard = () => {
     setTempData({ ...tempData, skills: updatedSkills });
   };
 
+  // const addJobRole = () => {
+  //   if (newJobRole.trim() && tempData.job_roles.length < 10) {
+  //     setTempData({
+  //       ...tempData,
+  //       job_roles: [...tempData.job_roles, newJobRole.trim()],
+  //     });
+  //     setNewJobRole("");
+  //   }
+  // };
+
+
   const saveChanges = async () => {
     try {
       const token = localStorage.getItem("port_tok");
+      // Ensure job_roles and skills are sent as JSON strings
+      const payload = {
+        ...tempData,
+  
+        skills: JSON.stringify(tempData.skills),
+      };
       const response = await axios.post(
-        `${baseurl}/updatecandidate/${token}`,
-        tempData
+        `${baseurl}/updatecandidate/${ton}`,
+        payload
       );
       if (response.data.success) {
         setUserData(tempData);
         setEditMode(false);
+        setError("");
+      } else {
+        setError(response.data.message || "Failed to update profile.");
       }
     } catch (error) {
       console.error("Error updating data:", error);
+      setError("An error occurred while updating your profile.");
     }
   };
 
@@ -171,41 +202,47 @@ const Dashboard = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-[#02325a] to-blue-800 rounded-xl p-6 mb-8 text-white shadow-lg">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">
-                Welcome back, {userData.full_name || "Candidate"}!
-              </h2>
-              <p className="opacity-90">
-                Here's your complete profile overview
-              </p>
-            </div>
-            {editMode ? (
-              <div className="flex space-x-2 mt-4 md:mt-0">
-                <button
-                  onClick={saveChanges}
-                  className="bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
-                >
-                  <FiSave className="mr-2" /> Save Changes
-                </button>
-                <button
-                  onClick={() => setEditMode(false)}
-                  className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium flex items-center"
-                >
-                  <FiX className="mr-2" /> Cancel
-                </button>
+        {error && (
+          <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
+            { }
+
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">
+                  Welcome back, {userData.full_name || "Candidate"}!
+                </h2>
+                <p className="opacity-90">
+                  Here's your complete profile overview
+                </p>
               </div>
-            ) : (
-              <button
-                onClick={() => setEditMode(true)}
-                className="mt-4 md:mt-0 bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
-              >
-                <FiEdit2 className="mr-2" /> Edit Profile
-              </button>
-            )}
+              {editMode ? (
+                <div className="flex space-x-2 mt-4 md:mt-0">
+                  <button
+                    onClick={saveChanges}
+                    className="bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+                  >
+                    <FiSave className="mr-2"
+
+                    /> Save Changes
+                  </button>
+                  <button
+                    onClick={() => setEditMode(false)}
+                    className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium flex items-center"
+                  >
+                    <FiX className="mr-2" /> Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setEditMode(true)}
+                  className="mt-4 md:mt-0 bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
+                >
+                  <FiEdit2 className="mr-2" /> Edit Profile
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex border-b border-gray-200 mb-6">
           <button
@@ -231,7 +268,7 @@ const Dashboard = () => {
           <button
             onClick={() => setActiveTab("CV-Builder")}
             className={`px-4 py-2 font-medium text-sm flex items-center ${
-              activeTab === "stats"
+              activeTab === "CV-Builder" // Fixed condition
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
@@ -373,14 +410,76 @@ const Dashboard = () => {
                     onChange={handleInputChange}
                   />
                   <div className="md:col-span-2">
-                    <EditableField
-                      editMode={editMode}
-                      icon={<FaBriefcase />}
-                      label="Job Roles"
-                      name="job_roles"
-                      value={editMode ? tempData.job_roles : userData.job_roles}
-                      onChange={handleInputChange}
-                    />
+                    <div className="flex items-center mb-2">
+                      <FaBriefcase className="text-gray-500 mr-2" />
+                      <span className="text-sm font-medium text-gray-500">
+                        Job Roles
+                      </span>
+                      {editMode && (
+                        <span className="text-xs text-gray-500 ml-auto">
+                          {tempData.job_roles.length}/10
+                        </span>
+                      )}
+                    </div>
+                    {editMode ? (
+                      <div>
+                        <div className="flex mb-2">
+                          <input
+                            type="text"
+                            value={newJobRole}
+                            onChange={(e) => setNewJobRole(e.target.value)}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && addJobRole()
+                            }
+                            placeholder="Add job role and press Enter"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={addJobRole}
+                            disabled={
+                              !newJobRole.trim() ||
+                              tempData.job_roles.length >= 10
+                            }
+                            className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {/* {tempData.job_roles.map((role, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
+                            >
+                              {role}
+                              <button
+                                onClick={() => removeJobRole(index)}
+                                className="ml-1 text-[#02325a] hover:text-blue-800"
+                              >
+                                <FaTimes size={12} />
+                              </button>
+                            </div>
+                          ))} */}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {/* {userData.job_roles.length > 0 ? (
+                          userData.job_roles.map((role, index) => (
+                            <span
+                              key={index}
+                              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                            >
+                              {role}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-gray-500">
+                            No job roles added
+                          </span>
+                        )} */}
+                      </div>
+                    )}
                   </div>
                 </div>
               </DashboardCard>
@@ -545,8 +644,8 @@ const Dashboard = () => {
                         Skills
                       </span>
                       {editMode && (
-                        <span className="text-xs text-gray-500 ml-auto">
-                          {tempData?.skills?.length}/10
+                        <span className="text-xs text-gray-500 ml_INVALID_VALUE_in_value_for_column_candidates_job_roles_at_position_0_in_value_for_column_candidates_job_roles/auto">
+                          {tempData.skills.length}/10
                         </span>
                       )}
                     </div>
@@ -564,7 +663,7 @@ const Dashboard = () => {
                           <button
                             onClick={addSkill}
                             disabled={
-                              !newSkill.trim() || tempData?.skills?.length >= 10
+                              !newSkill.trim() || tempData.skills.length >= 10
                             }
                             className="bg-blue-500 text-white px-3 py-2 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300"
                           >
@@ -572,7 +671,7 @@ const Dashboard = () => {
                           </button>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {tempData?.skills?.map((skill, index) => (
+                          {/* {tempData.skills.map((skill, index) => (
                             <div
                               key={index}
                               className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
@@ -585,13 +684,13 @@ const Dashboard = () => {
                                 <FaTimes size={12} />
                               </button>
                             </div>
-                          ))}
+                          ))} */}
                         </div>
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {userData?.skills?.length > 0 ? (
-                          userData.skills.map((skill, index) => (
+                        {/* {userData.skills.length > 0 ? (
+                          userData.skills.map((才, index) => (
                             <span
                               key={index}
                               className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
@@ -601,7 +700,7 @@ const Dashboard = () => {
                           ))
                         ) : (
                           <span className="text-gray-500">No skills added</span>
-                        )}
+                        )} */}
                       </div>
                     )}
                   </div>
@@ -653,7 +752,7 @@ const Dashboard = () => {
           </div>
         )}
         {activeTab === "CV-Builder" && (
-          <div className="bg-white rounded-xl shadow-sm  p-4">
+          <div className="bg-white rounded-xl shadow-sm p-4">
             {userData?.resume ? (
               <>
                 {!CvBuilder && (
@@ -676,7 +775,7 @@ const Dashboard = () => {
                   <div className="relative">
                     <button
                       onClick={() => setCvBuilder(false)}
-                      className=" absolute right-4 top-4 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition mb-4 float-right "
+                      className="absolute right-4 top-4 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition mb-4 float-right"
                     >
                       Close CV Builder
                     </button>
@@ -685,9 +784,7 @@ const Dashboard = () => {
                 )}
               </>
             ) : (
-              <>
-                <CVGeneration />
-              </>
+              <CVGeneration />
             )}
           </div>
         )}
@@ -697,11 +794,10 @@ const Dashboard = () => {
           <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
             <button
               onClick={() => setViewModel(false)}
-              className="absolute top-[14px] right-2  text-gray-600 hover:text-red-500 text-xl font-bold z-10"
+              className="absolute top-[14px] right-2 text-gray-600 hover:text-red-500 text-xl font-bold z-10"
             >
               X
             </button>
-            {/* PDF iframe */}
             <div className="w-full h-[90vh]">
               <iframe
                 src="http://127.0.0.1:8000/storage/pdf/qcUtUhAaO43fIzUhfnuWfMlhaQJUEYla5UCkLxa2.pdf"
@@ -762,7 +858,7 @@ const EditableField = ({
           <input
             type={type}
             name={name}
-            value={value}
+            value={value || ""}
             onChange={onChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
@@ -803,6 +899,7 @@ const calculateCompletion = (data) => {
     data.college_name,
     data.job_title,
     data.company_name,
+    data.job_roles.length > 0,
     data.skills.length > 0,
   ];
   const filledFields = fields.filter((field) => Boolean(field)).length;
@@ -827,6 +924,7 @@ const calculateStrengthScore = (data) => {
   if (data.college_name) score += 10;
   if (data.job_title) score += 15;
   if (data.company_name) score += 15;
+  if (data.job_roles.length > 0) score += 15;
   if (data.skills.length > 0) score += 20;
   return Math.min(score, 100);
 };
