@@ -1,79 +1,72 @@
-import React, { useState } from 'react';
-import { CVData, CVTemplate, Education } from '../../types/cv';
-import { Plus, Trash2, School, Calendar, Award } from 'lucide-react';
+import React, { useState } from "react";
+import { Plus, Trash2, School, Calendar, Award } from "lucide-react";
 
-interface EducationFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+const EducationForm = ({ data, onChange, template }) => {
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const addEducation = () => {
-    const newEducation: Education = {
+    const newEducation = {
       id: Date.now().toString(),
-      institution: '',
-      degree: '',
-      fieldOfStudy: '',
-      startDate: '',
-      endDate: '',
-      gpa: '',
-      achievements: ['']
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      startDate: "",
+      endDate: "",
+      gpa: "",
+      achievements: [""],
     };
 
     onChange({
       ...data,
-      education: [...data.education, newEducation]
+      education: [...data.education, newEducation],
     });
     setExpandedIndex(data.education.length);
   };
 
-  const removeEducation = (index: number) => {
+  const removeEducation = (index) => {
     const newEducation = data.education.filter((_, i) => i !== index);
     onChange({
       ...data,
-      education: newEducation
+      education: newEducation,
     });
   };
 
-  const updateEducation = (index: number, field: string, value: any) => {
+  const updateEducation = (index, field, value) => {
     const newEducation = [...data.education];
     newEducation[index] = {
       ...newEducation[index],
-      [field]: value
+      [field]: value,
     };
     onChange({
       ...data,
-      education: newEducation
+      education: newEducation,
     });
   };
 
-  const addAchievement = (eduIndex: number) => {
+  const addAchievement = (eduIndex) => {
     const newEducation = [...data.education];
-    newEducation[eduIndex].achievements.push('');
+    newEducation[eduIndex].achievements.push("");
     onChange({
       ...data,
-      education: newEducation
+      education: newEducation,
     });
   };
 
-  const updateAchievement = (eduIndex: number, achIndex: number, value: string) => {
+  const updateAchievement = (eduIndex, achIndex, value) => {
     const newEducation = [...data.education];
     newEducation[eduIndex].achievements[achIndex] = value;
     onChange({
       ...data,
-      education: newEducation
+      education: newEducation,
     });
   };
 
-  const removeAchievement = (eduIndex: number, achIndex: number) => {
+  const removeAchievement = (eduIndex, achIndex) => {
     const newEducation = [...data.education];
     newEducation[eduIndex].achievements.splice(achIndex, 1);
     onChange({
       ...data,
-      education: newEducation
+      education: newEducation,
     });
   };
 
@@ -81,21 +74,28 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Education</h2>
-        <p className="text-gray-600">Add your educational background, starting with the most recent</p>
+        <p className="text-gray-600">
+          Add your educational background, starting with the most recent
+        </p>
       </div>
 
       {data.education.map((edu, index) => (
-        <div key={edu.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+        <div
+          key={edu.id}
+          className="border border-gray-200 rounded-lg p-6 bg-gray-50"
+        >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
               {edu.institution || `Education ${index + 1}`}
             </h3>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                onClick={() =>
+                  setExpandedIndex(expandedIndex === index ? null : index)
+                }
                 className="text-[#02325a] hover:text-blue-700 font-medium"
               >
-                {expandedIndex === index ? 'Collapse' : 'Expand'}
+                {expandedIndex === index ? "Collapse" : "Expand"}
               </button>
               <button
                 onClick={() => removeEducation(index)}
@@ -118,7 +118,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                     <input
                       type="text"
                       value={edu.institution}
-                      onChange={(e) => updateEducation(index, 'institution', e.target.value)}
+                      onChange={(e) =>
+                        updateEducation(index, "institution", e.target.value)
+                      }
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="University name"
                       required
@@ -133,7 +135,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                   <input
                     type="text"
                     value={edu.degree}
-                    onChange={(e) => updateEducation(index, 'degree', e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(index, "degree", e.target.value)
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Bachelor's, Master's, PhD, etc."
                     required
@@ -147,7 +151,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                   <input
                     type="text"
                     value={edu.fieldOfStudy}
-                    onChange={(e) => updateEducation(index, 'fieldOfStudy', e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(index, "fieldOfStudy", e.target.value)
+                    }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Computer Science, Business, etc."
                     required
@@ -163,7 +169,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                     <input
                       type="text"
                       value={edu.gpa}
-                      onChange={(e) => updateEducation(index, 'gpa', e.target.value)}
+                      onChange={(e) =>
+                        updateEducation(index, "gpa", e.target.value)
+                      }
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="3.8/4.0"
                     />
@@ -179,7 +187,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                     <input
                       type="month"
                       value={edu.startDate}
-                      onChange={(e) => updateEducation(index, 'startDate', e.target.value)}
+                      onChange={(e) =>
+                        updateEducation(index, "startDate", e.target.value)
+                      }
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                     />
@@ -195,7 +205,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                     <input
                       type="month"
                       value={edu.endDate}
-                      onChange={(e) => updateEducation(index, 'endDate', e.target.value)}
+                      onChange={(e) =>
+                        updateEducation(index, "endDate", e.target.value)
+                      }
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                     />
@@ -212,7 +224,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, template 
                     <input
                       type="text"
                       value={achievement}
-                      onChange={(e) => updateAchievement(index, achIndex, e.target.value)}
+                      onChange={(e) =>
+                        updateAchievement(index, achIndex, e.target.value)
+                      }
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="e.g., Dean's List, Magna Cum Laude, Student Government"
                     />

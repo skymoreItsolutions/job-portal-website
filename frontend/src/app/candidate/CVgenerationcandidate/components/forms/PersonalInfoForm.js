@@ -1,15 +1,8 @@
 import React from 'react';
-import { CVData, CVTemplate } from '../../types/cv';
 import { User, Mail, Phone, MapPin, Globe, Linkedin } from 'lucide-react';
 
-interface PersonalInfoFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, template }) => {
-  const handleInputChange = (field: string, value: string) => {
+const PersonalInfoForm = ({ data, onChange, template }) => {
+  const handleInputChange = (field, value) => {
     onChange({
       ...data,
       personalInfo: {

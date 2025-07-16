@@ -1,86 +1,10 @@
 import React from "react";
 import TemplateSelector from "./components/TemplateSelector";
 import CVBuilder from "./components/CVBuilder";
-import { FileText, Sparkles } from "lucide-react";
+import { FileText } from "lucide-react";
 
-interface CVData {
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    location: string;
-    linkedin: string;
-    website: string;
-    summary: string;
-    profileImage: string;
-    title: string;
-  };
-  experience: Array<{
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    description: string[];
-  }>;
-  education: Array<{
-    institution: string;
-    degree: string;
-    field: string;
-    startDate: string;
-    endDate: string;
-  }>;
-  skills: string[];
-  certifications: Array<{
-    name: string;
-    issuer: string;
-    date: string;
-  }>;
-  languages: string[];
-  projects: Array<{
-    name: string;
-    description: string;
-    technologies: string[];
-    url?: string;
-  }>;
-  awards: Array<{
-    title: string;
-    issuer: string;
-    date: string;
-  }>;
-  volunteerWork: Array<{
-    organization: string;
-    role: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  publications: Array<{
-    title: string;
-    publisher: string;
-    date: string;
-    url?: string;
-  }>;
-  customSections: Array<{
-    title: string;
-    content: string[];
-  }>;
-}
-
-interface State {
-  currentStep: "templates" | "builder" | "preview";
-  selectedTemplate: string | null;
-  cvData: CVData;
-  isLoading: boolean;
-  error: string | null;
-}
-
-interface Props {}
-
-class CVGeneration extends React.Component<Props, State> {
-  private timer: NodeJS.Timeout | null = null;
-
-  constructor(props: Props) {
+class CVGeneration extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       currentStep: "templates",
@@ -127,7 +51,7 @@ class CVGeneration extends React.Component<Props, State> {
     }, 1000);
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error, errorInfo) {
     this.setState({ error: error.message });
     this.trackEvent("error_occurred", { error: error.message });
   }
@@ -138,7 +62,7 @@ class CVGeneration extends React.Component<Props, State> {
     }
   }
 
-  private loadFromLocalStorage(): CVData | null {
+  loadFromLocalStorage() {
     try {
       const savedData = localStorage.getItem("cvData");
       return savedData ? JSON.parse(savedData) : null;
@@ -148,7 +72,7 @@ class CVGeneration extends React.Component<Props, State> {
     }
   }
 
-  private saveToLocalStorage(data: CVData) {
+  saveToLocalStorage(data) {
     try {
       localStorage.setItem("cvData", JSON.stringify(data));
     } catch (error) {
@@ -156,12 +80,11 @@ class CVGeneration extends React.Component<Props, State> {
     }
   }
 
-  private trackEvent(eventName: string, data: any = {}) {
-    // Placeholder for analytics tracking
+  trackEvent(eventName, data = {}) {
     console.log(`Tracking event: ${eventName}`, data);
   }
 
-  handleTemplateSelect(template: string) {
+  handleTemplateSelect(template) {
     this.setState({ selectedTemplate: template });
     this.trackEvent("template_selected", { template });
   }
@@ -180,14 +103,14 @@ class CVGeneration extends React.Component<Props, State> {
     this.trackEvent("back_to_templates");
   }
 
-  handleDataChange(data: CVData) {
+  handleDataChange(data) {
     this.setState({ cvData: data });
     this.saveToLocalStorage(data);
     this.trackEvent("data_updated");
   }
 
   handleReset() {
-    const resetData: CVData = {
+    const resetData = {
       personalInfo: {
         firstName: "",
         lastName: "",

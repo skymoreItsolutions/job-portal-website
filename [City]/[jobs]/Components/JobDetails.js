@@ -1,33 +1,73 @@
-import React from 'react';
-import { 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Building, 
-  Calendar, 
-  AlertCircle, 
+import React from "react";
+import {
+  MapPin,
+  Clock,
+  DollarSign,
+  Building,
+  Calendar,
+  AlertCircle,
   Star,
   Users,
   Briefcase,
   Award,
   Heart,
   Share2,
-  Bookmark
-} from 'lucide-react';
-import { Job } from '../types/Job';
+  Bookmark,
+} from "lucide-react";
 
-interface JobDetailsProps {
-  job: Job;
-}
+export const JobDetails = ({ job }) => {
+  const job = {
+    title: "Senior Frontend Engineer",
+    company: "TechNova Inc.",
+    companyLogo: "https://via.placeholder.com/80x80.png?text=Logo",
+    location: "San Francisco, CA",
+    type: "Full-Time",
+    salary: "$120,000 - $150,000",
+    posted: "3 days ago",
+    urgent: true,
+    featured: true,
+    experienceLevel: "Senior",
+    department: "Engineering",
+    tags: ["React", "JavaScript", "TailwindCSS", "Next.js", "TypeScript"],
+    description: `
+    We're looking for a passionate and experienced Senior Frontend Engineer to join our growing team. 
+    You'll work on high-impact products that reach millions of users and help shape the future of our frontend stack.
+  `,
+    requirements: [
+      "5+ years of experience in frontend development.",
+      "Strong expertise in React and JavaScript/TypeScript.",
+      "Familiarity with TailwindCSS and modern CSS practices.",
+      "Experience with performance optimization and accessibility.",
+      "Good understanding of RESTful APIs and state management.",
+    ],
+    responsibilities: [
+      "Develop and maintain scalable web applications.",
+      "Collaborate with designers, backend developers, and product managers.",
+      "Write clean, maintainable, and well-documented code.",
+      "Participate in code reviews and mentoring.",
+      "Drive improvements to our frontend architecture and processes.",
+    ],
+    benefits: [
+      "Health, dental, and vision insurance.",
+      "Flexible work hours and remote-friendly policy.",
+      "Professional development stipend.",
+      "Generous PTO and parental leave.",
+      "Team retreats and wellness programs.",
+    ],
+  };
 
-export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
   const getExperienceLevelColor = (level: string) => {
     switch (level) {
-      case 'Entry': return 'bg-green-100 text-green-800';
-      case 'Mid': return 'bg-blue-100 text-blue-800';
-      case 'Senior': return 'bg-purple-100 text-purple-800';
-      case 'Lead': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "Entry":
+        return "bg-green-100 text-green-800";
+      case "Mid":
+        return "bg-blue-100 text-blue-800";
+      case "Senior":
+        return "bg-purple-100 text-purple-800";
+      case "Lead":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -48,7 +88,7 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
               </div>
             )}
           </div>
-          
+
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
               <h1 className="text-3xl font-bold">{job.title}</h1>
@@ -65,12 +105,12 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
                 </span>
               )}
             </div>
-            
+
             <h2 className="text-xl text-blue-100 mb-4 flex items-center gap-2">
               <Building className="w-5 h-5" />
               {job.company}
             </h2>
-            
+
             {/* Job meta info grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="flex items-center gap-2 text-blue-100">
@@ -120,14 +160,20 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
                 <Award className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-blue-600 font-medium">Experience Level</p>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getExperienceLevelColor(job.experienceLevel)}`}>
+                <p className="text-sm text-blue-600 font-medium">
+                  Experience Level
+                </p>
+                <span
+                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getExperienceLevelColor(
+                    job.experienceLevel
+                  )}`}
+                >
                   {job.experienceLevel}
                 </span>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
             <div className="flex items-center gap-3">
               <div className="bg-green-600 p-2 rounded-lg">
@@ -139,7 +185,7 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
             <div className="flex items-center gap-3">
               <div className="bg-purple-600 p-2 rounded-lg">
@@ -147,7 +193,9 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
               </div>
               <div>
                 <p className="text-sm text-purple-600 font-medium">Benefits</p>
-                <p className="font-semibold text-purple-800">{job.benefits.length} perks</p>
+                <p className="font-semibold text-purple-800">
+                  {job.benefits.length} perks
+                </p>
               </div>
             </div>
           </div>
@@ -182,11 +230,18 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
           </h3>
           <div className="grid gap-3">
             {job.requirements.map((requirement, index) => (
-              <div key={index} className="flex items-start gap-4 p-3 bg-blue-50 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors duration-200">
+              <div
+                key={index}
+                className="flex items-start gap-4 p-3 bg-blue-50 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors duration-200"
+              >
                 <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-white text-xs font-bold">{index + 1}</span>
+                  <span className="text-white text-xs font-bold">
+                    {index + 1}
+                  </span>
                 </div>
-                <span className="text-gray-700 leading-relaxed">{requirement}</span>
+                <span className="text-gray-700 leading-relaxed">
+                  {requirement}
+                </span>
               </div>
             ))}
           </div>
@@ -200,9 +255,14 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
           </h3>
           <div className="grid gap-3">
             {job.responsibilities.map((responsibility, index) => (
-              <div key={index} className="flex items-start gap-4 p-3 bg-green-50 rounded-lg border border-green-100 hover:border-green-200 transition-colors duration-200">
+              <div
+                key={index}
+                className="flex items-start gap-4 p-3 bg-green-50 rounded-lg border border-green-100 hover:border-green-200 transition-colors duration-200"
+              >
                 <div className="w-2 h-2 bg-green-600 rounded-full mt-3 flex-shrink-0"></div>
-                <span className="text-gray-700 leading-relaxed">{responsibility}</span>
+                <span className="text-gray-700 leading-relaxed">
+                  {responsibility}
+                </span>
               </div>
             ))}
           </div>
@@ -216,7 +276,10 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
           </h3>
           <div className="grid md:grid-cols-2 gap-3">
             {job.benefits.map((benefit, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 bg-purple-50 rounded-lg border border-purple-100 hover:border-purple-200 transition-colors duration-200">
+              <div
+                key={index}
+                className="flex items-start gap-4 p-4 bg-purple-50 rounded-lg border border-purple-100 hover:border-purple-200 transition-colors duration-200"
+              >
                 <div className="w-2 h-2 bg-purple-600 rounded-full mt-3 flex-shrink-0"></div>
                 <span className="text-gray-700 leading-relaxed">{benefit}</span>
               </div>
@@ -226,10 +289,12 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ job }) => {
 
         {/* Apply section */}
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center">
-          <h3 className="text-2xl font-bold mb-3">Ready to Join {job.company}?</h3>
+          <h3 className="text-2xl font-bold mb-3">
+            Ready to Join {job.company}?
+          </h3>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Take the next step in your career and become part of an innovative team that values growth, 
-            collaboration, and making a real impact.
+            Take the next step in your career and become part of an innovative
+            team that values growth, collaboration, and making a real impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">

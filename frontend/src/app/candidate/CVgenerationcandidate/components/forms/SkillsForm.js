@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, Skill } from '../../types/cv';
 import { Plus, Trash2, Star, Code, MessageSquare, Users } from 'lucide-react';
 
-interface SkillsFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => {
-  const [newSkill, setNewSkill] = useState({ name: '', level: 'Intermediate' as const, category: 'Technical' as const });
+const SkillsForm = ({ data, onChange, template }) => {
+  const [newSkill, setNewSkill] = useState({ name: '', level: 'Intermediate', category: 'Technical' });
 
   const addSkill = () => {
     if (newSkill.name.trim()) {
-      const skill: Skill = {
+      const skill = {
         id: Date.now().toString(),
         name: newSkill.name,
         level: newSkill.level,
@@ -28,14 +21,14 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
     }
   };
 
-  const removeSkill = (id: string) => {
+  const removeSkill = (id) => {
     onChange({
       ...data,
       skills: data.skills.filter(skill => skill.id !== id)
     });
   };
 
-  const updateSkill = (id: string, field: string, value: any) => {
+  const updateSkill = (id, field, value) => {
     const newSkills = data.skills.map(skill =>
       skill.id === id ? { ...skill, [field]: value } : skill
     );
@@ -45,7 +38,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
     });
   };
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category) => {
     switch (category) {
       case 'Technical': return Code;
       case 'Language': return MessageSquare;
@@ -54,7 +47,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
     }
   };
 
-  const getLevelColor = (level: string) => {
+  const getLevelColor = (level) => {
     switch (level) {
       case 'Beginner': return 'bg-gray-200 text-gray-700';
       case 'Intermediate': return 'bg-blue-200 text-blue-700';
@@ -70,7 +63,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
     }
     acc[skill.category].push(skill);
     return acc;
-  }, {} as Record<string, Skill[]>);
+  }, {});
 
   return (
     <div className="space-y-6">
@@ -102,7 +95,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
             </label>
             <select
               value={newSkill.category}
-              onChange={(e) => setNewSkill({ ...newSkill, category: e.target.value as any })}
+              onChange={(e) => setNewSkill({ ...newSkill, category: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Technical">Technical</option>
@@ -118,7 +111,7 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, template }) => 
             </label>
             <select
               value={newSkill.level}
-              onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value as any })}
+              onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Beginner">Beginner</option>

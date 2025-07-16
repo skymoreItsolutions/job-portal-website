@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { CVTemplate } from "../types/cv";
 import {
   templates,
   getTemplatesByCategory,
@@ -26,27 +25,15 @@ import {
   Briefcase,
 } from "lucide-react";
 
-interface TemplateSelectorProps {
-  selectedTemplate: CVTemplate | null;
-  onTemplateSelect: (template: CVTemplate) => void;
-  onNext: () => void;
-}
-
-const TemplateSelector: React.FC<TemplateSelectorProps> = ({
-  selectedTemplate,
-  onTemplateSelect,
-  onNext,
-}) => {
+const TemplateSelector = ({ selectedTemplate, onTemplateSelect, onNext }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedIndustry, setSelectedIndustry] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [showPremiumOnly, setShowPremiumOnly] = useState(false);
   const [showFeatured, setShowFeatured] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState<
-    "name" | "category" | "difficulty" | "popularity"
-  >("name");
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState("name");
 
   const categories = ["All", ...new Set(templates.map((t) => t.category))];
   const industries = ["All", ...new Set(templates.flatMap((t) => t.industry))];
@@ -116,7 +103,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     sortBy,
   ]);
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
         return "bg-green-100 text-green-800 border-green-200";
@@ -129,7 +116,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     }
   };
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category) => {
     switch (category) {
       case "Corporate":
         return Briefcase;
@@ -162,7 +149,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     }
   };
 
-  const TemplateCard = ({ template }: { template: CVTemplate }) => {
+  const TemplateCard = ({ template }) => {
     const CategoryIcon = getCategoryIcon(template.category);
 
     return (
@@ -292,7 +279,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     );
   };
 
-  const TemplateListItem = ({ template }: { template: CVTemplate }) => {
+  const TemplateListItem = ({ template }) => {
     const CategoryIcon = getCategoryIcon(template.category);
 
     return (
@@ -474,7 +461,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value)}
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="name">Sort by Name</option>

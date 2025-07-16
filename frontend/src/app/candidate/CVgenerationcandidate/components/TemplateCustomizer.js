@@ -1,24 +1,10 @@
 import React, { useState } from "react";
-import { CVTemplate } from "../types/cv";
 import { X, Palette, Type, Layout, Save, RotateCcw } from "lucide-react";
 
-interface TemplateCustomizerProps {
-  template: CVTemplate;
-  onClose: () => void;
-  onTemplateChange: (template: CVTemplate) => void;
-}
+const TemplateCustomizer = ({ template, onClose, onTemplateChange }) => {
+  const [customTemplate, setCustomTemplate] = useState(template);
+  const [activeTab, setActiveTab] = useState("colors");
 
-const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
-  template,
-  onClose,
-  onTemplateChange,
-}) => {
-  const [customTemplate, setCustomTemplate] = useState<CVTemplate>(template);
-  const [activeTab, setActiveTab] = useState<"colors" | "fonts" | "layout">(
-    "colors"
-  );
-
-  
   const colorPresets = [
     {
       name: "Professional Blue",
@@ -55,28 +41,28 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
     { name: "Source Sans Pro", category: "Clean Sans-serif" },
   ];
 
-  const updateColors = (colorUpdate: Partial<CVTemplate["colors"]>) => {
+  const updateColors = (colorUpdate) => {
     setCustomTemplate({
       ...customTemplate,
       colors: { ...customTemplate.colors, ...colorUpdate },
     });
   };
 
-  const updateFonts = (fontUpdate: Partial<CVTemplate["fonts"]>) => {
+  const updateFonts = (fontUpdate) => {
     setCustomTemplate({
       ...customTemplate,
       fonts: { ...customTemplate.fonts, ...fontUpdate },
     });
   };
 
-  const updateLayout = (layoutUpdate: Partial<CVTemplate["layout"]>) => {
+  const updateLayout = (layoutUpdate) => {
     setCustomTemplate({
       ...customTemplate,
       layout: { ...customTemplate.layout, ...layoutUpdate },
     });
   };
 
-  const applyColorPreset = (preset: (typeof colorPresets)[0]) => {
+  const applyColorPreset = (preset) => {
     updateColors(preset.colors);
   };
 
@@ -122,7 +108,8 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      વ
+                      onClick={() => setActiveTab(tab.id)}
                       className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         activeTab === tab.id
                           ? "bg-white text-gray-900 shadow-sm"
@@ -257,58 +244,62 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
               )}
 
               {activeTab === "fonts" && (
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">
-                      Heading Font
-                    </h3>
-                    <select
-                      value={customTemplate.fonts.heading}
-                      onChange={(e) => updateFonts({ heading: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    >
-                      {fontOptions.map((font) => (
-                        <option key={font.name} value={font.name}>
-                          {font.name} - {font.category}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-3">
+                        Heading Font
+                      </h3>
+                      <select
+                        value={customTemplate.fonts.heading}
+                        onChange={(e) =>
+                          updateFonts({ heading: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      >
+                        {fontOptions.map((font) => (
+                          <option key={font.name} value={font.name}>
+                            {font.name} - {font.category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">
-                      Body Font
-                    </h3>
-                    <select
-                      value={customTemplate.fonts.body}
-                      onChange={(e) => updateFonts({ body: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    >
-                      {fontOptions.map((font) => (
-                        <option key={font.name} value={font.name}>
-                          {font.name} - {font.category}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-3">
+                        Body Font
+                      </h3>
+                      <select
+                        value={customTemplate.fonts.body}
+                        onChange={(e) => updateFonts({ body: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      >
+                        {fontOptions.map((font) => (
+                          <option key={font.name} value={font.name}>
+                            {font.name} - {font.category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4
-                      className="font-semibold mb-2"
-                      style={{ fontFamily: customTemplate.fonts.heading }}
-                    >
-                      Heading Preview
-                    </h4>
-                    <p
-                      className="text-sm"
-                      style={{ fontFamily: customTemplate.fonts.body }}
-                    >
-                      This is how your body text will look with the selected
-                      fonts. The combination should be readable and
-                      professional.
-                    </p>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <h4
+                        className="font-semibold mb-2"
+                        style={{ fontFamily: customTemplate.fonts.heading }}
+                      >
+                        Heading Preview
+                      </h4>
+                      <p
+                        className="text-sm"
+                        style={{ fontFamily: customTemplate.fonts.body }}
+                      >
+                        This is how your body text will look with the selected
+                        fonts. The combination should be readable and
+                        professional.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </div> // 👈 Added this missing closing tag
               )}
 
               {activeTab === "layout" && (
@@ -359,7 +350,7 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
                         <button
                           key={option.value}
                           onClick={() =>
-                            updateLayout({ headerStyle: option.value as any })
+                            updateLayout({ headerStyle: option.value })
                           }
                           className={`w-full p-3 text-left border rounded-lg transition-colors ${
                             customTemplate.layout.headerStyle === option.value
@@ -387,7 +378,7 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
                           key={option.value}
                           onClick={() =>
                             updateLayout({
-                              sectionSpacing: option.value as any,
+                              sectionSpacing: option.value,
                             })
                           }
                           className={`w-full p-3 text-left border rounded-lg transition-colors ${
@@ -565,7 +556,6 @@ const TemplateCustomizer: React.FC<TemplateCustomizerProps> = ({
           </div>
         </div>
 
-        
         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
           <button
             onClick={resetToDefault}

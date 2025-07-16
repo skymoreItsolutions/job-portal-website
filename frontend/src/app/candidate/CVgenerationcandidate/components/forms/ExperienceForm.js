@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, Experience } from '../../types/cv';
 import { Plus, Trash2, Building, Calendar, MapPin } from 'lucide-react';
 
-interface ExperienceFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, template }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+const ExperienceForm = ({ data, onChange, template }) => {
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const addExperience = () => {
-    const newExperience: Experience = {
+    const newExperience = {
       id: Date.now().toString(),
       company: '',
       position: '',
@@ -31,7 +24,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, templat
     setExpandedIndex(data.experience.length);
   };
 
-  const removeExperience = (index: number) => {
+  const removeExperience = (index) => {
     const newExperience = data.experience.filter((_, i) => i !== index);
     onChange({
       ...data,
@@ -39,7 +32,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, templat
     });
   };
 
-  const updateExperience = (index: number, field: string, value: any) => {
+  const updateExperience = (index, field, value) => {
     const newExperience = [...data.experience];
     newExperience[index] = {
       ...newExperience[index],
@@ -51,7 +44,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, templat
     });
   };
 
-  const addAchievement = (expIndex: number) => {
+  const addAchievement = (expIndex) => {
     const newExperience = [...data.experience];
     newExperience[expIndex].achievements.push('');
     onChange({
@@ -60,7 +53,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, templat
     });
   };
 
-  const updateAchievement = (expIndex: number, achIndex: number, value: string) => {
+  const updateAchievement = (expIndex, achIndex, value) => {
     const newExperience = [...data.experience];
     newExperience[expIndex].achievements[achIndex] = value;
     onChange({
@@ -69,7 +62,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, templat
     });
   };
 
-  const removeAchievement = (expIndex: number, achIndex: number) => {
+  const removeAchievement = (expIndex, achIndex) => {
     const newExperience = [...data.experience];
     newExperience[expIndex].achievements.splice(achIndex, 1);
     onChange({

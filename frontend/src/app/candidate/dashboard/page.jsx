@@ -29,7 +29,7 @@ import {
 import { IoIosDocument } from "react-icons/io";
 import { FiSettings, FiEdit2, FiSave, FiX } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import CVGeneration from "../CVgenerationcandidate/CVGeneration.tsx";
+import CVGeneration from "../CVgenerationcandidate/CVGeneration";
 import Link from "next/link";
 
 const Dashboard = () => {

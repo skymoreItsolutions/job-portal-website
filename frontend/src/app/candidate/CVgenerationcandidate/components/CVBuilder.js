@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { CVData, CVTemplate } from '../types/cv';
-import PersonalInfoForm from './forms/PersonalInfoForm.tsx';
-import ExperienceForm from './forms/ExperienceForm.tsx';
-import EducationForm from './forms/EducationForm.tsx';
-import SkillsForm from './forms/SkillsForm.tsx';
-import ProjectsForm from './forms/ProjectsForm.tsx';
-import CertificationsForm from './forms/CertificationsForm.tsx';
-import LanguagesForm from './forms/LanguagesForm.tsx';
-import CVPreview from './CVPreview.tsx';
-import TemplateCustomizer from './TemplateCustomizer.tsx';
-import ExportModal from './ExportModal.tsx';
+import PersonalInfoForm from './forms/PersonalInfoForm';
+import ExperienceForm from './forms/ExperienceForm';
+import EducationForm from './forms/EducationForm';
+import SkillsForm from './forms/SkillsForm';
+import ProjectsForm from './forms/ProjectsForm';
+import CertificationsForm from './forms/CertificationsForm';
+import LanguagesForm from './forms/LanguagesForm';
+import CVPreview from './CVPreview';
+import TemplateCustomizer from './TemplateCustomizer';
+import ExportModal from './ExportModal';
 import { 
   User, 
   Briefcase, 
@@ -31,19 +30,12 @@ import {
   Crown
 } from 'lucide-react';
 
-interface CVBuilderProps {
-  template: CVTemplate;
-  onBack: () => void;
-  cvData: CVData;
-  onDataChange: (data: CVData) => void;
-}
-
-const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataChange }) => {
+const CVBuilder = ({ template, onBack, cvData, onDataChange }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [showCustomizer, setShowCustomizer] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
+  const [autoSaveStatus, setAutoSaveStatus] = useState('saved');
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
   const steps = [
@@ -122,11 +114,11 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
     }
   };
 
-  const handleStepClick = (stepIndex: number) => {
+  const handleStepClick = (stepIndex) => {
     setCurrentStep(stepIndex);
   };
 
-  const isStepCompleted = (stepIndex: number) => {
+  const isStepCompleted = (stepIndex) => {
     const step = steps[stepIndex];
     switch (step.id) {
       case 'personal':
@@ -373,7 +365,7 @@ const CVBuilder: React.FC<CVBuilderProps> = ({ template, onBack, cvData, onDataC
         <TemplateCustomizer
           template={template}
           onClose={() => setShowCustomizer(false)}
-          onTemplateChange={() => {}} // Will implement template customization
+          onTemplateChange={() => {}}
         />
       )}
 

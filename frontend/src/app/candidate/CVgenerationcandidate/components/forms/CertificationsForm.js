@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, Certification } from '../../types/cv';
 import { Plus, Trash2, Award, Calendar, Building, ExternalLink } from 'lucide-react';
 
-interface CertificationsFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange, template }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+const CertificationsForm = ({ data, onChange, template }) => {
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const addCertification = () => {
-    const newCertification: Certification = {
+    const newCertification = {
       id: Date.now().toString(),
       name: '',
       issuer: '',
@@ -30,7 +23,7 @@ const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange,
     setExpandedIndex(data.certifications.length);
   };
 
-  const removeCertification = (index: number) => {
+  const removeCertification = (index) => {
     const newCertifications = data.certifications.filter((_, i) => i !== index);
     onChange({
       ...data,
@@ -38,7 +31,7 @@ const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange,
     });
   };
 
-  const updateCertification = (index: number, field: string, value: any) => {
+  const updateCertification = (index, field, value) => {
     const newCertifications = [...data.certifications];
     newCertifications[index] = {
       ...newCertifications[index],
@@ -50,13 +43,13 @@ const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange,
     });
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString + '-01');
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
 
-  const isExpired = (expiryDate: string) => {
+  const isExpired = (expiryDate) => {
     if (!expiryDate) return false;
     const expiry = new Date(expiryDate + '-01');
     return expiry < new Date();

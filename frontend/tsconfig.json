@@ -32,7 +32,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/candidate/CVgenerationcandidate/CVGeneration.tsx", "src/app/candidate/CVgenerationcandidate/components/forms/CertificationsForm.tsx"  ],
+, "src/app/candidate/CVgenerationcandidate/CVGeneration.js", "src/app/candidate/CVgenerationcandidate/components/forms/CertificationsForm.js" , "src/app/candidate/CVgenerationcandidate/components/CVBuilder.js", "src/app/candidate/CVgenerationcandidate/components/forms/SkillsForm.js", "src/app/candidate/CVgenerationcandidate/components/forms/ProjectsForm.js", "src/app/candidate/CVgenerationcandidate/components/forms/PersonalInfoForm.js", "src/app/candidate/CVgenerationcandidate/components/forms/LanguagesForm.js", "src/app/candidate/CVgenerationcandidate/components/forms/ExperienceForm.js", "src/app/candidate/CVgenerationcandidate/components/forms/EducationForm.js", "src/app/candidate/CVgenerationcandidate/components/TemplateSelector.js", "src/app/candidate/CVgenerationcandidate/components/TemplateCustomizer.js", "src/app/candidate/CVgenerationcandidate/components/ExportModal.js", "src/app/candidate/CVgenerationcandidate/components/CVPreview.js" ],
   "exclude": [
     "node_modules"
   ]

@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, Project } from '../../types/cv';
 import { Plus, Trash2, FolderOpen, Calendar, Globe, Github, Star, Code } from 'lucide-react';
 
-interface ProjectsFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+const ProjectsForm = ({ data, onChange, template }) => {
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const addProject = () => {
-    const newProject: Project = {
+    const newProject = {
       id: Date.now().toString(),
       name: '',
       description: '',
@@ -33,7 +26,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     setExpandedIndex(data.projects.length);
   };
 
-  const removeProject = (index: number) => {
+  const removeProject = (index) => {
     const newProjects = data.projects.filter((_, i) => i !== index);
     onChange({
       ...data,
@@ -41,7 +34,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     });
   };
 
-  const updateProject = (index: number, field: string, value: any) => {
+  const updateProject = (index, field, value) => {
     const newProjects = [...data.projects];
     newProjects[index] = {
       ...newProjects[index],
@@ -53,7 +46,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     });
   };
 
-  const addTechnology = (projectIndex: number, technology: string) => {
+  const addTechnology = (projectIndex, technology) => {
     if (technology.trim()) {
       const newProjects = [...data.projects];
       newProjects[projectIndex].technologies.push(technology.trim());
@@ -64,7 +57,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     }
   };
 
-  const removeTechnology = (projectIndex: number, techIndex: number) => {
+  const removeTechnology = (projectIndex, techIndex) => {
     const newProjects = [...data.projects];
     newProjects[projectIndex].technologies.splice(techIndex, 1);
     onChange({
@@ -73,7 +66,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     });
   };
 
-  const addAchievement = (projectIndex: number) => {
+  const addAchievement = (projectIndex) => {
     const newProjects = [...data.projects];
     newProjects[projectIndex].achievements.push('');
     onChange({
@@ -82,7 +75,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     });
   };
 
-  const updateAchievement = (projectIndex: number, achIndex: number, value: string) => {
+  const updateAchievement = (projectIndex, achIndex, value) => {
     const newProjects = [...data.projects];
     newProjects[projectIndex].achievements[achIndex] = value;
     onChange({
@@ -91,7 +84,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
     });
   };
 
-  const removeAchievement = (projectIndex: number, achIndex: number) => {
+  const removeAchievement = (projectIndex, achIndex) => {
     const newProjects = [...data.projects];
     newProjects[projectIndex].achievements.splice(achIndex, 1);
     onChange({
@@ -269,7 +262,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
-                        const input = e.target as HTMLInputElement;
+                        const input = e.target;
                         addTechnology(index, input.value);
                         input.value = '';
                       }
@@ -277,7 +270,7 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, template })
                   />
                   <button
                     onClick={(e) => {
-                      const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement;
+                      const input = e.target.previousElementSibling;
                       addTechnology(index, input.value);
                       input.value = '';
                     }}

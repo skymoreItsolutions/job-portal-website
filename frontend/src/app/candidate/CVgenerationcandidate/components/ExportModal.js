@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, ExportOptions } from '../types/cv';
 import { X, Download, FileText, File, Code, Printer, Settings, Crown, Zap } from 'lucide-react';
 
-interface ExportModalProps {
-  cvData: CVData;
-  template: CVTemplate;
-  onClose: () => void;
-}
-
-const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) => {
-  const [exportOptions, setExportOptions] = useState<ExportOptions>({
+const ExportModal = ({ cvData, template, onClose }) => {
+  const [exportOptions, setExportOptions] = useState({
     format: 'pdf',
     quality: 'high',
     includeColors: true,
@@ -116,12 +109,12 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
     }
   };
 
-  const getFormatIcon = (format: string) => {
+  const getFormatIcon = (format) => {
     const option = formatOptions.find(opt => opt.value === format);
     return option ? option.icon : FileText;
   };
 
-  const isFormatPremium = (format: string) => {
+  const isFormatPremium = (format) => {
     const option = formatOptions.find(opt => opt.value === format);
     return option?.premium || false;
   };
@@ -162,7 +155,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                     return (
                       <button
                         key={option.value}
-                        onClick={() => !isPremium && setExportOptions({ ...exportOptions, format: option.value as any })}
+                        onClick={() => !isPremium && setExportOptions({ ...exportOptions, format: option.value })}
                         disabled={isPremium}
                         className={`p-4 border rounded-lg text-left transition-all ${
                           isSelected
@@ -202,7 +195,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                     {qualityOptions.map(option => (
                       <button
                         key={option.value}
-                        onClick={() => setExportOptions({ ...exportOptions, quality: option.value as any })}
+                        onClick={() => setExportOptions({ ...exportOptions, quality: option.value })}
                         className={`w-full p-3 border rounded-lg text-left transition-colors ${
                           exportOptions.quality === option.value
                             ? 'border-blue-500 bg-blue-50'
@@ -224,7 +217,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                     <h4 className="font-semibold text-gray-900 mb-3">Page Size</h4>
                     <select
                       value={exportOptions.pageSize}
-                      onChange={(e) => setExportOptions({ ...exportOptions, pageSize: e.target.value as any })}
+                      onChange={(e) => setExportOptions({ ...exportOptions, pageSize: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {pageSizeOptions.map(option => (
@@ -239,7 +232,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ cvData, template, onClose }) 
                     <h4 className="font-semibold text-gray-900 mb-3">Margins</h4>
                     <select
                       value={exportOptions.margins}
-                      onChange={(e) => setExportOptions({ ...exportOptions, margins: e.target.value as any })}
+                      onChange={(e) => setExportOptions({ ...exportOptions, margins: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {marginOptions.map(option => (

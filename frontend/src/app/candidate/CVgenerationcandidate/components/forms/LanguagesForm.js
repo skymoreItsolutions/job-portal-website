@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import { CVData, CVTemplate, Language } from '../../types/cv';
 import { Plus, Trash2, Languages, Award, Globe } from 'lucide-react';
 
-interface LanguagesFormProps {
-  data: CVData;
-  onChange: (data: CVData) => void;
-  template: CVTemplate;
-}
-
-const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template }) => {
-  const [newLanguage, setNewLanguage] = useState({ name: '', level: 'Conversational' as const, certification: '' });
+const LanguagesForm = ({ data, onChange, template }) => {
+  const [newLanguage, setNewLanguage] = useState({ name: '', level: 'Conversational', certification: '' });
 
   const addLanguage = () => {
     if (newLanguage.name.trim()) {
-      const language: Language = {
+      const language = {
         id: Date.now().toString(),
         name: newLanguage.name,
         level: newLanguage.level,
@@ -28,14 +21,14 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
     }
   };
 
-  const removeLanguage = (id: string) => {
+  const removeLanguage = (id) => {
     onChange({
       ...data,
       languages: data.languages.filter(lang => lang.id !== id)
     });
   };
 
-  const updateLanguage = (id: string, field: string, value: any) => {
+  const updateLanguage = (id, field, value) => {
     const newLanguages = data.languages.map(lang =>
       lang.id === id ? { ...lang, [field]: value } : lang
     );
@@ -45,7 +38,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
     });
   };
 
-  const getLevelColor = (level: string) => {
+  const getLevelColor = (level) => {
     switch (level) {
       case 'Native': return 'bg-green-100 text-green-800 border-green-200';
       case 'Fluent': return 'bg-blue-100 text-blue-800 border-blue-200';
@@ -55,7 +48,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
     }
   };
 
-  const getLevelDescription = (level: string) => {
+  const getLevelDescription = (level) => {
     switch (level) {
       case 'Native': return 'Native or bilingual proficiency';
       case 'Fluent': return 'Full professional proficiency';
@@ -111,7 +104,7 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, template 
             </label>
             <select
               value={newLanguage.level}
-              onChange={(e) => setNewLanguage({ ...newLanguage, level: e.target.value as any })}
+              onChange={(e) => setNewLanguage({ ...newLanguage, level: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Basic">Basic</option>

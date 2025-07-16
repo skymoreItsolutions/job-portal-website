@@ -1,14 +1,8 @@
 import React from 'react';
-import { CVData, CVTemplate } from '../types/cv';
 import { Mail, Phone, MapPin, Globe, Linkedin, Calendar, Star, Award, Code, Languages, ExternalLink, Github } from 'lucide-react';
 
-interface CVPreviewProps {
-  data: CVData;
-  template: CVTemplate;
-}
-
-const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
-  const renderSkillLevel = (level: string) => {
+const CVPreview = ({ data, template }) => {
+  const renderSkillLevel = (level) => {
     const levels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
     const currentLevel = levels.indexOf(level) + 1;
     
@@ -26,15 +20,15 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
     );
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString + '-01');
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
 
-  const getLanguageLevel = (level: string) => {
+  const getLanguageLevel = (level) => {
     const levels = { 'Native': 4, 'Fluent': 3, 'Conversational': 2, 'Basic': 1 };
-    return levels[level as keyof typeof levels] || 1;
+    return levels[level] || 1;
   };
 
   return (
@@ -375,7 +369,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
                       if (!acc[skill.category]) acc[skill.category] = [];
                       acc[skill.category].push(skill);
                       return acc;
-                    }, {} as Record<string, typeof data.skills>)).map(([category, skills]) => (
+                    }, {})).map(([category, skills]) => (
                       <div key={category}>
                         <h3 className="font-medium text-gray-800 mb-2">{category}</h3>
                         <div className="space-y-2">
