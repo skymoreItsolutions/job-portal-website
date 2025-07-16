@@ -20,7 +20,6 @@ const Second = ({ alldata, handelinputs }) => {
 
   return (
     <div className="w-full p-8 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-      {/* Header with Icon */}
       <div className="flex items-center mb-6">
         <div className="bg-blue-100 p-3 rounded-lg mr-4">
           <FiBook className="text-blue-600 text-xl" />
@@ -35,8 +34,71 @@ const Second = ({ alldata, handelinputs }) => {
         </div>
       </div>
 
+      <div className="space-y-2 animate-fade-in mb-6">
+        <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
+          <FiAward className="mr-2 text-blue-500" />
+          Are you currently pursuing your education?
+        </label>
+        <div className="flex space-x-6">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="is_pursuing"
+              value="Yes"
+              checked={alldata.is_pursuing === "Yes"}
+              onChange={handelinputs}
+              className="mr-2"
+            />
+            Yes
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="is_pursuing"
+              value="No"
+              checked={alldata.is_pursuing === "No"}
+              onChange={handelinputs}
+              className="mr-2"
+            />
+            No
+          </label>
+        </div>
+      </div>
+
+      <div className="space-y-2 animate-fade-in mb-6">
+        <label
+          htmlFor="highest_education"
+          className="flex items-center text-sm font-medium text-gray-700 mb-3"
+        >
+          <FiAward className="mr-2 text-blue-500" />
+          Highest Education Level
+        </label>
+        <div className="flex space-x-2">
+          {["Diploma", "ITI", "Graduate", "Post Graduate"].map((level) => (
+            <button
+              key={level}
+              type="button"
+              onClick={() =>
+                handelinputs({
+                  target: { name: "highest_education", value: level },
+                })
+              }
+              className={`px-4 py-2 rounded-full border ${
+                alldata.highest_education === level
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+              } transition-all duration-200`}
+            >
+              {level}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Form Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Are you currently pursuing your education? */}
+
         {/* Degree Program Dropdown */}
         <div className="space-y-2 animate-fade-in">
           <label
@@ -63,26 +125,6 @@ const Second = ({ alldata, handelinputs }) => {
             ))}
           </select>
         </div>
-
-        {/* Degree Field */}
-        {/* <div className="space-y-2 animate-fade-in">
-          <label
-            htmlFor="degree"
-            className="flex items-center text-sm font-medium text-gray-700"
-          >
-            <FiAward className="mr-2 text-blue-500" />
-            Specialization
-          </label>
-          <input
-            type="text"
-            placeholder="e.g. Computer Science"
-            id="degree"
-            name="degree"
-            value={alldata.degree}
-            onChange={handelinputs}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
-          />
-        </div> */}
 
         {/* Passing Marks Field */}
         <div className="space-y-2 animate-fade-in">

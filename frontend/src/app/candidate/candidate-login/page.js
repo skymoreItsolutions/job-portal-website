@@ -34,6 +34,10 @@ export default function Page() {
     job_title: "",
     experience_months: "",
     company_name: "",
+    is_pursuing: "",
+    highest_education: "",
+    is_working: "Yes",
+    notice_period: "",
     prefers_night_shift: 0,
     prefers_day_shift: 1,
     work_from_home: 0,
@@ -113,9 +117,9 @@ export default function Page() {
       `${baseurl}/updatecandidate/${token}`,
       formData,
       {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     if (response.data.success) {
@@ -125,10 +129,7 @@ export default function Page() {
         icon: "success",
       });
 
-
-
-      router.push('/candidate/dashboard')
-    
+      router.push("/candidate/dashboard");
     } else {
       Swal.fire({
         title: "Submit Error",

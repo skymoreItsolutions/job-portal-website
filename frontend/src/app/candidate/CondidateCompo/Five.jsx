@@ -9,6 +9,7 @@ import {
   FiEye,
   FiEyeOff,
 } from "react-icons/fi";
+import CreatableSelect from "react-select/creatable";
 
 const Five = ({
   alldata,
@@ -120,7 +121,6 @@ const Five = ({
     { value: "Yiddish", label: "Yiddish" },
     { value: "Yoruba", label: "Yoruba" },
     { value: "Zulu", label: "Zulu" },
-    { value: "Other", label: "Other" },
   ];
 
   const skillOptions = [
@@ -279,7 +279,6 @@ const Five = ({
     { value: "Raspberry Pi", label: "Raspberry Pi" },
     { value: "Virtual Reality", label: "Virtual Reality" },
     { value: "Augmented Reality", label: "Augmented Reality" },
-    { value: "Other", label: "Other" },
   ];
 
   // Custom styles for react-select to match existing form styling
@@ -309,10 +308,10 @@ const Five = ({
     }),
     multiValueRemove: (provided) => ({
       ...provided,
-      color: '#065f46',
-      '&:hover': {
-        backgroundColor: '#059669',
-        color: 'white',
+      color: "#065f46",
+      "&:hover": {
+        backgroundColor: "#059669",
+        color: "white",
       },
     }),
     placeholder: (provided) => ({
@@ -360,19 +359,29 @@ const Five = ({
               (Search and select multiple)
             </span>
           </label>
-          <Select
+          <CreatableSelect
             isMulti
             name="preferred_languages"
             options={languageOptions}
-            value={languageOptions.filter((option) =>
-              alldata?.preferred_languages?.includes(option.value)
-            )}
-            onChange={handleLanguageChange}
+            value={
+              alldata?.preferred_languages?.map((lang) => ({
+                value: lang,
+                label: lang,
+              })) || []
+            }
+            onChange={(selectedOptions) => {
+              const selectedLanguages = selectedOptions
+                ? selectedOptions.map((option) => option.value)
+                : [];
+              setalldata({
+                ...alldata,
+                preferred_languages: selectedLanguages,
+              });
+            }}
             styles={customStyles}
-            placeholder="Search and select languages..."
+            placeholder="Search or create languages..."
             className="w-full"
             classNamePrefix="select"
-            isSearchable={true}
           />
         </div>
 
@@ -384,20 +393,28 @@ const Five = ({
               (Search and select up to 10 skills)
             </span>
           </label>
-          <Select
+          <CreatableSelect
             isMulti
             name="skills"
             options={skillOptions}
-            value={skillOptions.filter((option) =>
-              alldata?.skills?.includes(option.value)
-            )}
-            onChange={handleSkillChange}
+            value={
+              alldata?.skills?.map((skill) => ({
+                value: skill,
+                label: skill,
+              })) || []
+            }
+            onChange={(selectedOptions) => {
+              const selectedSkills = selectedOptions
+                ? selectedOptions.map((option) => option.value)
+                : [];
+              setalldata({ ...alldata, skills: selectedSkills.slice(0, 10) });
+            }}
             styles={customStyles}
-            placeholder="Search and select skills..."
+            placeholder="Search or create skills..."
             className="w-full"
             classNamePrefix="select"
-            isSearchable={true}
           />
+
           <span className="text-xs text-gray-400 mt-1">
             {alldata?.skills?.length || 0}/10 skills selected
           </span>

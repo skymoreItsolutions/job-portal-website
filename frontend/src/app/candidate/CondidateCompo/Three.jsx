@@ -1,5 +1,6 @@
 import React from "react";
 import { FiBriefcase, FiCalendar, FiDollarSign, FiClock } from "react-icons/fi";
+import { FiAward } from "react-icons/fi";
 import Select from "react-select";
 
 const Three = ({ alldata, handelinputs }) => {
@@ -127,6 +128,73 @@ const Three = ({ alldata, handelinputs }) => {
       </div>
 
       <div className="space-y-6">
+        <div className="space-y-2 animate-fade-in mb-6">
+          <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
+            <FiAward className="mr-2 text-blue-500" />
+            Are you currently Working in this Company?
+          </label>
+          <div className="flex space-x-6">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="is_working"
+                value="Yes"
+                checked={alldata.is_working === "Yes"}
+                onChange={handelinputs}
+                className="mr-2"
+              />
+              Yes
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="is_working"
+                value="No"
+                checked={alldata.is_working === "No"}
+                onChange={handelinputs}
+                className="mr-2"
+              />
+              No
+            </label>
+          </div>
+        </div>
+
+        <div className="space-y-2 animate-fade-in mb-6">
+          <label
+            htmlFor="notice_period"
+            className="flex items-center text-sm font-medium text-gray-700 mb-3"
+          >
+            <FiAward className="mr-2 text-blue-500" />
+            Notice Period
+          </label>
+          <div className="flex flex-wrap gap-3">
+            {[
+              "No notice Period",
+              "Less than 15 Days",
+              "1 month",
+              "2 month",
+              "3 Or more months",
+            ].map((level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() =>
+                  handelinputs({
+                    target: { name: "notice_period", value: level },
+                  })
+                }
+                className={`px-4 py-2 rounded-full border ${
+                  alldata.notice_period === level
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                } transition-all duration-200`}
+              >
+                {level}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
             <FiClock className="mr-2 text-emerald-500" />
