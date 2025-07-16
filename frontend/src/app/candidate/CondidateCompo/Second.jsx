@@ -3,20 +3,129 @@ import React, { useState } from "react";
 import { FiBook, FiAward, FiMapPin, FiHome } from "react-icons/fi";
 
 const Second = ({ alldata, handelinputs }) => {
-  const degreePrograms = [
-    "BCA (Bachelor of Computer Applications)",
-    "B.A (Bachelor of Arts)",
-    "B.Sc (Bachelor of Science)",
-    "B.Com (Bachelor of Commerce)",
-    "B.Tech (Bachelor of Technology)",
-    "M.A (Master of Arts)",
-    "M.Sc (Master of Science)",
-    "M.Com (Master of Commerce)",
-    "MCA (Master of Computer Applications)",
-    "M.Tech (Master of Technology)",
-    "Ph.D (Doctor of Philosophy)",
-    "Other",
-  ];
+  // Mapping degree programs for each education level
+  const degreeProgramsByEducationLevel = {
+    Schooling: [
+      "10th Grade (Secondary School Certificate)",
+      "12th Grade (Non-Medical)",
+      "12th Grade (Medical with Maths)",
+      "12th Grade (Medical without Maths)",
+      "12th Grade (Commerce)",
+      "12th Grade (Arts)",
+      "12th Grade (Vocational)",
+      "12th Grade (Humanities)",
+      "12th Grade (Science)",
+      "10th Grade (State Board)",
+      "10th Grade (CBSE)",
+      "International GCSE",
+    ],
+    Diploma: [
+      "Diploma in Engineering",
+      "Diploma in Computer Applications",
+      "Diploma in Business Administration",
+      "Diploma in Nursing",
+      "Diploma in Pharmacy",
+      "Diploma in Hotel Management",
+      "Diploma in Fashion Designing",
+      "Diploma in Animation and Multimedia",
+      "Diploma in Graphic Design",
+      "Diploma in Electrical Engineering",
+      "Diploma in Civil Engineering",
+      "Diploma in Mechanical Engineering",
+      "Diploma in Automobile Engineering",
+      "Diploma in Construction Management",
+      "Diploma in Industrial Safety",
+      "Diploma in Interior Designing",
+      "Diploma in Digital Marketing",
+      "Diploma in Event Management",
+      "Diploma in Architecture",
+    ],
+    ITI: [
+      "ITI in Electrician",
+      "ITI in Fitter",
+      "ITI in Welder",
+      "ITI in Computer Operator and Programming Assistant",
+      "ITI in Mechanic",
+      "ITI in Turner",
+      "ITI in Plumber",
+      "ITI in Wireman",
+      "ITI in Draughtsman Civil",
+      "ITI in Refrigeration and Air Conditioning",
+      "ITI in Tool and Die Maker",
+      "ITI in Mechanical Engineering",
+      "ITI in Welding",
+      "ITI in Carpentry",
+      "ITI in Masonry",
+      "ITI in Painter",
+      "ITI in AC and Refrigeration Technician",
+      "ITI in Diesel Mechanic",
+      "ITI in Multi-Skilled Technician",
+    ],
+    Graduate: [
+      "BCA (Bachelor of Computer Applications)",
+      "B.A (Bachelor of Arts)",
+      "B.Sc (Bachelor of Science)",
+      "B.Com (Bachelor of Commerce)",
+      "B.Tech (Bachelor of Technology)",
+      "BBA (Bachelor of Business Administration)",
+      "B.Ed (Bachelor of Education)",
+      "LLB (Bachelor of Laws)",
+      "BHM (Bachelor of Hotel Management)",
+      "BDS (Bachelor of Dental Surgery)",
+      "MBBS (Bachelor of Medicine, Bachelor of Surgery)",
+      "BAMS (Bachelor of Ayurvedic Medicine and Surgery)",
+      "BPT (Bachelor of Physiotherapy)",
+      "B.Des (Bachelor of Design)",
+      "BFA (Bachelor of Fine Arts)",
+      "B.Arch (Bachelor of Architecture)",
+      "B.Voc (Bachelor of Vocation)",
+      "B.Optom (Bachelor of Optometry)",
+      "BNS (Bachelor of Nursing Science)",
+      "B.Pharma (Bachelor of Pharmacy)",
+      "B.SW (Bachelor of Social Work)",
+      "B.JMC (Bachelor of Journalism and Mass Communication)",
+      "B.El.Ed (Bachelor of Elementary Education)",
+    ],
+    "Post Graduate": [
+      "M.A (Master of Arts)",
+      "M.Sc (Master of Science)",
+      "M.Com (Master of Commerce)",
+      "MCA (Master of Computer Applications)",
+      "M.Tech (Master of Technology)",
+      "MBA (Master of Business Administration)",
+      "M.Ed (Master of Education)",
+      "LLM (Master of Laws)",
+      "Ph.D (Doctor of Philosophy)",
+      "M.Phil (Master of Philosophy)",
+      "MDS (Master of Dental Surgery)",
+      "MS (Master of Surgery)",
+      "M.PA (Master of Public Administration)",
+      "MIM (Master in International Management)",
+      "MFA (Master of Fine Arts)",
+      "MArch (Master of Architecture)",
+      "MHRM (Master of Human Resource Management)",
+      "MCA (Master of Computer Applications)",
+      "MPH (Master of Public Health)",
+      "MIB (Master of International Business)",
+      "MDS (Master of Dental Surgery)",
+      "MSc (Master of Science in Nursing)",
+      "MSW (Master of Social Work)",
+      "LLD (Doctor of Laws)",
+      "DM (Doctorate of Medicine)",
+      "DNB (Diplomate of National Board)",
+    ],
+  };
+
+  // Handle the degree program options based on selected education level
+  const handleEducationLevelChange = (level) => {
+    handelinputs({
+      target: { name: "highest_education", value: level },
+    });
+  };
+
+  // Get the degree options for the selected highest education level
+  const selectedDegreePrograms =
+    degreeProgramsByEducationLevel[alldata.highest_education] || [];
 
   return (
     <div className="w-full p-8 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -74,31 +183,27 @@ const Second = ({ alldata, handelinputs }) => {
           Highest Education Level
         </label>
         <div className="flex space-x-2">
-          {["Diploma", "ITI", "Graduate", "Post Graduate"].map((level) => (
-            <button
-              key={level}
-              type="button"
-              onClick={() =>
-                handelinputs({
-                  target: { name: "highest_education", value: level },
-                })
-              }
-              className={`px-4 py-2 rounded-full border ${
-                alldata.highest_education === level
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-300"
-              } transition-all duration-200`}
-            >
-              {level}
-            </button>
-          ))}
+          {["Schooling", "Diploma", "ITI", "Graduate", "Post Graduate"].map(
+            (level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() => handleEducationLevelChange(level)}
+                className={`px-4 py-2 rounded-full border ${
+                  alldata.highest_education === level
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                } transition-all duration-200`}
+              >
+                {level}
+              </button>
+            )
+          )}
         </div>
       </div>
 
       {/* Form Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Are you currently pursuing your education? */}
-
         {/* Degree Program Dropdown */}
         <div className="space-y-2 animate-fade-in">
           <label
@@ -118,7 +223,7 @@ const Second = ({ alldata, handelinputs }) => {
             <option value="" disabled>
               Select Degree Program
             </option>
-            {degreePrograms.map((program) => (
+            {selectedDegreePrograms.map((program) => (
               <option key={program} value={program}>
                 {program}
               </option>
@@ -233,4 +338,5 @@ const Second = ({ alldata, handelinputs }) => {
     </div>
   );
 };
+
 export default Second;

@@ -34,7 +34,7 @@ export default function Page() {
     job_title: "",
     experience_months: "",
     company_name: "",
-    is_pursuing: "",
+    is_pursuing: "Yes",
     highest_education: "",
     is_working: "Yes",
     notice_period: "",

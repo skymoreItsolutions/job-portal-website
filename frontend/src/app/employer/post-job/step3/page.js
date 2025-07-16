@@ -6,7 +6,6 @@ import { HiQuestionMarkCircle, HiTemplate } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 
-
 export default function Page() {
   const steps = [
     { id: 1 },
@@ -116,32 +115,36 @@ export default function Page() {
         <div className="bg-white rounded-md shadow-sm py-5 px-4 space-y-4">
           <div>
             <h6 className="text-base font-semibold">
-            Communication Preferences
+              Communication Preferences
             </h6>
             <div className="flex mt-4 w-fit items-start gap-2 p-3 bg-[#EBF3FE] border border-blue-200 rounded-md">
-  <svg
-    height="20"
-    width="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="flex-shrink-0 mt-0.5"
-  >
-    <path d="M19 9h-4V3H9v6H5l7 7 7-7z" fill="#0074E8" />
-    <path d="M5 18v2h14v-2H5z" fill="#0074E8" />
-    <path d="M0 0h24v24H0z" fill="none" />
-  </svg>
-  <p className="text-sm text-gray-800">
-    Leads information will be accessible on Hiring Boat portal and can be{' '}
-    <strong className="font-semibold text-black">downloaded in excel</strong>{' '}
-    format.
-  </p>
-</div>
-
+              <svg
+                height="20"
+                width="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="flex-shrink-0 mt-0.5"
+              >
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7z" fill="#0074E8" />
+                <path d="M5 18v2h14v-2H5z" fill="#0074E8" />
+                <path d="M0 0h24v24H0z" fill="none" />
+              </svg>
+              <p className="text-sm text-gray-800">
+                Leads information will be accessible on Hiring Boat portal and
+                can be{" "}
+                <strong className="font-semibold text-black">
+                  downloaded in excel
+                </strong>{" "}
+                format.
+              </p>
+            </div>
           </div>
           <div>
             <h6 className="text-base font-semibold">
-            Do you want candidates to contactyou via Call / Whatsapp after they apply?*</h6>
+              Do you want candidates to contactyou via Call / Whatsapp after
+              they apply?*
+            </h6>
             <div className="flex flex-col gap-y-4 mt-4">
               <div className="flex items-center gap-2">
                 <input
@@ -150,7 +153,7 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="yes" className="text-sm">
-                Yes, to myself
+                  Yes, to myself
                 </label>
               </div>
 
@@ -161,7 +164,7 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
-                Yes, to other recruiter
+                  Yes, to other recruiter
                 </label>
               </div>
               <div className="flex items-center gap-2">
@@ -171,7 +174,7 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
-                No, I will contact candidates first
+                  No, I will contact candidates first
                 </label>
               </div>
             </div>
@@ -181,17 +184,17 @@ export default function Page() {
         <div className="bg-white rounded-md shadow-sm py-5 px-4 space-y-4">
           <div>
             <h6 className="text-base font-semibold">
-            Notification Preferences
+              Notification Preferences
             </h6>
-      
-
           </div>
           <div>
             <h6 className="text-sm font-[700] flex items-center gap-x-1">
-            Every time you receive a matched candidate application,do you want <img src="/img/employer/whatsapp.png"  className="text-green-400 w-8 h-8"/>
-            Whatsapp Alerts from Job portal?*
-
-            
+              Every time you receive a matched candidate application,do you want{" "}
+              <img
+                src="/img/employer/whatsapp.png"
+                className="text-green-400 w-8 h-8"
+              />
+              Whatsapp Alerts from Job portal?*
             </h6>
             <div className="flex flex-col gap-y-4 mt-4">
               <div className="flex items-center gap-2">
@@ -201,7 +204,7 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="yes" className="text-sm">
-                Yes, to myself
+                  Yes, to myself
                 </label>
               </div>
 
@@ -212,7 +215,7 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
-                Yes, to other recruiter
+                  Yes, to other recruiter
                 </label>
               </div>
               <div className="flex items-center gap-2">
@@ -222,13 +225,12 @@ export default function Page() {
                   className="w-4 h-4 rounded-full border border-gray-400 appearance-none checked:bg-[#00223f] checked:border-transparent"
                 />
                 <label htmlFor="no" className="text-sm">
-                No, I will contact candidates first
+                  No, I will contact candidates first
                 </label>
               </div>
             </div>
           </div>
         </div>
-
 
         <div className="bg-white flex gap-x-4 rounded-md shadow-sm py-5 px-4 justify-center items-center">
           <button className="w-32 rounded-sm py-2 text-white font-semibold bg-[#005F3E]">
