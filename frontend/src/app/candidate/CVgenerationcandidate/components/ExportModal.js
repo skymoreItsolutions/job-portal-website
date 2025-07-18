@@ -106,12 +106,98 @@ const ExportModal = ({ cvData, template, onClose }) => {
     },
   ];
 
+  const stripOklchFromClone = (element, disableColors = false) => {
+    const elements = element.getElementsByTagName("*");
+    for (let el of elements) {
+      // Handle inline styles
+      if (el.style) {
+        const inlineStyles = el.getAttribute("style") || "";
+        if (inlineStyles.includes("oklch") || disableColors) {
+          el.style.backgroundColor = disableColors ? "#ffffff" : inlineStyles.includes("background-color") ? "#ffffff" : el.style.backgroundColor;
+          el.style.color = disableColors ? "#000000" : inlineStyles.includes("color") ? "#000000" : el.style.color;
+          el.style.backgroundImage = disableColors ? "none" : inlineStyles.includes("background-image") ? "none" : el.style.backgroundImage;
+          el.style.borderColor = disableColors ? "#000000" : inlineStyles.includes("border-color") ? "#000000" : el.style.borderColor;
+        }
+      }
+
+      // Handle computed styles
+      const style = window.getComputedStyle(el);
+      const properties = [
+        "backgroundColor",
+        "color",
+        "backgroundImage",
+        "borderColor",
+        "borderTopColor",
+        "borderRightColor",
+        "borderBottomColor",
+        "borderLeftColor",
+      ];
+      properties.forEach((prop) => {
+        if (style[prop] && (style[prop].includes("oklch") || disableColors)) {
+          if (prop === "backgroundColor") el.style.backgroundColor = "#ffffff";
+          if (prop === "color") el.style.color = "#000000";
+          if (prop === "backgroundImage") el.style.backgroundImage = "none";
+          if (prop.includes("border")) el.style[prop] = "#000000";
+        }
+      });
+
+      // Sanitize style attribute
+      if (el.getAttribute("style")) {
+        let styleAttr = el.getAttribute("style");
+        if (styleAttr.includes("oklch") || disableColors) {
+          styleAttr = styleAttr
+            .replace(/background-color:\s*oklch\([^)]+\)/gi, "background-color: #ffffff")
+            .replace(/color:\s*oklch\([^)]+\)/gi, "color: #000000")
+            .replace(/background-image:\s*[^;]*oklch\([^)]+\)[^;]*/gi, "background-image: none")
+            .replace(/border-color:\s*oklch\([^)]+\)/gi, "border-color: #000000");
+          el.setAttribute("style", styleAttr);
+        }
+      }
+
+      // Handle pseudo-elements
+      const pseudoStyles = [":before", ":after"];
+      pseudoStyles.forEach((pseudo) => {
+        try {
+          const pseudoStyle = window.getComputedStyle(el, pseudo);
+          if (
+            (pseudoStyle.backgroundColor && (pseudoStyle.backgroundColor.includes("oklch") || disableColors)) ||
+            (pseudoStyle.color && (pseudoStyle.color.includes("oklch") || disableColors))
+          ) {
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = `
+              ${el.tagName.toLowerCase()}${pseudo} {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                background-image: none !important;
+              }
+            `;
+            el.appendChild(styleSheet);
+          }
+        } catch (e) {
+          // Ignore errors for unsupported pseudo-elements
+        }
+      });
+    }
+
+    // Sanitize root element styles
+    if (element.getAttribute("style")) {
+      let styleAttr = element.getAttribute("style");
+      if (styleAttr.includes("oklch") || disableColors) {
+        styleAttr = styleAttr
+          .replace(/background-color:\s*oklch\([^)]+\)/gi, "background-color: #ffffff")
+          .replace(/color:\s*oklch\([^)]+\)/gi, "color: #000000")
+          .replace(/background-image:\s*[^;]*oklch\([^)]+\)[^;]*/gi, "background-image: none")
+          .replace(/border-color:\s*oklch\([^)]+\)/gi, "border-color: #000000");
+        element.setAttribute("style", styleAttr);
+      }
+    }
+  };
+
   const handleExport = async () => {
     setIsExporting(true);
     setExportProgress(10);
 
     const originalElement = document.getElementById("cv-content");
-    console.log(originalElement);
     if (!originalElement) {
       console.error("CV content not found");
       setIsExporting(false);
@@ -121,12 +207,27 @@ const ExportModal = ({ cvData, template, onClose }) => {
     // Clone the CV content
     const clone = originalElement.cloneNode(true);
 
-    // Render offscreen
+    // Sanitize colors
+    stripOklchFromClone(clone, !exportOptions.includeColors);
+
+    // Set explicit dimensions for A4 (595px x 842px at 72 DPI)
+    const pageWidth = exportOptions.pageSize === "Letter" ? 612 : 595; // Letter: 8.5in x 72px/in = 612px, A4: 210mm x 2.834px/mm ≈ 595px
+    const pageHeight = exportOptions.pageSize === "Letter" ? 792 : 842; // Letter: 11in x 72px/in = 792px, A4: 297mm x 2.834px/mm ≈ 842px
+    const margin = exportOptions.margins === "narrow" ? 10 : exportOptions.margins === "normal" ? 20 : 30; // in pixels
+
+    // Render offscreen with fixed dimensions
     const hiddenWrapper = document.createElement("div");
     hiddenWrapper.style.position = "absolute";
     hiddenWrapper.style.left = "-9999px";
     hiddenWrapper.style.top = "0";
     hiddenWrapper.style.backgroundColor = "#ffffff";
+    hiddenWrapper.style.width = `${pageWidth}px`;
+    hiddenWrapper.style.minHeight = `${pageHeight}px`;
+    hiddenWrapper.style.padding = `${margin}px`;
+    hiddenWrapper.style.boxSizing = "border-box";
+    clone.style.width = `${pageWidth - 2 * margin}px`;
+    clone.style.minHeight = `${pageHeight - 2 * margin}px`;
+    clone.style.overflow = "visible";
     hiddenWrapper.appendChild(clone);
     document.body.appendChild(hiddenWrapper);
 
@@ -134,29 +235,42 @@ const ExportModal = ({ cvData, template, onClose }) => {
       setExportProgress(30);
       const canvas = await html2canvas(clone, {
         backgroundColor: "#ffffff",
-        scale: exportOptions.quality === "high" ? 3 : 2,
+        scale: exportOptions.quality === "high" ? 2 : 1, // Reduced scale to prevent memory issues
         useCORS: true,
-        logging: false,
+        logging: true,
+        width: pageWidth,
+        height: clone.scrollHeight, // Capture full height of content
+        windowWidth: pageWidth,
+        windowHeight: clone.scrollHeight,
       });
+
+      console.log("Canvas dimensions:", canvas.width, canvas.height);
 
       setExportProgress(60);
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "portrait",
-        unit: "mm",
-        format: exportOptions.pageSize === "Letter" ? "letter" : "a4",
+        unit: "px",
+        format: [pageWidth, pageHeight],
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const contentWidth = pageWidth - 2 * margin;
+      const contentHeight = (canvas.height * contentWidth) / canvas.width;
 
       let position = 0;
-      while (position < imgHeight) {
-        pdf.addImage(imgData, "PNG", 0, -position, pdfWidth, imgHeight);
-        position += pdfHeight;
-        if (position < imgHeight) pdf.addPage();
+      while (position < contentHeight) {
+        pdf.addImage(
+          imgData,
+          "PNG",
+          margin,
+          margin - position,
+          contentWidth,
+          contentHeight
+        );
+        position += pageHeight - 2 * margin;
+        if (position < contentHeight) {
+          pdf.addPage();
+        }
       }
 
       setExportProgress(90);
@@ -187,35 +301,34 @@ const ExportModal = ({ cvData, template, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[rgba(0,0,0,0.75)] bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.75)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+      <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", boxShadow: "0 10px 15px rgba(0,0,0,0.2)", width: "100%", maxWidth: "896px", maxHeight: "90vh", overflow: "hidden" }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-6 py-4 flex items-center justify-between">
+        <div style={{ background: "linear-gradient(to right, #02325a, #9333ea)", color: "#ffffff", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <h2 className="text-xl font-semibold">Export Your CV</h2>
-            <p className="text-blue-100">
-              Choose your preferred format and settings
-            </p>
+            <h2 style={{ fontSize: "20px", fontWeight: 600 }}>Export Your CV</h2>
+            <p style={{ color: "#bfdbfe" }}>Choose your preferred format and settings</p>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-200 p-2"
+            style={{ color: "#ffffff", padding: "8px" }}
+            className="hover:text-gray-200"
           >
-            <X className="w-6 h-6" />
+            <X style={{ width: "24px", height: "24px" }} />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div style={{ padding: "24px", overflowY: "auto", maxHeight: "calc(90vh - 200px)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }} className="lg:grid-cols-2">
             {/* Export Options */}
-            <div className="space-y-6">
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               {/* Format Selection */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
+                <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#111827", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <FileText style={{ width: "20px", height: "20px" }} />
                   Export Format
                 </h3>
-                <div className="grid grid-cols-1 gap-3">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
                   {formatOptions.map((option) => {
                     const Icon = option.icon;
                     const isSelected = exportOptions.format === option.value;
@@ -232,32 +345,36 @@ const ExportModal = ({ cvData, template, onClose }) => {
                           })
                         }
                         disabled={isPremium}
-                        className={`p-4 border rounded-lg text-left transition-all ${
-                          isSelected
-                            ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-                            : isPremium
-                            ? "border-gray-200 bg-gray-50 cursor-not-allowed opacity-60"
-                            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                        }`}
+                        style={{
+                          padding: "16px",
+                          border: `1px solid ${isSelected ? "#3b82f6" : isPremium ? "#e5e7eb" : "#e5e7eb"}`,
+                          borderRadius: "8px",
+                          textAlign: "left",
+                          transition: "all 0.2s",
+                          backgroundColor: isSelected ? "#eff6ff" : isPremium ? "#f3f4f6" : "#ffffff",
+                          cursor: isPremium ? "not-allowed" : "pointer",
+                          opacity: isPremium ? 0.6 : 1,
+                        }}
+                        className={isSelected ? "ring-2 ring-blue-200" : ""}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                             <Icon
-                              className={`w-5 h-5 ${
-                                isSelected ? "text-[#02325a]" : "text-gray-600"
-                              }`}
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                color: isSelected ? "#02325a" : "#4b5563",
+                              }}
                             />
-                            <span className="font-medium">{option.label}</span>
+                            <span style={{ fontWeight: 500 }}>{option.label}</span>
                           </div>
                           {isPremium && (
-                            <Crown className="w-4 h-4 text-yellow-500" />
+                            <Crown style={{ width: "16px", height: "16px", color: "#eab308" }} />
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">
-                          {option.description}
-                        </p>
+                        <p style={{ fontSize: "14px", color: "#4b5563" }}>{option.description}</p>
                         {isPremium && (
-                          <p className="text-xs text-yellow-600 mt-1">
+                          <p style={{ fontSize: "12px", color: "#ca8a04", marginTop: "4px" }}>
                             Premium feature
                           </p>
                         )}
@@ -270,11 +387,11 @@ const ExportModal = ({ cvData, template, onClose }) => {
               {/* Quality Settings */}
               {exportOptions.format === "pdf" && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Settings className="w-5 h-5" />
+                  <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#111827", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Settings style={{ width: "20px", height: "20px" }} />
                     Quality Settings
                   </h3>
-                  <div className="space-y-3">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {qualityOptions.map((option) => (
                       <button
                         key={option.value}
@@ -284,16 +401,18 @@ const ExportModal = ({ cvData, template, onClose }) => {
                             quality: option.value,
                           })
                         }
-                        className={`w-full p-3 border rounded-lg text-left transition-colors ${
-                          exportOptions.quality === option.value
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          border: `1px solid ${exportOptions.quality === option.value ? "#3b82f6" : "#e5e7eb"}`,
+                          borderRadius: "8px",
+                          textAlign: "left",
+                          transition: "all 0.2s",
+                          backgroundColor: exportOptions.quality === option.value ? "#eff6ff" : "#ffffff",
+                        }}
                       >
-                        <div className="font-medium">{option.label}</div>
-                        <div className="text-sm text-gray-600">
-                          {option.description}
-                        </div>
+                        <div style={{ fontWeight: 500 }}>{option.label}</div>
+                        <div style={{ fontSize: "14px", color: "#4b5563" }}>{option.description}</div>
                       </button>
                     ))}
                   </div>
@@ -301,11 +420,10 @@ const ExportModal = ({ cvData, template, onClose }) => {
               )}
 
               {/* Page Settings */}
-              {(exportOptions.format === "pdf" ||
-                exportOptions.format === "docx") && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {(exportOptions.format === "pdf" || exportOptions.format === "docx") && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }} className="md:grid-cols-2">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
+                    <h4 style={{ fontWeight: 600, color: "#111827", marginBottom: "12px" }}>
                       Page Size
                     </h4>
                     <select
@@ -316,7 +434,15 @@ const ExportModal = ({ cvData, template, onClose }) => {
                           pageSize: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "8px",
+                        outline: "none",
+                        transition: "all 0.2s",
+                      }}
+                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {pageSizeOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -327,7 +453,7 @@ const ExportModal = ({ cvData, template, onClose }) => {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
+                    <h4 style={{ fontWeight: 600, color: "#111827", marginBottom: "12px" }}>
                       Margins
                     </h4>
                     <select
@@ -338,7 +464,15 @@ const ExportModal = ({ cvData, template, onClose }) => {
                           margins: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "8px",
+                        outline: "none",
+                        transition: "all 0.2s",
+                      }}
+                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {marginOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -352,11 +486,11 @@ const ExportModal = ({ cvData, template, onClose }) => {
 
               {/* Additional Options */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#111827", marginBottom: "16px" }}>
                   Additional Options
                 </h3>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
                     <input
                       type="checkbox"
                       checked={exportOptions.includeColors}
@@ -366,13 +500,19 @@ const ExportModal = ({ cvData, template, onClose }) => {
                           includeColors: e.target.checked,
                         })
                       }
-                      className="w-4 h-4 text-[#02325a] border-gray-300 rounded focus:ring-blue-500"
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        color: "#02325a",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        outline: "none",
+                      }}
+                      className="focus:ring-blue-500"
                     />
                     <div>
-                      <span className="font-medium text-gray-900">
-                        Include Colors
-                      </span>
-                      <p className="text-sm text-gray-600">
+                      <span style={{ fontWeight: 500, color: "#111827" }}>Include Colors</span>
+                      <p style={{ fontSize: "14px", color: "#4b5563" }}>
                         Keep template colors in the exported file
                       </p>
                     </div>
@@ -382,19 +522,19 @@ const ExportModal = ({ cvData, template, onClose }) => {
             </div>
 
             {/* Preview & Summary */}
-            <div className="space-y-6">
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               {/* Export Summary */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div style={{ backgroundColor: "#f9fafb", borderRadius: "8px", padding: "24px" }}>
+                <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#111827", marginBottom: "16px" }}>
                   Export Summary
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Format:</span>
-                    <span className="font-medium flex items-center gap-2">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "#4b5563" }}>Format:</span>
+                    <span style={{ fontWeight: 500, display: "flex", alignItems: "center", gap: "8px" }}>
                       {React.createElement(
                         getFormatIcon(exportOptions.format),
-                        { className: "w-4 h-4" }
+                        { style: { width: "16px", height: "16px" } }
                       )}
                       {
                         formatOptions.find(
@@ -403,73 +543,68 @@ const ExportModal = ({ cvData, template, onClose }) => {
                       }
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Template:</span>
-                    <span className="font-medium">{template.name}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "#4b5563" }}>Template:</span>
+                    <span style={{ fontWeight: 500 }}>{template.name}</span>
                   </div>
                   {exportOptions.format === "pdf" && (
                     <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Quality:</span>
-                        <span className="font-medium capitalize">
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: "#4b5563" }}>Quality:</span>
+                        <span style={{ fontWeight: 500, textTransform: "capitalize" }}>
                           {exportOptions.quality}
                         </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Page Size:</span>
-                        <span className="font-medium">
-                          {exportOptions.pageSize}
-                        </span>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: "#4b5563" }}>Page Size:</span>
+                        <span style={{ fontWeight: 500 }}>{exportOptions.pageSize}</span>
                       </div>
                     </>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Colors:</span>
-                    <span className="font-medium">
-                      {exportOptions.includeColors
-                        ? "Included"
-                        : "Black & White"}
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "#4b5563" }}>Colors:</span>
+                    <span style={{ fontWeight: 500 }}>
+                      {exportOptions.includeColors ? "Included" : "Black & White"}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* File Preview */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-3">
+              <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "16px" }}>
+                <h4 style={{ fontWeight: 600, color: "#111827", marginBottom: "12px" }}>
                   File Preview
                 </h4>
-                <div className="bg-gray-100 rounded-lg p-4 text-center">
-                  <div className="w-16 h-20 bg-white border border-gray-300 rounded mx-auto mb-3 flex items-center justify-center">
+                <div style={{ backgroundColor: "#f3f4f6", borderRadius: "8px", padding: "16px", textAlign: "center" }}>
+                  <div style={{ width: "64px", height: "80px", backgroundColor: "#ffffff", border: "1px solid #d1d5db", borderRadius: "8px", margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {React.createElement(getFormatIcon(exportOptions.format), {
-                      className: "w-8 h-8 text-gray-600",
+                      style: { width: "32px", height: "32px", color: "#4b5563" },
                     })}
                   </div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div style={{ fontSize: "14px", fontWeight: 500, color: "#111827" }}>
                     {cvData.personalInfo.firstName}_
                     {cvData.personalInfo.lastName}_CV.{exportOptions.format}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Estimated size:{" "}
-                    {exportOptions.quality === "high" ? "2-3 MB" : "1-2 MB"}
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>
+                    Estimated size: {exportOptions.quality === "high" ? "2-3 MB" : "1-2 MB"}
                   </div>
                 </div>
               </div>
 
               {/* Premium Upgrade */}
               {isFormatPremium(exportOptions.format) && (
-                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Crown className="w-6 h-6 text-yellow-600" />
-                    <h4 className="font-semibold text-gray-900">
+                <div style={{ background: "linear-gradient(to right, #fefce8, #ffedd5)", border: "1px solid #fde68a", borderRadius: "8px", padding: "24px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+                    <Crown style={{ width: "24px", height: "24px", color: "#ca8a04" }} />
+                    <h4 style={{ fontWeight: 600, color: "#111827" }}>
                       Premium Feature
                     </h4>
                   </div>
-                  <p className="text-gray-700 mb-4">
+                  <p style={{ color: "#374151", marginBottom: "16px" }}>
                     Unlock advanced export formats and customization options
                     with Bolt Premium.
                   </p>
-                  <button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2 px-4 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-colors font-medium">
+                  <button style={{ width: "100%", background: "linear-gradient(to right, #eab308, #f97316)", color: "#ffffff", padding: "8px 16px", borderRadius: "8px", fontWeight: 500, transition: "all 0.2s" }} className="hover:from-yellow-600 hover:to-orange-600">
                     Upgrade to Premium
                   </button>
                 </div>
@@ -479,11 +614,11 @@ const ExportModal = ({ cvData, template, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
+        <div style={{ backgroundColor: "#f9fafb", padding: "16px 24px", borderTop: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontSize: "14px", color: "#4b5563" }}>
             {isExporting ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-[#02325a] border-t-transparent rounded-full animate-spin"></div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "16px", height: "16px", border: "2px solid #02325a", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
                 Exporting... {exportProgress}%
               </div>
             ) : (
@@ -491,27 +626,39 @@ const ExportModal = ({ cvData, template, onClose }) => {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <button
               onClick={onClose}
               disabled={isExporting}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50"
+              style={{ padding: "8px 16px", color: "#4b5563", transition: "all 0.2s", opacity: isExporting ? 0.5 : 1 }}
+              className="hover:text-gray-800"
             >
               Cancel
             </button>
             <button
               onClick={handleExport}
               disabled={isExporting || isFormatPremium(exportOptions.format)}
-              className="flex items-center gap-2 bg-gradient-to-r from-[#02325a] to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "linear-gradient(to right, #02325a, #9333ea)",
+                color: "#ffffff",
+                padding: "8px 24px",
+                borderRadius: "8px",
+                transition: "all 0.2s",
+                opacity: isExporting || isFormatPremium(exportOptions.format) ? 0.5 : 1,
+                cursor: isExporting || isFormatPremium(exportOptions.format) ? "not-allowed" : "pointer",
+              }}
             >
               {isExporting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div style={{ width: "16px", height: "16px", border: "2px solid #ffffff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
                   Exporting...
                 </>
               ) : (
                 <>
-                  <Download className="w-4 h-4" />
+                  <Download style={{ width: "16px", height: "16px" }} />
                   Export CV
                 </>
               )}
@@ -525,10 +672,14 @@ const ExportModal = ({ cvData, template, onClose }) => {
 
         {/* Progress Bar */}
         {isExporting && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200">
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "4px", backgroundColor: "#e5e7eb" }}>
             <div
-              className="h-full bg-gradient-to-r from-[#02325a] to-purple-600 transition-all duration-300"
-              style={{ width: `${exportProgress}%` }}
+              style={{
+                height: "100%",
+                background: "linear-gradient(to right, #02325a, #9333ea)",
+                transition: "width 0.3s",
+                width: `${exportProgress}%`,
+              }}
             />
           </div>
         )}
