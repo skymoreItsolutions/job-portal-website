@@ -1,11 +1,12 @@
 'use client'
 
-import MultiStepJobPostingForm from '@/app/components/MultiStepJobPostingForm'
+import dynamic from 'next/dynamic';
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { baseurl } from '@/app/components/common'
 import Sidebar from '@/app/components/Sidebar'
 
+const MultiStepJobPostingForm = dynamic(() => import('@/app/components/MultiStepJobPostingForm'), { ssr: false });
 const Page = () => {
   const [userdata, setIsLoggedIn] = useState(null)
   const [companies, setCompanies] = useState(null)

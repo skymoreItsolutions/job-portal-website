@@ -231,7 +231,7 @@ export default function Navbar() {
       <nav className="bg-white p-4 shadow-md sticky top-0 z-50 px-[8%]">
         <div className="mx-auto flex justify-between items-center">
           <div className="text-black text-2xl font-bold">
-            <Link className={`flex items-center ${isLoggedIn ? 'ml-[100px]' : ' '} `} href="/">
+            <Link className={`flex items-center ${isLoggedIn ? '' : ' '} `} href="/">
             <img  className="h-[80px]" src='/img/logo-rm-boat.png' />
               <span className="text-2xl ml-2  uppercase leading-1">
                 Hiring Boat
