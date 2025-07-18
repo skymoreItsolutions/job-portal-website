@@ -44,9 +44,15 @@ export default function Navbar() {
           }
         );
 
+
+        console.log('res.data.success' ,res.data.doneprofile)
+
         if (res.data && res.data.success) {
           setIsLoggedIn(true);
-        } else {
+        } else if (res.data.doneprofile === 1){
+            setIsLoggedIn(true);
+        } 
+        else {
           setIsLoggedIn(false);
           localStorage.removeItem("employerToken");
           // localStorage.removeItem("port_tok");
@@ -94,6 +100,7 @@ export default function Navbar() {
 
   // Handle OTP verification
   
+ 
   const handleSendOtp = async () => {
   setLoading(true);
   setError("");
@@ -109,7 +116,7 @@ export default function Navbar() {
     const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
     const response = await axios.post(`${baseurl}/${endpoint}`, payload);
 
-    console.log('response',response);
+    console.log('response', response);
     if (response.data.success) {
       if (loginType === "Employer") {
         const sessionToken = response.data.session_token;
@@ -130,10 +137,13 @@ export default function Navbar() {
         localStorage.setItem("port_tok", sessionToken);
         setShowModal(false);
         setOtpSent(false);
-        router.push("/candidate/candidate-login");
+        // Redirect based on whether profile is complete (doneprofile: 1) or not
+        const redirectPath = response.data.user.doneprofile === 1 
+          ? "/candidate/dashboard" 
+          : "/candidate/candidate-login";
+        router.push(redirectPath);
       }
     } else {
-      // Check for specific error message
       if (
         loginType === "Employer" &&
         response.data.message === "No employer found with this email"
@@ -146,10 +156,9 @@ export default function Navbar() {
       }
     }
   } catch (error) {
-
-      setOtpSent(false);
-        setShowModal(false);
-        router.push("/employer/onboarding");
+    setOtpSent(false);
+    setShowModal(false);
+    router.push("/employer/onboarding");
     setError("Failed to verify OTP. Please try again.");
   }
   setLoading(false);
