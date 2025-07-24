@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuBriefcaseBusiness, FaMapMarkerAlt, FaSearch } from "react-icons/fa";
+import {  FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { motion } from 'framer-motion';
 import Autosuggest from 'react-autosuggest';
 import { TypeAnimation } from 'react-type-animation';
@@ -131,7 +131,7 @@ const Herosection = () => {
               }}
             />
             <span className='absolute top-1/2 left-3 transform -translate-y-1/2'>
-              <LuBriefcaseBusiness className='text-xl text-slate-500' />
+              {/* <LuBriefcaseBusiness className='text-xl text-slate-500' /> */}
             </span>
             {!searchInput && (
               <div className="absolute left-10 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">

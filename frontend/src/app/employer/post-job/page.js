@@ -12,6 +12,9 @@ const Page = () => {
   const [companies, setCompanies] = useState(null)
 
 
+  
+
+
   useEffect(() => {
     const checkLogin = async () => {
       const token = localStorage.getItem('employerToken')

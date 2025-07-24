@@ -44,7 +44,7 @@ const CandidatesDashboard = () => {
     { value: 'angular', label: 'Angular' },
   ];
 
- const locationOptions = [
+  const locationOptions = [
     { value: 'delhi', label: 'Delhi' },
     { value: 'jaipur', label: 'Jaipur' },
     { value: 'lucknow', label: 'Lucknow' },
@@ -56,6 +56,7 @@ const CandidatesDashboard = () => {
     { value: 'ghaziabad', label: 'Ghaziabad' },
     { value: 'meerut', label: 'Meerut' },
   ];
+
   // Experience range options remain unchanged
   const experienceOptions = [
     { value: '0.25', label: '3 Months' },
@@ -74,10 +75,20 @@ const CandidatesDashboard = () => {
     );
   };
 
-  // Handle input changes (unchanged)
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'minSalary' || name === 'maxSalary') {
+    if (name === 'experienceType') {
+      // Reset experience and salary fields when experienceType changes
+      setFormData({
+        ...formData,
+        experienceType: value,
+        minExperience: '',
+        maxExperience: '',
+        minSalary: '',
+        maxSalary: ''
+      });
+    } else if (name === 'minSalary' || name === 'maxSalary') {
       const numValue = value ? parseInt(value.replace(/,/g, '')) : '';
       if (numValue === '' || (numValue >= 0 && numValue <= 99999999)) {
         setFormData({ ...formData, [name]: numValue });
@@ -172,22 +183,24 @@ const CandidatesDashboard = () => {
     setFormData({ ...formData, locations: selectedLocations });
   };
 
-  // Validate fields (unchanged)
+  // Validate fields
   const validateFields = () => {
-    if (formData.minExperience && formData.maxExperience) {
-      if (parseFloat(formData.minExperience) >= parseFloat(formData.maxExperience)) {
-        return 'Minimum experience must be less than maximum experience';
+    if (formData.experienceType !== 'fresher') {
+      if (formData.minExperience && formData.maxExperience) {
+        if (parseFloat(formData.minExperience) >= parseFloat(formData.maxExperience)) {
+          return 'Minimum experience must be less than maximum experience';
+        }
       }
-    }
-    if (formData.minSalary && formData.maxSalary) {
-      if (parseInt(formData.minSalary) >= parseInt(formData.maxSalary)) {
-        return 'Minimum salary must be less than maximum salary';
+      if (formData.minSalary && formData.maxSalary) {
+        if (parseInt(formData.minSalary) >= parseInt(formData.maxSalary)) {
+          return 'Minimum salary must be less than maximum salary';
+        }
       }
     }
     return null;
   };
 
-  // Handle form submission (unchanged)
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationError = validateFields();
@@ -198,10 +211,10 @@ const CandidatesDashboard = () => {
     const queryParams = new URLSearchParams({
       keywords: formData.keywords.map((k) => k.value).join(','),
       locations: formData.locations.map((l) => l.value).join(','),
-      minExperience: formData.minExperience,
-      maxExperience: formData.maxExperience,
-      minSalary: formData.minSalary,
-      maxSalary: formData.maxSalary,
+      minExperience: formData.experienceType === 'fresher' ? '' : formData.minExperience,
+      maxExperience: formData.experienceType === 'fresher' ? '' : formData.maxExperience,
+      minSalary: formData.experienceType === 'fresher' ? '' : formData.minSalary,
+      maxSalary: formData.experienceType === 'f Fresher Only' ? '' : formData.maxSalary,
       education: formData.education,
       active: formData.active,
       experienceType: formData.experienceType,
@@ -209,7 +222,7 @@ const CandidatesDashboard = () => {
     router.push(`/employer/candidate-data?${queryParams}`);
   };
 
-  // Format and parse INR functions (unchanged)
+  // Format and parse INR functions
   const formatINR = (value) => {
     if (!value) return '';
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -314,97 +327,99 @@ const CandidatesDashboard = () => {
                 />
               </div>
               {formData.experienceType !== 'fresher' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="minExperience"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Minimum Experience
-                    </label>
-                    <select
-                      name="minExperience"
-                      id="minExperience"
-                      value={formData.minExperience}
-                      onChange={handleInputChange}
-                      className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                    >
-                      <option value="">Select Min Experience</option>
-                      {experienceOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="minExperience"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Minimum Experience
+                      </label>
+                      <select
+                        name="minExperience"
+                        id="minExperience"
+                        value={formData.minExperience}
+                        onChange={handleInputChange}
+                        className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                      >
+                        <option value="">Select Min Experience</option>
+                        {experienceOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="maxExperience"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Maximum Experience
+                      </label>
+                      <select
+                        name="maxExperience"
+                        id="maxExperience"
+                        value={formData.maxExperience}
+                        onChange={handleInputChange}
+                        className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                      >
+                        <option value="">Select Max Experience</option>
+                        {getMaxExperienceOptions().map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label
-                      htmlFor="maxExperience"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Maximum Experience
-                    </label>
-                    <select
-                      name="maxExperience"
-                      id="maxExperience"
-                      value={formData.maxExperience}
-                      onChange={handleInputChange}
-                      className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                    >
-                      <option value="">Select Max Experience</option>
-                      {getMaxExperienceOptions().map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="minSalary"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Minimum Monthly Salary (INR)
+                      </label>
+                      <input
+                        type="text"
+                        name="minSalary"
+                        id="minSalary"
+                        value={formatINR(formData.minSalary)}
+                        onChange={(e) =>
+                          handleInputChange({
+                            target: { name: 'minSalary', value: parseINR(e.target.value) },
+                          })
+                        }
+                        placeholder="e.g., 30,000"
+                        className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="maxSalary"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Maximum Monthly Salary (INR)
+                      </label>
+                      <input
+                        type="text"
+                        name="maxSalary"
+                        id="maxSalary"
+                        value={formatINR(formData.maxSalary)}
+                        onChange={(e) =>
+                          handleInputChange({
+                            target: { name: 'maxSalary', value: parseINR(e.target.value) },
+                          })
+                        }
+                        placeholder="e.g., 1,00,000"
+                        className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                      />
+                    </div>
                   </div>
-                </div>
+                </>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="minSalary"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Minimum Monthly Salary (INR)
-                  </label>
-                  <input
-                    type="text"
-                    name="minSalary"
-                    id="minSalary"
-                    value={formatINR(formData.minSalary)}
-                    onChange={(e) =>
-                      handleInputChange({
-                        target: { name: 'minSalary', value: parseINR(e.target.value) },
-                      })
-                    }
-                    placeholder="e.g., 30,000"
-                    className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="maxSalary"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Maximum Monthly Salary (INR)
-                  </label>
-                  <input
-                    type="text"
-                    name="maxSalary"
-                    id="maxSalary"
-                    value={formatINR(formData.maxSalary)}
-                    onChange={(e) =>
-                      handleInputChange({
-                        target: { name: 'maxSalary', value: parseINR(e.target.value) },
-                      })
-                    }
-                    placeholder="e.g., 1,00,000"
-                    className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                  />
-                </div>
-              </div>
               <div>
                 <label
                   htmlFor="locations"

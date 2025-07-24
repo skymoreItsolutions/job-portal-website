@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   FaCheck,
   FaTimes,
@@ -13,13 +13,27 @@ import axios from "axios";
 import { baseurl } from "./common";
 import CreatableSelect from "react-select/creatable";
 import debounce from "lodash/debounce";
-
+import { Tooltip } from "flowbite-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Heading from "@tiptap/extension-heading";
-
+import {
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaStrikethrough,
+  FaListUl,
+  FaListOl,
+  FaHeading,
+  FaEraser,
+} from "react-icons/fa";
 import Underline from "@tiptap/extension-underline";
 import Strike from "@tiptap/extension-strike";
+import Heading from "@tiptap/extension-heading";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+
 // import TextAlign from '@tiptap/extension-text-align';
 // import Superscript from '@tiptap/extension-superscript';
 // import Subscript from '@tiptap/extension-subscript';
@@ -178,63 +192,62 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   }
 `;
 
-const generateJobDescription = async () => {
-  // Ensure required fields exist
-  if (!formData.jobTitle || !formData.industry) {
-    setErrors((prev) => ({
-      ...prev,
-      jobOverview:
-        "Job Title and Industry are required to generate a description.",
-    }));
-    return;
-  }
+  const generateJobDescription = async () => {
+    // Ensure required fields exist
 
-  setIsSubmitting(true);
-  setApiError(null);
+    console.log("Generate Job Description with AI");
+    if (!formData.jobTitle) {
+      setErrors((prev) => ({
+        ...prev,
+        jobOverview:
+          "Job Title and Industry are required to generate a description.",
+      }));
+      return;
+    }
 
-  try {
-    // Send formData directly (structured JSON)
-    const response = await axios.post(
-      `${baseurl}/generate-job-description`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    setIsSubmitting(true);
+    setApiError(null);
 
-      console.log('response',response)
+    try {
+      // Send formData directly (structured JSON)
+      const response = await axios.post(
+        `${baseurl}/generate-job-description`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const generatedText =
-      response.data?.jobOverview?.trim() || "Failed to generate description.";
- console.log('respgeneratedTextonse',generatedText)
-    // Update form state and localStorage
+      console.log("response", response);
 
-  
-    setFormData((prev) => ({
-      ...prev,
-      jobOverview: generatedText,
-    }));
+      const generatedText =
+        response.data?.jobOverview?.trim() || "Failed to generate description.";
+      console.log("respgeneratedTextonse", generatedText);
+      // Update form state and localStorage
 
+      setFormData((prev) => ({
+        ...prev,
+        jobOverview: generatedText,
+      }));
 
-    localStorage.setItem(
-      "jobPostingFormData",
-      JSON.stringify({
-        data: { ...formData, jobOverview: generatedText },
-        timestamp: new Date().getTime(),
-      })
-    );
+      localStorage.setItem(
+        "jobPostingFormData",
+        JSON.stringify({
+          data: { ...formData, jobOverview: generatedText },
+          timestamp: new Date().getTime(),
+        })
+      );
 
-    setErrors((prev) => ({ ...prev, jobOverview: null }));
-  } catch (error) {
-    setApiError("Failed to generate job description. Please try again.");
-    console.error("API Error:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
+      setErrors((prev) => ({ ...prev, jobOverview: null }));
+    } catch (error) {
+      setApiError("Failed to generate job description. Please try again.");
+      console.error("API Error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const courseOptions = {
     Undergraduate: [
@@ -665,6 +678,8 @@ const generateJobDescription = async () => {
     industry: "",
     department: "",
     jobRole: "",
+    joiningFeeRequired: "",
+    totalExperienceRequired: "",
   });
   const [errors, setErrors] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -674,6 +689,74 @@ const generateJobDescription = async () => {
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [locationInputs, setLocationInputs] = useState(["", "", ""]);
   const [showNewCompanyFields, setShowNewCompanyFields] = useState(false);
+  const [selectedJobRole, setSelectedJobRole] = useState("");
+
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [jobRoleOptions, setJobRoleOptions] = useState([]);
+  const [filteredJobRoleOptions, setFilteredJobRoleOptions] = useState([]);
+  const [showJobRoleDropdown, setShowJobRoleDropdown] = useState(false);
+  const [jobRoleSearch, setJobRoleSearch] = useState("");
+  const dropdownRef = useRef(null);
+  const jobRoleDropdownRef = useRef(null);
+
+  const fetchJobTitles = useCallback(
+    debounce(async (query) => {
+      if (!query || query.length < 2) {
+        setSuggestions([]);
+        setShowDropdown(false);
+        setJobRoleOptions([]);
+        setFilteredJobRoleOptions([]);
+        setShowJobRoleDropdown(false);
+        setFormData((prev) => ({ ...prev, jobRole: "" }));
+        return;
+      }
+
+      setIsLoading(true);
+      setSearchError(null);
+
+      try {
+        const response = await axios.get(`${baseurl}/job-titles/search`, {
+          params: { query },
+        });
+
+        if (response.data.data && response.data.data.length > 0) {
+          setSuggestions(response.data.data);
+          setShowDropdown(true);
+        } else {
+          setSuggestions([]);
+          setShowDropdown(false);
+          setSearchError(response.data.message || "No job titles found");
+        }
+      } catch (err) {
+        setSuggestions([]);
+        setShowDropdown(false);
+        setSearchError(
+          err.response?.data?.errors?.query?.[0] || "Error fetching job titles"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    []
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        jobRoleDropdownRef.current &&
+        !jobRoleDropdownRef.current.contains(event.target)
+      ) {
+        setShowJobRoleDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const formatINR = (value) => {
     if (!value) return "";
@@ -772,11 +855,20 @@ const generateJobDescription = async () => {
           .map((skill) => ({ value: skill, label: skill }));
         setAllSkillsOptions([...skillsOptions, ...customSkills]);
         setShowNewCompanyFields(!!data.newCompanyName);
+        // Restore jobRoleSearch and jobRole
+        if (data.jobRole) {
+          setJobRoleSearch(data.jobRole);
+          setFilteredJobRoleOptions(
+            jobRoleOptions.filter((option) =>
+              option.text.toLowerCase().includes(data.jobRole.toLowerCase())
+            )
+          );
+        }
       } else {
         localStorage.removeItem("jobPostingFormData");
       }
     }
-  }, []);
+  }, [jobRoleOptions]); // Add jobRoleOptions as dependency to ensure filtering works
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -909,15 +1001,28 @@ const generateJobDescription = async () => {
         if (!formData.companyName && !formData.newCompanyName) {
           newErrors.companyName =
             "Either select a company or enter a new company name";
+          if (!formData.panCard) newErrors.panCard = "Document is required";
         }
         if (showNewCompanyFields) {
           if (!formData.newCompanyName)
             newErrors.newCompanyName = "New company name is required";
-          if (!formData.panCard) newErrors.panCard = "PAN card is required";
-          if (!formData.gstCertificate)
-            newErrors.gstCertificate = "GST certificate is required";
+          if (!formData.panCard)
+            newErrors.panCard =
+              "Aggreement With Comapny  / Other Document  is required";
         }
         if (!formData.jobTitle) newErrors.jobTitle = "Job title is required";
+        if (!formData.jobType) newErrors.jobType = "Job Type is required";
+
+        // if (!formData.industry) newErrors.industry = "Industry is required";
+        // if (!formData.department) newErrors.department = "Department is required";
+        if (!formData.jobRole) newErrors.jobRole = "Job Role is required";
+
+        if (!formData.joiningFeeRequired)
+          newErrors.joiningFeeRequired =
+            "Please select whether a joining fee or deposit is required";
+
+        //department jobRole
+
         if (formData.locations.length === 0)
           newErrors.locations = "At least one location is required";
         if (!formData.payType) newErrors.payType = "Pay type is required";
@@ -944,9 +1049,16 @@ const generateJobDescription = async () => {
         }
         if (!formData.englishLevel)
           newErrors.englishLevel = "English level is required";
-        if (!formData.experienceLevel)
-          newErrors.experienceLevel = "Minimum experience is required";
+        if (!formData.totalExperienceRequired)
+          newErrors.totalExperienceRequired = "Total experience is required";
         if (
+          formData.totalExperienceRequired === "Experienced" &&
+          !formData.experienceLevel
+        ) {
+          newErrors.experienceLevel = "Minimum experience is required";
+        }
+        if (
+          formData.totalExperienceRequired === "Experienced" &&
           formData.experienceMax &&
           parseInt(formData.experienceMax) < parseInt(formData.experienceLevel)
         ) {
@@ -970,6 +1082,8 @@ const generateJobDescription = async () => {
           newErrors.contact =
             "Selected contact preference requires a valid email or phone";
         }
+        // if (!formData.interviewTime) "Interview Time Is Required ";
+        // if (!formData.interviewDate) "Interview Date Is Required ";
         if (
           formData.interviewMode !== "Online" &&
           !formData.interviewLocation
@@ -992,9 +1106,13 @@ const generateJobDescription = async () => {
       } else {
         setShowConfirmation(true);
       }
+      // Scroll to the top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // Smooth scrolling for better UX
+      });
     }
   };
-
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
@@ -1019,16 +1137,12 @@ const generateJobDescription = async () => {
     apiData.append("employer_id", isLoggedIn.id);
 
     // Company handling
-    if (
-      showNewCompanyFields &&
-      formData.newCompanyName &&
-      formData.panCard &&
-      formData.gstCertificate
-    ) {
+    if (showNewCompanyFields && formData.newCompanyName && formData.panCard) {
       // Register new company with documents
-      apiData.append("newCompanyName", formData.newCompanyName); // Use 'newCompanyName' to match backend
+      apiData.append("company_name", formData.newCompanyName);
       apiData.append("pan_card", formData.panCard);
       apiData.append("gst_certificate", formData.gstCertificate);
+      // apiData.append("gst_certificate", formData.gstCertificate);
     } else if (!showNewCompanyFields && formData.companyName) {
       // Use existing company
       const selectedCompany = companies?.find(
@@ -1070,7 +1184,7 @@ const generateJobDescription = async () => {
     );
     apiData.append(
       "total_experience_max",
-      parseInt(formData.experienceMax) || null
+      parseInt(formData.experienceMax) || 0
     );
     apiData.append("other_job_titles", JSON.stringify(formData.preferredRoles));
     apiData.append("job_expire_time", parseInt(formData.jobExpireTime) || 7);
@@ -1120,6 +1234,7 @@ const generateJobDescription = async () => {
     apiData.append("contact_phone", formData.contactPhone || null);
     apiData.append("interview_date", formData.interviewDate || null);
     apiData.append("interview_time", formData.interviewTime || null);
+
     apiData.append("not_email", formData.notEmail ? "1" : "0");
     apiData.append("viewed_number", formData.viewedNumber ? "1" : "0");
     apiData.append("industry", formData.industry);
@@ -1233,11 +1348,13 @@ const generateJobDescription = async () => {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Heading.configure({
-        levels: [1, 2, 3], // Support H1, H2, H3
-      }),
+      Bold,
+      Italic,
       Underline,
       Strike,
+      BulletList,
+      OrderedList,
+      Heading.configure({ levels: [1, 2, 3] }),
     ],
     editorProps: {
       attributes: {
@@ -1246,20 +1363,23 @@ const generateJobDescription = async () => {
       },
     },
 
-    content: formData.jobOverview ,
+    content: formData.jobOverview,
     immediatelyRender: false,
     editable: true,
     onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      // Optionally, basic beautification:
+      const prettyHTML = html.replace(/></g, ">\n<");
       setFormData((prev) => ({
         ...prev,
-        jobOverview: editor.getHTML(),
+        jobOverview: prettyHTML,
       }));
       localStorage.setItem(
         "jobPostingFormData",
         JSON.stringify({
           data: {
             ...formData,
-            jobOverview: editor.getHTML(),
+            jobOverview: prettyHTML,
           },
           timestamp: new Date().getTime(),
         })
@@ -1267,8 +1387,10 @@ const generateJobDescription = async () => {
     },
   });
 
-
-
+  const baseBtn =
+    "px-3 py-1.5 mr-1 rounded transition-colors flex items-center";
+  const activeBtn = "bg-blue-600 text-white";
+  const inactiveBtn = "bg-blue-50 text-blue-700 hover:bg-blue-100";
 
   useEffect(() => {
     if (editor && formData.jobOverview) {
@@ -1277,8 +1399,78 @@ const generateJobDescription = async () => {
     }
   }, [formData.jobOverview, editor]);
 
+  const handleChange = (e) => {
+    const value = e.target.value;
+    handleInputChange(e); // Update formData in parent component
+    fetchJobTitles(value);
+  };
 
-  
+  const handleJobRoleSearch = (e) => {
+    const value = e.target.value;
+    setJobRoleSearch(value);
+    setShowJobRoleDropdown(true);
+
+    // Filter job roles
+    const filtered = jobRoleOptions.filter((option) =>
+      option.text.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredJobRoleOptions(filtered);
+  };
+
+  // Handle job title selection
+  const handleSelect = (jobTitle) => {
+    setFormData((prev) => ({
+      ...prev,
+      jobTitle: jobTitle.job_title,
+      jobRole: "", // Clear job role on new job title selection
+    }));
+    setSuggestions([]);
+    setShowDropdown(false);
+    const newJobRoleOptions = jobTitle.results || [];
+    setJobRoleOptions(newJobRoleOptions);
+    setFilteredJobRoleOptions(newJobRoleOptions);
+    setShowJobRoleDropdown(newJobRoleOptions.length > 0);
+    setJobRoleSearch("");
+    // Save to localStorage
+    localStorage.setItem(
+      "jobPostingFormData",
+      JSON.stringify({
+        data: {
+          ...formData,
+          jobTitle: jobTitle.job_title,
+          jobRole: "",
+        },
+        timestamp: new Date().getTime(),
+      })
+    );
+  };
+
+  // Handle job role selection
+  const handleJobRoleSelect = (result) => {
+    setFormData((prev) => ({
+      ...prev,
+      jobRole: result.text,
+    }));
+    setJobRoleSearch(result.text);
+    setShowJobRoleDropdown(false);
+    setErrors((prev) => ({
+      ...prev,
+      jobRole: "", // Clear any existing error
+    }));
+
+    // Save to localStorage
+    localStorage.setItem(
+      "jobPostingFormData",
+      JSON.stringify({
+        data: {
+          ...formData,
+          jobRole: result.text,
+        },
+        timestamp: new Date().getTime(),
+      })
+    );
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -1323,20 +1515,27 @@ const generateJobDescription = async () => {
                     </option>
                   ))}
                 </select>
-                <motion.button
-                  type="button"
-                  onClick={() => setShowNewCompanyFields(!showNewCompanyFields)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-2 p-3 bg-[#02325a] text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
-                  title={
-                    showNewCompanyFields
-                      ? "Cancel New Company"
-                      : "Hire for Another Company"
-                  }
+                <Tooltip
+                  content="Post Job For My Client"
+                  className="text-nowrap"
                 >
-                  {showNewCompanyFields ? <FaTimes /> : <FaPlus />}
-                </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={() =>
+                      setShowNewCompanyFields(!showNewCompanyFields)
+                    }
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-2 p-3 bg-[#02325a] text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                    title={
+                      showNewCompanyFields
+                        ? "Cancel New Company"
+                        : "Hire for Another Company"
+                    }
+                  >
+                    {showNewCompanyFields ? <FaTimes /> : <FaPlus />}
+                  </motion.button>
+                </Tooltip>
               </div>
               {errors.companyName && (
                 <p className="mt-1 text-xs text-red-500">
@@ -1355,7 +1554,7 @@ const generateJobDescription = async () => {
                 >
                   <div>
                     <label className="block text-sm font-semibold text-gray-800">
-                      New Company Name *
+                      Client Company Name*
                     </label>
                     <input
                       type="text"
@@ -1377,7 +1576,7 @@ const generateJobDescription = async () => {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-800">
-                      PAN Card *
+                      Aggreement With Comapny * / Other Document *
                     </label>
                     <input
                       type="file"
@@ -1394,7 +1593,7 @@ const generateJobDescription = async () => {
                       </p>
                     )}
                   </div>
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-semibold text-gray-800">
                       GST Certificate *
                     </label>
@@ -1414,7 +1613,7 @@ const generateJobDescription = async () => {
                         {errors.gstCertificate}
                       </p>
                     )}
-                  </div>
+                  </div> */}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1426,13 +1625,103 @@ const generateJobDescription = async () => {
                 type="text"
                 name="jobTitle"
                 value={formData.jobTitle}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className={`mt-2 w-full rounded-lg border ${
                   errors.jobTitle ? "border-red-500" : "border-gray-300"
                 } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                placeholder="Type to search job titles..."
+                autoComplete="off"
               />
               {errors.jobTitle && (
                 <p className="mt-1 text-xs text-red-500">{errors.jobTitle}</p>
+              )}
+              {searchError && (
+                <p className="mt-1 text-xs text-red-500">{searchError}</p>
+              )}
+              {isLoading && (
+                <p className="mt-1 text-xs text-gray-500">Loading...</p>
+              )}
+              {showDropdown && suggestions.length > 0 && (
+                <ul
+                  ref={dropdownRef}
+                  className="absolute w-[52%] z-10 mt-1  bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                >
+                  {suggestions.map((jobTitle) => (
+                    <li
+                      key={jobTitle.id}
+                      onClick={() => handleSelect(jobTitle)}
+                      className="px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {jobTitle.job_title}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Job Role Input */}
+
+            <div className="relative">
+              <label className="block text-sm font-semibold text-gray-800">
+                Job Role *
+              </label>
+              <input
+                type="text"
+                name="jobRole"
+                value={jobRoleSearch}
+                onChange={handleJobRoleSearch}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    jobRoleSearch &&
+                    !filteredJobRoleOptions.some(
+                      (option) =>
+                        option.text.toLowerCase() ===
+                        jobRoleSearch.toLowerCase()
+                    )
+                  ) {
+                    // If Enter is pressed and no matching role exists, treat input as custom role
+                    handleJobRoleSelect({ id: "custom", text: jobRoleSearch });
+                  }
+                }}
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.jobRole ? "border-red-500" : "border-gray-300"
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                placeholder="Type to search job roles..."
+                autoComplete="off"
+              />
+              {errors.jobRole && (
+                <p className="mt-1 text-xs text-red-500">{errors.jobRole}</p>
+              )}
+              {showJobRoleDropdown && (
+                <ul
+                  ref={jobRoleDropdownRef}
+                  className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                >
+                  {filteredJobRoleOptions.length > 0
+                    ? filteredJobRoleOptions.map((result) => (
+                        <li
+                          key={result.id}
+                          onClick={() => handleJobRoleSelect(result)}
+                          className="px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 cursor-pointer"
+                        >
+                          {result.text}
+                        </li>
+                      ))
+                    : jobRoleSearch && (
+                        <li
+                          onClick={() =>
+                            handleJobRoleSelect({
+                              id: "custom",
+                              text: jobRoleSearch,
+                            })
+                          }
+                          className="px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 cursor-pointer"
+                        >
+                          Add "{jobRoleSearch}" as custom job role
+                        </li>
+                      )}
+                </ul>
               )}
             </div>
             <div>
@@ -1511,7 +1800,7 @@ const generateJobDescription = async () => {
                 </div>
               )}
             </div>
-            <div>
+            {/* <div>
               <label className="block text-sm font-semibold text-gray-800">
                 Industry *
               </label>
@@ -1556,25 +1845,8 @@ const generateJobDescription = async () => {
               {errors.department && (
                 <p className="mt-1 text-xs text-red-500">{errors.department}</p>
               )}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-800">
-                Job Role *
-              </label>
-              <input
-                type="text"
-                name="jobRole"
-                value={formData.jobRole}
-                onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${
-                  errors.jobRole ? "border-red-500" : "border-gray-300"
-                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-              />
-              {errors.jobRole && (
-                <p className="mt-1 text-xs text-red-500">{errors.jobRole}</p>
-              )}
-            </div>
-            {/* ... (keeping existing job title, job type, locations sections) */}
+            </div> */}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
@@ -1661,6 +1933,59 @@ const generateJobDescription = async () => {
                 </div>
               )}
             </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">
+                Is there any joining fee or deposit required from the candidate?
+                *
+              </label>
+              <div className="mt-2 flex space-x-2">
+                <label
+                  className={` w-[100px]  font-semibold  text-center py-2 px-3 rounded-md border cursor-pointer transition-all duration-300 ${
+                    formData.joiningFeeRequired === "Yes"
+                      ? "bg-[#02325a] text-white border-[#02325a]"
+                      : "bg-white text-gray-800 border-gray-300 hover:bg-blue-50"
+                  } ${
+                    errors.joiningFeeRequired ? "border-red-500" : ""
+                  } text-xs`}
+                >
+                  <input
+                    type="radio"
+                    name="joiningFeeRequired"
+                    value="Yes"
+                    checked={formData.joiningFeeRequired === "Yes"}
+                    onChange={handleInputChange}
+                    className="hidden"
+                  />
+                  Yes
+                </label>
+                <label
+                  className={` w-[100px]  font-semibold  text-center py-2 px-3 rounded-md border cursor-pointer transition-all duration-300 ${
+                    formData.joiningFeeRequired === "No"
+                      ? "bg-[#02325a] text-white border-[#02325a]"
+                      : "bg-white text-gray-800 border-gray-300 hover:bg-blue-50"
+                  } ${
+                    errors.joiningFeeRequired ? "border-red-500" : ""
+                  } text-xs`}
+                >
+                  <input
+                    type="radio"
+                    name="joiningFeeRequired"
+                    value="No"
+                    checked={formData.joiningFeeRequired === "No"}
+                    onChange={handleInputChange}
+                    className="hidden"
+                  />
+                  No
+                </label>
+              </div>
+              {errors.joiningFeeRequired && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.joiningFeeRequired}
+                </p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
@@ -1850,50 +2175,87 @@ const generateJobDescription = async () => {
                 </p>
               )}
             </div>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-800">
-                  Minimum Experience (Years) *
-                </label>
-                <input
-                  type="number"
-                  name="experienceLevel"
-                  value={formData.experienceLevel}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
-                    errors.experienceLevel
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                  min="0"
-                />
-                {errors.experienceLevel && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.experienceLevel}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-800">
-                  Maximum Experience (Years)
-                </label>
-                <input
-                  type="number"
-                  name="experienceMax"
-                  value={formData.experienceMax}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
-                    errors.experienceMax ? "border-red-500" : "border-gray-300"
-                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                  min={formData.experienceLevel || 0}
-                />
-                {errors.experienceMax && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.experienceMax}
-                  </p>
-                )}
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">
+                Total Experience Required *
+              </label>
+
+              <div className="mt-2 flex space-x-1">
+                {["Any", "Experienced", "Fresher"].map((option) => (
+                  <label
+                    key={option}
+                    className={` w-[140px]  text-center py-2 px-2  text-lg rounded-md border cursor-pointer transition-all duration-300 ${
+                      formData.totalExperienceRequired === option
+                        ? "bg-[#02325a] text-white border-[#02325a]"
+                        : "bg-white text-gray-800 border-gray-300 hover:bg-blue-50"
+                    } ${
+                      errors.totalExperienceRequired ? "border-red-500" : ""
+                    } `}
+                  >
+                    <input
+                      type="radio"
+                      name="totalExperienceRequired"
+                      value={option}
+                      checked={formData.totalExperienceRequired === option}
+                      onChange={handleInputChange}
+                      className="hidden text-2xl"
+                    />
+                    {option}
+                  </label>
+                ))}
               </div>
             </div>
+
+            {formData.totalExperienceRequired === "Experienced" && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800">
+                    Minimum Experience (Years) *
+                  </label>
+                  <input
+                    type="number"
+                    name="experienceLevel"
+                    value={formData.experienceLevel}
+                    onChange={handleInputChange}
+                    className={`mt-2 w-full rounded-lg border ${
+                      errors.experienceLevel
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    min="0"
+                  />
+                  {errors.experienceLevel && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.experienceLevel}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800">
+                    Maximum Experience (Years)
+                  </label>
+                  <input
+                    type="number"
+                    name="experienceMax"
+                    value={formData.experienceMax}
+                    onChange={handleInputChange}
+                    className={`mt-2 w-full rounded-lg border ${
+                      errors.experienceMax
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                    min={formData.experienceLevel || 0}
+                  />
+                  {errors.experienceMax && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.experienceMax}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-semibold text-gray-800">
                 Gender Preference
@@ -1942,129 +2304,144 @@ const generateJobDescription = async () => {
               >
                 Generate with AI
               </motion.button>
-
-            
             </div>
 
             <div
-        className={`mt-2 border rounded-lg ${
-          errors.jobOverview ? "border-red-500" : "border-gray-300"
-        }`}
-      >
-        <div className="tiptap-toolbar">
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("heading", { level: 1 }) ? "active" : ""
-            }`}
-            aria-label="Toggle Heading 1"
-            title="Heading 1"
-          >
-            H1
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("heading", { level: 2 }) ? "active" : ""
-            }`}
-            aria-label="Toggle Heading 2"
-            title="Heading 2"
-          >
-            H2
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("heading", { level: 3 }) ? "active" : ""
-            }`}
-            aria-label="Toggle Heading 3"
-            title="Heading 3"
-          >
-            H3
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleBold().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("bold") ? "active" : ""
-            }`}
-            aria-label="Toggle Bold"
-            title="Bold (Ctrl+B)"
-          >
-            <strong>B</strong>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleItalic().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("italic") ? "active" : ""
-            }`}
-            aria-label="Toggle Italic"
-            title="Italic (Ctrl+I)"
-          >
-            <em>I</em>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleUnderline().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("underline") ? "active" : ""
-            }`}
-            aria-label="Toggle Underline"
-            title="Underline"
-          >
-            <u>U</u>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleStrike().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("strike") ? "active" : ""
-            }`}
-            aria-label="Toggle Strikethrough"
-            title="Strikethrough"
-          >
-            <s>S</s>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleBulletList().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("bulletList") ? "active" : ""
-            }`}
-            aria-label="Toggle Bullet List"
-            title="Bullet List"
-          >
-            • List
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-            className={`px-3 py-1.5 mr-1 rounded ${
-              editor?.isActive("orderedList") ? "active" : ""
-            }`}
-            aria-label="Toggle Ordered List"
-            title="Ordered List"
-          >
-            1. List
-          </button>
-          <button
-            type="button"
-            onClick={() => editor?.chain().focus().unsetAllMarks().clearNodes().run()}
-            className="px-3 py-1.5 rounded"
-            aria-label="Clear Formatting"
-            title="Clear Formatting"
-          >
-            Clear
-          </button>
-        </div>
-        <EditorContent editor={editor} className="tiptap-editor" />
-      </div>
+              className={`mt-2 border rounded-lg ${
+                errors.jobOverview ? "border-red-500" : "border-gray-300"
+              }`}
+            >
+              <div className="tiptap-toolbar flex flex-wrap mb-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 1 }).run()
+                  }
+                  className={`${baseBtn} ${
+                    editor.isActive("heading", { level: 1 })
+                      ? activeBtn
+                      : inactiveBtn
+                  }`}
+                  aria-label="H1"
+                  title="Heading 1"
+                >
+                  <FaHeading className="mr-1" /> H1
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 2 }).run()
+                  }
+                  className={`${baseBtn} ${
+                    editor.isActive("heading", { level: 2 })
+                      ? activeBtn
+                      : inactiveBtn
+                  }`}
+                  aria-label="H2"
+                  title="Heading 2"
+                >
+                  <FaHeading className="mr-1" /> H2
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 3 }).run()
+                  }
+                  className={`${baseBtn} ${
+                    editor.isActive("heading", { level: 3 })
+                      ? activeBtn
+                      : inactiveBtn
+                  }`}
+                  aria-label="H3"
+                  title="Heading 3"
+                >
+                  <FaHeading className="mr-1" /> H3
+                </button>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  className={`${baseBtn} ${
+                    editor.isActive("bold") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Bold"
+                  title="Bold"
+                >
+                  <FaBold />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  className={`${baseBtn} ${
+                    editor.isActive("italic") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Italic"
+                  title="Italic"
+                >
+                  <FaItalic />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  className={`${baseBtn} ${
+                    editor.isActive("underline") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Underline"
+                  title="Underline"
+                >
+                  <FaUnderline />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => editor.chain().focus().toggleStrike().run()}
+                  className={`${baseBtn} ${
+                    editor.isActive("strike") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Strikethrough"
+                  title="Strikethrough"
+                >
+                  <FaStrikethrough />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().toggleBulletList().run()
+                  }
+                  className={`${baseBtn} ${
+                    editor.isActive("bulletList") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Bullet List"
+                  title="Bullet List"
+                >
+                  <FaListUl />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().toggleOrderedList().run()
+                  }
+                  className={`${baseBtn} ${
+                    editor.isActive("orderedList") ? activeBtn : inactiveBtn
+                  }`}
+                  aria-label="Ordered List"
+                  title="Ordered List"
+                >
+                  <FaListOl />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    editor.chain().focus().unsetAllMarks().clearNodes().run()
+                  }
+                  className={`${baseBtn} ${inactiveBtn}`}
+                  aria-label="Clear Formatting"
+                  title="Clear Formatting"
+                >
+                  <FaEraser />
+                </button>
+              </div>
+              <EditorContent editor={editor} className="tiptap-editor" />
+            </div>
 
-       
             <div>
               <label className="block text-sm font-semibold text-gray-800">
                 Required Skills * (Type and add with comma)
@@ -2184,16 +2561,23 @@ const generateJobDescription = async () => {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-800">
-                Contact Preference *
+                Do you want candidates to contact you via Call *
               </label>
-              <div className="mt-3 grid grid-cols-3 gap-4">
-                {["Call", "Whatsapp", "No Preference"].map((preference) => (
-                  <div key={preference} className="flex items-center">
+              <div className="mt-3 grid grid-cols-1 gap-4">
+                {[
+                  { label: "Yes, to myself", value: "Call" },
+                  { label: "Yes, to other recruiter", value: "Whatsapp" },
+                  {
+                    label: "No, I will contact candidates first",
+                    value: "No Preference",
+                  },
+                ].map(({ label, value }) => (
+                  <div key={value} className="flex items-center">
                     <input
                       type="radio"
                       name="contactPreference"
-                      value={preference}
-                      checked={formData.contactPreference === preference}
+                      value={value}
+                      checked={formData.contactPreference === value}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
@@ -2203,7 +2587,7 @@ const generateJobDescription = async () => {
                       className="h-5 w-5 text-[#02325a] focus:ring-blue-500 transition-all duration-300"
                     />
                     <label className="ml-2 text-sm text-gray-700">
-                      {preference}
+                      {label}
                     </label>
                   </div>
                 ))}
@@ -2251,7 +2635,7 @@ const generateJobDescription = async () => {
                   placeholder="Enter contact email"
                 />
                 <div className="mt-2">
-                  <label className="flex items-center text-sm text-gray-800">
+                  {/* <label className="flex items-center text-sm text-gray-800">
                     <input
                       type="checkbox"
                       name="notEmail"
@@ -2260,7 +2644,7 @@ const generateJobDescription = async () => {
                       className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                     />
                     Do not use email
-                  </label>
+                  </label> */}
                 </div>
               </div>
               <div>
@@ -2277,7 +2661,7 @@ const generateJobDescription = async () => {
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                   placeholder="Enter contact phone"
                 />
-                <div className="mt-2">
+                {/* <div className="mt-2">
                   <label className="flex items-center text-sm text-gray-800">
                     <input
                       type="checkbox"
@@ -2288,7 +2672,7 @@ const generateJobDescription = async () => {
                     />
                     Allow phone number to be viewed
                   </label>
-                </div>
+                </div> */}
               </div>
             </div>
             {errors.contact && (
@@ -2307,7 +2691,7 @@ const generateJobDescription = async () => {
                   className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm font-semibold text-gray-800">
                   Interview Time
                 </label>
@@ -2318,7 +2702,7 @@ const generateJobDescription = async () => {
                   onChange={handleInputChange}
                   className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                 />
-              </div>
+              </div> */}
             </div>
           </motion.div>
         );
@@ -2327,7 +2711,6 @@ const generateJobDescription = async () => {
     }
   };
 
-  console.log("userdata?.company_name", userdata);
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -2468,16 +2851,6 @@ const generateJobDescription = async () => {
                             : "Not specified"}
                         </dd>
                       </div>
-                      <div>
-                        <dt className="font-semibold text-gray-800">
-                          GST Certificate
-                        </dt>
-                        <dd className="text-gray-600">
-                          {formData.gstCertificate
-                            ? formData.gstCertificate.name
-                            : "Not specified"}
-                        </dd>
-                      </div>
                     </>
                   )}
                   <div>
@@ -2598,7 +2971,7 @@ const generateJobDescription = async () => {
                   <div>
                     <dt className="font-semibold text-gray-800">Perks</dt>
                     <dd className="text-gray-600">
-                      {formData.perks.join(", ") || "Not specified"}
+                      {formData?.perks?.join(", ") || "Not specified"}
                     </dd>
                   </div>
                   <div>
