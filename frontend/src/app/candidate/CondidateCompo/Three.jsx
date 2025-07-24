@@ -1,7 +1,6 @@
 import React from "react";
 import { FiBriefcase, FiCalendar, FiDollarSign, FiClock } from "react-icons/fi";
 import { FiAward } from "react-icons/fi";
-import Select from "react-select";
 
 const Three = ({ alldata, handelinputs }) => {
   const jobRolesOptions = [
@@ -113,8 +112,30 @@ const Three = ({ alldata, handelinputs }) => {
     { label: "AI Prompt Engineer", value: "AI Prompt Engineer" },
   ];
 
+  const experienceLevelOptions = [
+    { value: "Fresher", label: "Fresher (0-6 months)" },
+    { value: "Experienced", label: "Experienced (6 months - 30 years)" },
+    { value: "Both", label: "Both (0-30 years)" },
+  ];
+
+  // Determine experience range based on selected experience level
+  const getExperienceRange = () => {
+    switch (alldata.experience_level) {
+      case "Fresher":
+        return { years: [...Array(1)].map((_, i) => i), months: [...Array(7)].map((_, i) => i) };
+      case "Experienced":
+        return { years: [...Array(31)].map((_, i) => i), months: [...Array(12)].map((_, i) => i) };
+      case "Both":
+        return { years: [...Array(31)].map((_, i) => i), months: [...Array(12)].map((_, i) => i) };
+      default:
+        return { years: [...Array(31)].map((_, i) => i), months: [...Array(12)].map((_, i) => i) };
+    }
+  };
+
+  const { years, months } = getExperienceRange();
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 lg:p-8  hover:shadow-md transition-shadow duration-300">
+    <div className="bg-white rounded-xl shadow-sm p-6 lg:p-8 hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center mb-6">
         <div className="bg-emerald-100 p-3 rounded-lg mr-4">
           <FiBriefcase className="text-emerald-600 text-xl" />
@@ -195,6 +216,29 @@ const Three = ({ alldata, handelinputs }) => {
           </div>
         </div>
 
+        <div className="space-y-2 animate-fade-in mb-6">
+          <label
+            htmlFor="experience_level"
+            className="flex items-center text-sm font-medium text-gray-700 mb-3"
+          >
+            <FiClock className="mr-2 text-emerald-500" />
+            Experience Level
+          </label>
+          <select
+            name="experience_level"
+            value={alldata.experience_level || ""}
+            onChange={handelinputs}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+          >
+            <option value="">Select experience level</option>
+            {experienceLevelOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
             <FiClock className="mr-2 text-emerald-500" />
@@ -215,9 +259,9 @@ const Three = ({ alldata, handelinputs }) => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
               >
                 <option value="">Select years</option>
-                {[...Array(12)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1} {index === 0 ? "year" : "years"}
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year} {year === 1 ? "year" : "years"}
                   </option>
                 ))}
               </select>
@@ -236,9 +280,9 @@ const Three = ({ alldata, handelinputs }) => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
               >
                 <option value="">Select months</option>
-                {[...Array(12)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1} {index === 0 ? "month" : "months"}
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month} {month === 1 ? "month" : "months"}
                   </option>
                 ))}
               </select>
@@ -287,7 +331,6 @@ const Three = ({ alldata, handelinputs }) => {
           />
         </div>
 
-        {/* Current Salary */}
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
             <FiDollarSign className="mr-2 text-emerald-500" />
@@ -306,7 +349,6 @@ const Three = ({ alldata, handelinputs }) => {
           </div>
         </div>
 
-        {/* Start Date */}
         <div className="animate-fade-in">
           <h6 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
             <FiCalendar className="mr-2 text-emerald-500" />
