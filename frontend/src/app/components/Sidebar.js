@@ -44,7 +44,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     <div
       className={`bg-white shadow-lg ${
         isSidebarOpen ? 'w-64' : 'w-20'
-      } transition-all duration-300 h-screen fixed top-0 left-0 z-50`}
+      } transition-all duration-300 h-[80vh] mt-[120px] fixed top-0 left-0 z-50`}
     >
       <div className="p-4 flex justify-between items-center">
         <h2 className={`text-xl font-bold text-gray-800 ${isSidebarOpen ? 'block' : 'hidden'}`}>

@@ -7,6 +7,7 @@ import { useRouter,usePathname } from "next/navigation";
 import { FaEnvelope, FaLock, FaSpinner, FaTimes, FaUserCircle } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { baseurl } from "./common";
+import { FaCoins } from "react-icons/fa6";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,8 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const [usercred,setusercred] = useState()
+  const [showCredits, setShowCredits] = useState(false);
   // Check if user is logged in on mount
   useEffect(() => {
     const checkLogin = async () => {
@@ -44,9 +47,18 @@ export default function Navbar() {
           }
         );
 
+
+
+        setusercred(res?.data.data.credits)
+       
+
+
         if (res.data && res.data.success) {
           setIsLoggedIn(true);
-        } else {
+        } else if (res.data.doneprofile === 1){
+            setIsLoggedIn(true);
+        } 
+        else {
           setIsLoggedIn(false);
           localStorage.removeItem("employerToken");
           // localStorage.removeItem("port_tok");
@@ -94,6 +106,7 @@ export default function Navbar() {
 
   // Handle OTP verification
   
+ 
   const handleSendOtp = async () => {
   setLoading(true);
   setError("");
@@ -109,7 +122,7 @@ export default function Navbar() {
     const payload = loginType === "Employer" ? { contact_email: email, otp } : { email, otp };
     const response = await axios.post(`${baseurl}/${endpoint}`, payload);
 
-    console.log('response',response);
+    console.log('response', response);
     if (response.data.success) {
       if (loginType === "Employer") {
         const sessionToken = response.data.session_token;
@@ -130,10 +143,13 @@ export default function Navbar() {
         localStorage.setItem("port_tok", sessionToken);
         setShowModal(false);
         setOtpSent(false);
-        router.push("/candidate/candidate-login");
+        // Redirect based on whether profile is complete (doneprofile: 1) or not
+        const redirectPath = response.data.user.doneprofile === 1 
+          ? "/candidate/dashboard" 
+          : "/candidate/candidate-login";
+        router.push(redirectPath);
       }
     } else {
-      // Check for specific error message
       if (
         loginType === "Employer" &&
         response.data.message === "No employer found with this email"
@@ -146,10 +162,9 @@ export default function Navbar() {
       }
     }
   } catch (error) {
-
-      setOtpSent(false);
-        setShowModal(false);
-        router.push("/employer/onboarding");
+    setOtpSent(false);
+    setShowModal(false);
+    router.push("/employer/onboarding");
     setError("Failed to verify OTP. Please try again.");
   }
   setLoading(false);
@@ -225,13 +240,27 @@ export default function Navbar() {
     router.push("/");
   };
 
+   console.log('res.data.success' ,usercred)
+
+
+     const handleCreditsClick = () => {
+    setShowCredits(!showCredits);
+    setTimeout(() => setShowCredits(false), 3000); // Auto-hide after 3 seconds
+  };
+
+   const handleCloseTooltip = () => {
+    setShowCredits(false);
+  };
+
+
+
   return (
     <>
       {/* Navbar */}
       <nav className="bg-white p-4 shadow-md sticky top-0 z-50 px-[8%]">
         <div className="mx-auto flex justify-between items-center">
           <div className="text-black text-2xl font-bold">
-            <Link className={`flex items-center ${isLoggedIn ? 'ml-[100px]' : ' '} `} href="/">
+            <Link className={`flex items-center ${isLoggedIn ? '' : ' '} `} href="/">
             <img  className="h-[80px]" src='/img/logo-rm-boat.png' />
               <span className="text-2xl ml-2  uppercase leading-1">
                 Hiring Boat
@@ -274,20 +303,47 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <div className="flex items-center gap-4">
-                <Link href={loginType == "Employer" ? "/candidate/dashboard" : "/employer/dashboard"} className="text-black hover:text-gray-600">
-                  Dashboard
-                </Link>
-                <Link href={loginType == "Employer" ? "/candidate/dashboard" : "/employer/profile"}>
-                  <FaUserCircle className="text-2xl text-[#00223f]" />
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition"
-                >
-                  Logout
-                </button>
-              </div>
+               <div className="flex items-center gap-4">
+      {/* <Link href={loginType === "Employer" ? "/candidate/dashboard" : "/employer/dashboard"} className="text-black hover:text-gray-600 transition-colors duration-200">
+        Dashboards
+      </Link> */}
+      {loginType !== "Employer" && (
+         <div className="relative">
+        <button
+          onClick={handleCreditsClick}
+          className="flex items-center gap-2 text-blue-950 font-semibold  bg-slate-200 px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+        >
+         <FaCoins/>
+          <span>
+              Available Credits
+
+          </span>
+        </button>
+        {showCredits && (
+          <div className="absolute right-0 mt-3 w-64 bg-gradient-to-br from-white to-gray-100 text-black rounded-xl shadow-xl p-6 border border-gray-200 animate-[fadeIn_0.3s_ease-in-out]">
+            <div className="flex items-center gap-3 mb-3">
+              <FaCoins className="text-3xl text-yellow-500 animate-pulse" />
+              <h3 className="text-lg font-semibold text-gray-800">Your Credits</h3>
+            </div>
+            <p className="text-base font-medium text-gray-700">
+              Remaining Credits: <span className="text-green-600 font-bold">{usercred}</span>
+            </p>
+            <p className="text-sm text-gray-500 mt-2">Use credits to unlock premium features!</p>
+          </div>
+        )}
+      </div>
+      )}
+      <Link href={loginType === "Employer" ? "/candidate/dashboard" : "/employer/profile"} className="flex items-center">
+        <FaUserCircle className="text-2xl text-[#00223f] hover:text-[#004080] transition-colors duration-200" />
+      </Link>
+     
+      <button
+        onClick={handleLogout}
+        className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md"
+      >
+        Logout
+      </button>
+    </div>
             )}
           </div>
 
@@ -408,17 +464,7 @@ export default function Navbar() {
                 />
               </div>
 
-              {!otpSent && (
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={useOtpLogin}
-                    onChange={() => setUseOtpLogin(!useOtpLogin)}
-                    className="mr-2"
-                  />
-                  <label className="text-gray-600">Login with OTP</label>
-                </div>
-              )}
+            
 
               {!otpSent && !useOtpLogin && (
                 <div className="relative">
@@ -430,6 +476,18 @@ export default function Navbar() {
                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                </div>
+              )}
+
+                {!otpSent && (
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={useOtpLogin}
+                    onChange={() => setUseOtpLogin(!useOtpLogin)}
+                    className="mr-2"
+                  />
+                  <label className="text-gray-600">Login with OTP</label>
                 </div>
               )}
 

@@ -143,7 +143,11 @@ export default function Page() {
     if (!token) {
       // router.push("/")
     } else {
-      const response = await axios.get(`${baseurl}/candidateinfo/${token}`);
+      const response = await axios.get(`${baseurl}/candidateinfo/${token}`,
+    {    headers: {
+          Authorization: `Bearer ${token}`,
+        },}
+      );
       if (response.data.success) {
         setalldata(response.data.candidate);
       }
