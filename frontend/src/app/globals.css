@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../../.flowbite-react/class-list.json";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 
 /* @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
@@ -28,6 +25,30 @@
 
 
 
+}
+
+
+.simple-line::after{
+     content: '';
+    height: 18px;
+    width: 1.5px;
+    position: absolute;
+    bottom: 4px;
+    left: -5px;
+    background-color: #62748e86;
+    background-size: contain;
+}
+
+
+.simple-line::before{
+     content: '';
+    height: 18px;
+    width: 1.5px;
+    position: absolute;
+    bottom: 4px;
+    right: -5px;
+    background-color: #62748e86;
+    background-size: contain;
 }
 
 

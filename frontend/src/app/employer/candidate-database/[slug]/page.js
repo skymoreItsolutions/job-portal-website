@@ -79,7 +79,7 @@ const CandidateCard = ({ candidate }) => {
           <ProfileDetails
             icon={<FaBriefcase className="text-xl" />}
             label="Employment Type"
-            value={candidate.employment_type}
+            value={candidate.employment_types}
           />
         </div>
         <div className="mb-6">

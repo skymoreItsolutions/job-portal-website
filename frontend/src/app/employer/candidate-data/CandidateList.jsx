@@ -588,7 +588,7 @@ const CandidateList = () => {
                     ))}
                   </select>
                 </div>
-                <div>
+                {/* <div>
                   <label className="text-sm font-medium text-gray-700 flex items-center">
                     <FaLanguage className="mr-2 text-[#02325a]" /> English Fluency
                   </label>
@@ -603,14 +603,16 @@ const CandidateList = () => {
                     <option value="intermediate">Intermediate</option>
                     <option value="fluent">Fluent</option>
                   </select>
-                </div>
+                </div> */}
                 <div>
                   <label className="text-sm font-medium text-gray-700 flex items-center">
                     <FaBriefcase className="mr-2 text-[#02325a]" /> Employment Type
                   </label>
                   <div className="space-y-2">
-                    {filterOptions?.experience_types?.map((option) => (
+                  {/* {  console.log('employment_types',filterOptions?.employment_types)} */}
+                    {filterOptions?.employment_types?.map((option) => (
                       <label key={option.value} className="flex items-center">
+                         {  console.log('employment_types',option)}
                         <input
                           type="checkbox"
                           name="experience_type"
@@ -620,7 +622,7 @@ const CandidateList = () => {
                           className="h-5 w-5 text-[#02325a] focus:ring-blue-500 border-gray-300 rounded"
                         />
                         <span className="ml-2 text-sm text-gray-700 flex items-center">
-                          <FaBriefcase className="mr-2 text-[#02325a]" /> {option.value} ({option.count})
+                             {option.value} ({option.count})
                         </span>
                       </label>
                     ))}

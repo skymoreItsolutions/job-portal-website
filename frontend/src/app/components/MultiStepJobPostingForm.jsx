@@ -2559,6 +2559,32 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 ))}
               </div>
             </div>
+
+                {formData.interviewMode !== "Online" && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">
+                  Interview Location *
+                </label>
+                <input
+                  type="text"
+                  name="interviewLocation"
+                  value={formData.interviewLocation}
+                  onChange={handleInputChange}
+                  className={`mt-2 w-full rounded-lg border ${
+                    errors.interviewLocation
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                />
+                {errors.interviewLocation && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.interviewLocation}
+                  </p>
+                )}
+              </div>
+            )}
+
+
             <div>
               <label className="block text-sm font-semibold text-gray-800">
                 Do you want candidates to contact you via Call *
@@ -2596,29 +2622,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
               )}
             </div>
-            {formData.interviewMode !== "Online" && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-800">
-                  Interview Location *
-                </label>
-                <input
-                  type="text"
-                  name="interviewLocation"
-                  value={formData.interviewLocation}
-                  onChange={handleInputChange}
-                  className={`mt-2 w-full rounded-lg border ${
-                    errors.interviewLocation
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                />
-                {errors.interviewLocation && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {errors.interviewLocation}
-                  </p>
-                )}
-              </div>
-            )}
+        
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
@@ -2679,7 +2683,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              {/* <div>
                 <label className="block text-sm font-semibold text-gray-800">
                   Interview Date
                 </label>
@@ -2690,7 +2694,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   onChange={handleInputChange}
                   className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                 />
-              </div>
+              </div> */}
               {/* <div>
                 <label className="block text-sm font-semibold text-gray-800">
                   Interview Time
