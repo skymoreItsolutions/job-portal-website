@@ -68,12 +68,13 @@ const First = ({ alldata, handelinputs, handelgender }) => {
         {/* Phone Number Field */}
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Phone Number <span className="text-gray-400">(Optional)</span>
+            Phone Number 
           </label>
           <input
             type="tel"
             placeholder="+91 (___) ___-____"
             name="number"
+            required
             value={alldata.number  || ""}
             onChange={handelinputs}
             minLength={10}
