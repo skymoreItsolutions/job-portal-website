@@ -46,6 +46,15 @@ export default function Page() {
     preferred_language: "",
     skills: [],
     password: "",
+
+    highest_education: "",
+    education_level: "",
+    specialization: "",
+    college_name: "",
+    complete_years: "",
+    school_medium: "",
+
+    
   });
   console.log(alldata);
   const [resume, setResume] = useState();
