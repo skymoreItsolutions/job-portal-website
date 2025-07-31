@@ -29,7 +29,7 @@ export default function Navbar() {
   useEffect(() => {
     const checkLogin = async () => {
       const token = localStorage.getItem("employerToken") || localStorage.getItem("port_tok");
-      console.log('wrefrf3f34',token)
+      // console.log('wrefrf3f34',token)
       if (!token) {
         if (pathname !== "/") {
           
@@ -240,7 +240,7 @@ export default function Navbar() {
     router.push("/");
   };
 
-   console.log('res.data.success' ,usercred)
+  //  console.log('res.data.success' ,usercred)
 
 
      const handleCreditsClick = () => {

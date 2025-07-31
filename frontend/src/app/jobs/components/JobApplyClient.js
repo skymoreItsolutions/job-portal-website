@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { jobsData } from "..//data/jobs";
+import { jobsData } from "../data/jobs";
 import {
   ChevronRight,
   Upload,
@@ -12,9 +12,10 @@ import {
   MapPin,
 } from "lucide-react";
 
-export default function JobApplyClient({ params }) {
+export default function JobApplyClient({ params: paramsPromise }) {
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [job, setJob] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,12 +29,29 @@ export default function JobApplyClient({ params }) {
     agreeToTerms: false,
   });
 
-  const job = jobsData.find(
-    (j) =>
-      j.title.toLowerCase() ===
-        params.jobname.replace(/-/g, " ").toLowerCase() &&
-      j.location.toLowerCase().includes(params.location.toLowerCase())
-  );
+  // Resolve params promise
+  const params = use(paramsPromise);
+  const resolvedParams = typeof params === 'string' ? JSON.parse(params) : params;
+
+  useEffect(() => {
+    if (!resolvedParams?.location || !resolvedParams?.jobname) {
+      console.warn('Invalid params:', resolvedParams);
+      return;
+    }
+
+    console.log('Params:', { location: resolvedParams.location, jobname: resolvedParams.jobname });
+    const jobSlug = resolvedParams.jobname.replace(/-/g, " ").trim();
+    console.log('Looking for:', { jobSlug, location: resolvedParams.location });
+
+    const foundJob = jobsData.find(
+      (j) =>
+        j.title.toLowerCase().trim() === jobSlug.toLowerCase() &&
+        j.location.toLowerCase().trim() === resolvedParams.location.toLowerCase().trim()
+    );
+
+    console.log('Found Job:', foundJob);
+    setJob(foundJob);
+  }, [resolvedParams]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -47,13 +65,37 @@ export default function JobApplyClient({ params }) {
     }, 1000);
   };
 
-  if (!job) {
+  if (!resolvedParams?.location || !resolvedParams?.jobname) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Invalid Job URL
+          </h1>
+          <p className="text-gray-600 mb-8">
+            The job URL is invalid. Please check the link or try again.
+          </p>
+          <button
+            onClick={() => router.push("/jobs")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Jobs
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!job) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Job Not Found
           </h1>
+          <p className="text-gray-600 mb-8">
+            The job you're looking for doesn't exist or has been removed.
+          </p>
           <button
             onClick={() => router.push("/jobs")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -68,7 +110,7 @@ export default function JobApplyClient({ params }) {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-2xl mx-auto px-4 py-20">
+        <div className="max-w-7xl mx-auto px-4 py-20">
           <div className="bg-white rounded-lg shadow-md text-center">
             <div className="p-8">
               <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
@@ -89,7 +131,7 @@ export default function JobApplyClient({ params }) {
                 </button>
                 <button
                   onClick={() =>
-                    router.push(`/jobs/${params.location}/${params.jobname}`)
+                    router.push(`/jobs/${resolvedParams.location}/${resolvedParams.jobname}`)
                   }
                   className="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors"
                 >
@@ -105,24 +147,22 @@ export default function JobApplyClient({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
-
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <button
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/jobs")}
               className="hover:text-blue-600"
             >
               Jobs
             </button>
             <ChevronRight className="h-4 w-4" />
-            <span className="capitalize">{params.location}</span>
+            <span className="capitalize">{resolvedParams.location}</span>
             <ChevronRight className="h-4 w-4" />
             <button
               onClick={() =>
-                router.push(`/jobs/${params.location}/${params.jobname}`)
+                router.push(`/jobs/${resolvedParams.location}/${resolvedParams.jobname}`)
               }
               className="hover:text-blue-600"
             >
@@ -134,7 +174,7 @@ export default function JobApplyClient({ params }) {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Application Form */}
           <div className="lg:col-span-2">
@@ -407,7 +447,7 @@ export default function JobApplyClient({ params }) {
                       className="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors"
                       onClick={() =>
                         router.push(
-                          `/jobs/${params.location}/${params.jobname}`
+                          `/jobs/${resolvedParams.location}/${resolvedParams.jobname}`
                         )
                       }
                     >

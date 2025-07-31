@@ -85,4 +85,4 @@ export default function JobCard({ job }) {
       </div>
     </div>
   );
-}
+} 

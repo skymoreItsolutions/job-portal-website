@@ -44,7 +44,7 @@ const Dashboard = () => {
     college_name: "",
     passing_marks: "",
     experience_years: "",
-    job_roles: [], // Changed to array to match JSON column
+    job_roles: [],
     job_title: "",
     experience_months: "",
     company_name: "",
@@ -67,34 +67,27 @@ const Dashboard = () => {
   const [newJobRole, setNewJobRole] = useState(""); // Added for job_roles input
   const [error, setError] = useState(""); // Added for error handling
 
-const fetchData = async (token) => {
-  if (!token) {
-    router.push("/");
-  } else {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${baseurl}/candidateprofile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Log raw response data for debugging
-      console.log('datasss', response.data);
-
-     
-
-      console.log('candidateData', response.data);
-      setUserData(response.data);
-      setTempData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to load profile data. Please try again.");
-    } finally {
-      setLoading(false);
+  const fetchData = async (token) => {
+    if (!token) {
+      router.push("/");
+    } else {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${baseurl}/candidateprofile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(response.data);
+        setTempData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to load profile data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-};
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("port_tok");
@@ -136,14 +129,13 @@ const fetchData = async (token) => {
   //   }
   // };
 
-
   const saveChanges = async () => {
     try {
       const token = localStorage.getItem("port_tok");
       // Ensure job_roles and skills are sent as JSON strings
       const payload = {
         ...tempData,
-  
+
         skills: JSON.stringify(tempData.skills),
       };
       const response = await axios.post(
@@ -204,7 +196,7 @@ const fetchData = async (token) => {
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {error && (
           <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
-            { }
+            {}
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
@@ -221,9 +213,7 @@ const fetchData = async (token) => {
                     onClick={saveChanges}
                     className="bg-white text-[#02325a] hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center"
                   >
-                    <FiSave className="mr-2"
-
-                    /> Save Changes
+                    <FiSave className="mr-2" /> Save Changes
                   </button>
                   <button
                     onClick={() => setEditMode(false)}
@@ -428,9 +418,7 @@ const fetchData = async (token) => {
                             type="text"
                             value={newJobRole}
                             onChange={(e) => setNewJobRole(e.target.value)}
-                            onKeyDown={(e) =>
-                              e.key === "Enter" && addJobRole()
-                            }
+                            onKeyDown={(e) => e.key === "Enter" && addJobRole()}
                             placeholder="Add job role and press Enter"
                             className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />

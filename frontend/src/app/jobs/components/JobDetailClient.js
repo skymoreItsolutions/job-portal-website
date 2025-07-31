@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { jobsData } from "../data/jobs";
 import RelatedJobs from "./RelatedJobs";
@@ -16,38 +16,48 @@ import {
   Share2,
 } from "lucide-react";
 
-export default function JobDetailClient({ params }) {
+export default function JobDetailClient({ params: paramsPromise }) {
   const router = useRouter();
   const [job, setJob] = useState(null);
   const [relatedJobs, setRelatedJobs] = useState([]);
   const [isSaved, setIsSaved] = useState(false);
 
+  // Resolve params promise
+  const params = use(paramsPromise);
+  const resolvedParams = typeof params === 'string' ? JSON.parse(params) : params;
+
   useEffect(() => {
-    if (params.location && params.jobname) {
-      const jobSlug = params.jobname.replace(/-/g, " ");
-      const foundJob = jobsData.find(
-        (j) =>
-          j.title.toLowerCase() === jobSlug.toLowerCase() &&
-          j.location.toLowerCase().includes(params.location.toLowerCase())
-      );
-
-      if (foundJob) {
-        setJob(foundJob);
-
-        // Find related jobs
-        const related = jobsData
-          .filter(
-            (j) =>
-              j.id !== foundJob.id &&
-              (j.category === foundJob.category ||
-                j.location === foundJob.location ||
-                j.company === foundJob.company)
-          )
-          .slice(0, 3);
-        setRelatedJobs(related);
-      }
+    if (!resolvedParams?.location || !resolvedParams?.jobname) {
+      console.warn('Invalid params:', resolvedParams);
+      return;
     }
-  }, [params]);
+
+    console.log('Params:', { location: resolvedParams.location, jobname: resolvedParams.jobname });
+    const jobSlug = resolvedParams.jobname.replace(/-/g, " ").trim();
+    console.log('Looking for:', { jobSlug, location: resolvedParams.location });
+
+    const foundJob = jobsData.find(
+      (j) =>
+        j.title.toLowerCase().trim() === jobSlug.toLowerCase() &&
+        j.location.toLowerCase().trim() === resolvedParams.location.toLowerCase().trim()
+    );
+
+    console.log('Found Job:', foundJob);
+
+    if (foundJob) {
+      setJob(foundJob);
+      const related = jobsData
+        .filter(
+          (j) =>
+            j.id !== foundJob.id &&
+            (j.category === foundJob.category ||
+              j.location === foundJob.location ||
+              j.company === foundJob.company)
+        )
+        .slice(0, 3);
+      setRelatedJobs(related);
+    }
+  }, [resolvedParams]);
 
   if (!job) {
     return (
@@ -71,7 +81,7 @@ export default function JobDetailClient({ params }) {
   }
 
   const handleApply = () => {
-    router.push(`/jobs/${params.location}/${params.jobname}/apply`);
+    router.push(`/jobs/${resolvedParams.location}/${resolvedParams.jobname}/apply`);
   };
 
   return (
@@ -81,13 +91,13 @@ export default function JobDetailClient({ params }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <button
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/jobs")}
               className="hover:text-blue-600"
             >
               Jobs
             </button>
             <ChevronRight className="h-4 w-4" />
-            <span className="capitalize">{params.location}</span>
+            <span className="capitalize">{resolvedParams.location}</span>
             <ChevronRight className="h-4 w-4" />
             <span className="text-gray-900 font-medium">{job.title}</span>
           </nav>
