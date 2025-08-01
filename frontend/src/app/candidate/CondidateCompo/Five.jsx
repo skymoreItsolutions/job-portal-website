@@ -10,27 +10,149 @@ import {
   FiEyeOff,
 } from "react-icons/fi";
 
-const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
+const Five = ({ alldata, handelinputs, handelresume, resume, setalldata,errors }) => {
   const [showpassword, setShowpassword] = useState(false);
 
-  // Initial language and skill options
+  // Indian language options
   const [languageOptions, setLanguageOptions] = useState([
-    { value: "Afrikaans", label: "Afrikaans" },
-    { value: "Albanian", label: "Albanian" },
-    { value: "Amharic", label: "Amharic" },
-    { value: "Yoruba", label: "Yoruba" },
-    { value: "Zulu", label: "Zulu" },
+    { value: "Hindi", label: "Hindi" },
+    { value: "Bengali", label: "Bengali" },
+    { value: "Telugu", label: "Telugu" },
+    { value: "Marathi", label: "Marathi" },
+    { value: "Tamil", label: "Tamil" },
+    { value: "Urdu", label: "Urdu" },
+    { value: "Gujarati", label: "Gujarati" },
+    { value: "Malayalam", label: "Malayalam" },
+    { value: "Kannada", label: "Kannada" },
+    { value: "Oriya", label: "Oriya" },
+    { value: "Punjabi", label: "Punjabi" },
+    { value: "Assamese", label: "Assamese" },
+    { value: "Maithili", label: "Maithili" },
+    { value: "Santhali", label: "Santhali" },
+    { value: "Kashmiri", label: "Kashmiri" },
+    { value: "Nepali", label: "Nepali" },
+    { value: "Konkani", label: "Konkani" },
+    { value: "Sindhi", label: "Sindhi" },
+    { value: "Bodo", label: "Bodo" },
+    { value: "Manipuri", label: "Manipuri" },
+    { value: "Tulu", label: "Tulu" },
+    { value: "Khasi", label: "Khasi" },
+    { value: "Mizo", label: "Mizo" },
   ]);
 
+  // Expanded skill options
   const [skillOptions, setSkillOptions] = useState([
     { value: "HTML", label: "HTML" },
     { value: "CSS", label: "CSS" },
-    { value: "Raspberry Pi", label: "Raspberry Pi" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "React", label: "React" },
+    { value: "Node.js", label: "Node.js" },
+    { value: "Python", label: "Python" },
+    { value: "Java", label: "Java" },
+    { value: "C++", label: "C++" },
+    { value: "C#", label: "C#" },
+    { value: "PHP", label: "PHP" },
+    { value: "Ruby", label: "Ruby" },
+    { value: "SQL", label: "SQL" },
+    { value: "MySQL", label: "MySQL" },
+    { value: "PostgreSQL", label: "PostgreSQL" },
+    { value: "MongoDB", label: "MongoDB" },
+    { value: "Git", label: "Git" },
+    { value: "Docker", label: "Docker" },
+    { value: "AWS", label: "AWS" },
+    { value: "Azure", label: "Azure" },
+    { value: "Google Cloud", label: "Google Cloud" },
+    { value: "Kubernetes", label: "Kubernetes" },
+    { value: "TypeScript", label: "TypeScript" },
+    { value: "Angular", label: "Angular" },
+    { value: "Vue.js", label: "Vue.js" },
+    { value: "Django", label: "Django" },
+    { value: "Flask", label: "Flask" },
+    { value: "Spring", label: "Spring" },
+    { value: "Express.js", label: "Express.js" },
+    { value: "GraphQL", label: "GraphQL" },
+    { value: "REST API", label: "REST API" },
+    { value: "Linux", label: "Linux" },
+    { value: "Windows Server", label: "Windows Server" },
+    { value: "Agile Methodology", label: "Agile Methodology" },
+    { value: "Scrum", label: "Scrum" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "CI/CD", label: "CI/CD" },
+    { value: "Jenkins", label: "Jenkins" },
+    { value: "Terraform", label: "Terraform" },
+    { value: "Ansible", label: "Ansible" },
+    { value: "Machine Learning", label: "Machine Learning" },
+    { value: "Deep Learning", label: "Deep Learning" },
+    { value: "Data Analysis", label: "Data Analysis" },
+    { value: "Data Visualization", label: "Data Visualization" },
+    { value: "Tableau", label: "Tableau" },
+    { value: "Power BI", label: "Power BI" },
+    { value: "Pandas", label: "Pandas" },
+    { value: "NumPy", label: "NumPy" },
+    { value: "TensorFlow", label: "TensorFlow" },
+    { value: "PyTorch", label: "PyTorch" },
+    { value: "R", label: "R" },
+    { value: "MATLAB", label: "MATLAB" },
+    { value: "Excel", label: "Excel" },
+    { value: "VBA", label: "VBA" },
+    { value: "Shell Scripting", label: "Shell Scripting" },
+    { value: "Bash", label: "Bash" },
+    { value: "PowerShell", label: "PowerShell" },
+    { value: "Cybersecurity", label: "Cybersecurity" },
+    { value: "Penetration Testing", label: "Penetration Testing" },
+    { value: "Ethical Hacking", label: "Ethical Hacking" },
+    { value: "Network Security", label: "Network Security" },
+    { value: "UI/UX Design", label: "UI/UX Design" },
+    { value: "Figma", label: "Figma" },
+    { value: "Adobe XD", label: "Adobe XD" },
+    { value: "Sketch", label: "Sketch" },
+    { value: "Photoshop", label: "Photoshop" },
+    { value: "Illustrator", label: "Illustrator" },
+    { value: "Project Management", label: "Project Management" },
+    { value: "Jira", label: "Jira" },
+    { value: "Trello", label: "Trello" },
+    { value: "Asana", label: "Asana" },
+    { value: "Blockchain", label: "Blockchain" },
+    { value: "Solidity", label: "Solidity" },
+    { value: "Ethereum", label: "Ethereum" },
+    { value: "Smart Contracts", label: "Smart Contracts" },
+    { value: "Web3", label: "Web3" },
+    { value: "Testing", label: "Testing" },
+    { value: "Selenium", label: "Selenium" },
+    { value: "Cypress", label: "Cypress" },
+    { value: "Postman", label: "Postman" },
+    { value: "API Testing", label: "API Testing" },
+    { value: "Unit Testing", label: "Unit Testing" },
+    { value: "Agile Testing", label: "Agile Testing" },
+    { value: "Mobile Development", label: "Mobile Development" },
+    { value: "React Native", label: "React Native" },
+    { value: "Flutter", label: "Flutter" },
+    { value: "Swift", label: "Swift" },
+    { value: "Kotlin", label: "Kotlin" },
+    { value: "Android Development", label: "Android Development" },
+    { value: "iOS Development", label: "iOS Development" },
+    { value: "Game Development", label: "Game Development" },
+    { value: "Unity", label: "Unity" },
+    { value: "Unreal Engine", label: "Unreal Engine" },
     { value: "Virtual Reality", label: "Virtual Reality" },
     { value: "Augmented Reality", label: "Augmented Reality" },
+    { value: "Raspberry Pi", label: "Raspberry Pi" },
+    { value: "Arduino", label: "Arduino" },
+    { value: "IoT", label: "IoT" },
+    { value: "Big Data", label: "Big Data" },
+    { value: "Hadoop", label: "Hadoop" },
+    { value: "Spark", label: "Spark" },
+    { value: "Cloud Computing", label: "Cloud Computing" },
   ]);
 
-  // Custom styles for react-select to match existing form styling
+  // English proficiency levels
+  const englishLevels = [
+    { value: "Beginner", label: "Beginner" },
+    { value: "Intermediate", label: "Intermediate" },
+    { value: "Fluent", label: "Fluent" },
+  ];
+
+  // Custom styles for react-select
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -86,7 +208,15 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
     const selectedSkills = selectedOptions
       ? selectedOptions.map((option) => option.value)
       : [];
-    setalldata({ ...alldata, skills: selectedSkills.slice(0, 10) }); // Limit to 10 skills
+    setalldata({ ...alldata, skills: selectedSkills.slice(0, 10) });
+  };
+
+  // Handle English level selection
+  const handleEnglishLevelChange = (selectedOption) => {
+    setalldata({
+      ...alldata,
+      english_level: selectedOption ? selectedOption.value : "",
+    });
   };
 
   // Handle input change to detect comma
@@ -95,10 +225,9 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
     const isComma = lastChar === ",";
 
     if (isComma) {
-      const newValue = inputValue.slice(0, -1).trim(); // Remove the comma and trim spaces
+      const newValue = inputValue.slice(0, -1).trim();
       if (newValue) {
         if (type === "language") {
-          // Prevent duplicate languages
           const isDuplicate = languageOptions.some(
             (option) => option.value.toLowerCase() === newValue.toLowerCase()
           );
@@ -111,7 +240,6 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
             });
           }
         } else if (type === "skill") {
-          // Prevent duplicate skills
           const isDuplicate = skillOptions.some(
             (option) => option.value.toLowerCase() === newValue.toLowerCase()
           );
@@ -120,7 +248,7 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
             setSkillOptions((prev) => [...prev, newOption]);
             setalldata({
               ...alldata,
-              skills: [...alldata.skills, newValue].slice(0, 10), // Limit to 10 skills
+              skills: [...alldata.skills, newValue].slice(0, 10),
             });
           }
         }
@@ -139,10 +267,35 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
       </div>
 
       <div className="space-y-6">
+        {/* English Proficiency Level */}
+        <div className="animate-fade-in">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            English Proficiency
+            <span className="text-xs text-gray-500 ml-1">
+              (Select one)
+            </span>
+          </label>
+          <CreatableSelect
+            isClearable
+            name="english_level"
+            options={englishLevels}
+            value={
+              alldata?.english_level
+                ? { value: alldata.english_level, label: alldata.english_level }
+                : null
+            }
+            onChange={handleEnglishLevelChange}
+            styles={customStyles}
+            placeholder="Select English proficiency..."
+            className="w-full"
+            classNamePrefix="select"
+          />
+        </div>
+
         {/* Preferred Languages Multi-Select */}
         <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Preferred Languages
+            Preferred Indian Languages
             <span className="text-xs text-gray-500 ml-1">
               (Search and select multiple)
             </span>
@@ -195,7 +348,6 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
             className="w-full"
             classNamePrefix="select"
           />
-
           <span className="text-xs text-gray-400 mt-1">
             {alldata?.skills?.length || 0}/10 skills selected
           </span>
@@ -228,12 +380,11 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
         </div>
 
         {/* Resume Upload */}
-        <div className="animate-fade-in">
+       <div className="animate-fade-in">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Upload Resume
           </label>
           <div className="relative group">
-            {/* Hidden file input */}
             <input
               type="file"
               id="resume-upload"
@@ -256,7 +407,6 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
                     <FiFileText className="w-10 h-10 text-emerald-500" />
                     <FiCheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-white bg-emerald-500 rounded-full p-0.5" />
                   </div>
-
                   <div className="w-full text-center">
                     <p className="text-sm font-medium text-gray-800 truncate max-w-xs">
                       {resume.name}
@@ -265,12 +415,11 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
                       {(resume.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
-
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handelresume({ target: { files: [] } }); // Reset resume
+                      handelresume({ target: { files: [] } });
                     }}
                     className="mt-3 flex items-center text-xs text-red-500 hover:text-red-600 transition-colors"
                   >
@@ -287,16 +436,18 @@ const Five = ({ alldata, handelinputs, handelresume, resume, setalldata }) => {
                     or drag and drop
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
-                    PDF, DOCX (Max. 5MB)
+                    PDF, DOC, DOCX (Max. 2MB)
                   </p>
                 </>
               )}
             </label>
-            {/* Animated border effect */}
             {!resume && (
               <div className="absolute inset-0 border-2 border-transparent rounded-xl pointer-events-none group-hover:border-emerald-200 transition-all duration-300" />
             )}
           </div>
+          {errors.resume && (
+            <p className="text-red-500 text-xs mt-1">{errors.resume}</p>
+          )}
         </div>
       </div>
     </div>

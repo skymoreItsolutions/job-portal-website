@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FiBook, FiAward } from "react-icons/fi";
 import Select from "react-select";
 
-const Second = ({ alldata = {}, handelinputs }) => {
+const Second = ({ alldata = {}, handelinputs, errors }) => {
   const [qualifications, setQualifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const EducationLvl = [
@@ -15,13 +15,11 @@ const Second = ({ alldata = {}, handelinputs }) => {
     { name: "Post Graduate", value: 2 },
   ];
 
-
-    const experienceLevelOptions = [
+  const experienceLevelOptions = [
     { value: "Fresher", label: "Fresher" },
     { value: "Experienced", label: "Experienced" },
   ];
 
-  
   const [eduLvl, setEduLvl] = useState(() => {
     const foundLevel = alldata.highest_education
       ? EducationLvl.find((lvl) => lvl.name === alldata.highest_education)
@@ -47,7 +45,8 @@ const Second = ({ alldata = {}, handelinputs }) => {
       setLoadingQualifications(true);
       setError(null);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         const response = await fetch(
           `${apiUrl}/api/v1/qualifications/education-level/${eduLvl}`
         );
@@ -84,7 +83,8 @@ const Second = ({ alldata = {}, handelinputs }) => {
           setSpecializations([]);
           return;
         }
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         const response = await fetch(
           `${apiUrl}/api/v1/qualifications/${selectedQualification.id}/specializations`
         );
@@ -148,12 +148,16 @@ const Second = ({ alldata = {}, handelinputs }) => {
     label: spec.title,
   }));
 
-  const schoolMediumOptions = ["English", "Hindi", "Spanish", "French", "Other"].map(
-    (medium) => ({
-      value: medium,
-      label: medium,
-    })
-  );
+  const schoolMediumOptions = [
+    "English",
+    "Hindi",
+    "Spanish",
+    "French",
+    "Other",
+  ].map((medium) => ({
+    value: medium,
+    label: medium,
+  }));
 
   const monthOptions = months.map((month) => ({
     value: month,
@@ -165,7 +169,9 @@ const Second = ({ alldata = {}, handelinputs }) => {
     const value = e.target.value;
     const currentYear = new Date().getFullYear();
     if (alldata.currently_pursuing === "No" && value > currentYear) {
-      setError("Completion year cannot be in the future for completed education.");
+      setError(
+        "Completion year cannot be in the future for completed education."
+      );
       return;
     }
     handelinputs(e);
@@ -175,6 +181,36 @@ const Second = ({ alldata = {}, handelinputs }) => {
     return <div className="text-center p-8">Loading...</div>;
   }
 
+  console.log("errors", errors);
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      borderColor: "#d1d5db",
+      padding: "0.5rem",
+      borderRadius: "0.5rem",
+      "&:hover": {
+        borderColor: "#10b981",
+      },
+      boxShadow: "none",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#10b981"
+        : state.isFocused
+        ? "#ecfdf5"
+        : null,
+      color: state.isSelected ? "white" : "#374151",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "0.5rem",
+      marginTop: "0.25rem",
+      zIndex: 9999, // Add this to ensure the dropdown menu appears above other elements
+    }),
+  };
+
   return (
     <div className="w-full p-4 lg:p-8 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center mb-6">
@@ -182,8 +218,12 @@ const Second = ({ alldata = {}, handelinputs }) => {
           <FiBook className="text-blue-600 text-xl" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Education Details</h2>
-          <p className="text-gray-500 text-sm">Fill in your academic information</p>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Education Details
+          </h2>
+          <p className="text-gray-500 text-sm">
+            Fill in your academic information
+          </p>
         </div>
       </div>
 
@@ -251,7 +291,11 @@ const Second = ({ alldata = {}, handelinputs }) => {
                 : "Select Highest Education Level"
             }
             className="w-full"
-            classNamePrefix="react-select"
+  
+              styles={customStyles}
+
+
+  menuPortalTarget={document.body} 
           />
         </div>
 
@@ -284,7 +328,7 @@ const Second = ({ alldata = {}, handelinputs }) => {
                     }
                     placeholder="Select School Medium"
                     className="w-full"
-                    classNamePrefix="react-select"
+            
                   />
                 </div>
 
@@ -295,7 +339,10 @@ const Second = ({ alldata = {}, handelinputs }) => {
                     className="flex items-center text-sm font-medium text-gray-700"
                   >
                     <FiAward className="mr-2 text-blue-500" />
-                    Year of Completion
+
+                    {alldata.currently_pursuing === "Yes"
+                      ? "Year of Completion (Expacted)"
+                      : "Year of Completion "}
                   </label>
                   <input
                     type="number"
@@ -334,10 +381,11 @@ const Second = ({ alldata = {}, handelinputs }) => {
                         },
                       })
                     }
+                    styles={customStyles}
+                    className="w-full text-gray-700"
+                    menuPortalTarget={document.body}
                     placeholder="Select Month"
-                    className="w-full"
                     classNamePrefix="react-select"
-                   
                   />
                 </div>
               </>
@@ -367,11 +415,14 @@ const Second = ({ alldata = {}, handelinputs }) => {
                       })
                     }
                     placeholder={
-                      loadingQualifications ? "Loading..." : "Select Degree Program"
+                      loadingQualifications
+                        ? "Loading..."
+                        : "Select Degree Program"
                     }
-                    className="w-full"
                     classNamePrefix="react-select"
-                  
+                    styles={customStyles}
+                    className="w-full text-gray-700"
+                    menuPortalTarget={document.body}
                   />
                 </div>
 
@@ -399,11 +450,17 @@ const Second = ({ alldata = {}, handelinputs }) => {
                       })
                     }
                     placeholder={
-                      loadingSpecializations ? "Loading..." : "Select Specialization"
+                      loadingSpecializations
+                        ? "Loading..."
+                        : "Select Specialization"
                     }
-                    className="w-full"
                     classNamePrefix="react-select"
-                    isDisabled={loadingSpecializations || !alldata.education_level}
+                    styles={customStyles}
+                    className="w-full text-gray-700"
+                    menuPortalTarget={document.body}
+                    isDisabled={
+                      loadingSpecializations || !alldata.education_level
+                    }
                   />
                 </div>
 
@@ -434,7 +491,9 @@ const Second = ({ alldata = {}, handelinputs }) => {
                     className="flex items-center text-sm font-medium text-gray-700"
                   >
                     <FiAward className="mr-2 text-blue-500" />
-                    Year of Completion
+                    {alldata.currently_pursuing === "Yes"
+                      ? "Year of Completion (Expacted)"
+                      : "Year of Completion "}
                   </label>
                   <input
                     type="number"
@@ -446,7 +505,6 @@ const Second = ({ alldata = {}, handelinputs }) => {
                     min="1900"
                     max={new Date().getFullYear() + 5}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
-                    disabled={alldata.currently_pursuing === "Yes"}
                   />
                 </div>
 
@@ -473,9 +531,14 @@ const Second = ({ alldata = {}, handelinputs }) => {
                         },
                       })
                     }
-                    placeholder="Select Month"
+          
                     className="w-full"
                     classNamePrefix="react-select"
+                       styles={customStyles}
+        
+                    menuPortalTarget={document.body}
+                    placeholder="Select Month"
+
                     isDisabled={alldata.currently_pursuing === "Yes"}
                   />
                 </div>
@@ -491,6 +554,9 @@ const Second = ({ alldata = {}, handelinputs }) => {
                   </label>
                   <Select
                     inputId="school-medium-select"
+                    styles={customStyles}
+                    className="w-full text-gray-700"
+                    menuPortalTarget={document.body}
                     options={schoolMediumOptions}
                     value={schoolMediumOptions.find(
                       (option) => option.value === alldata.school_medium
@@ -504,7 +570,6 @@ const Second = ({ alldata = {}, handelinputs }) => {
                       })
                     }
                     placeholder="Select School Medium"
-                    className="w-full"
                     classNamePrefix="react-select"
                   />
                 </div>

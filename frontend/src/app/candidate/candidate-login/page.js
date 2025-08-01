@@ -46,27 +46,125 @@ export default function Page() {
     preferred_language: "",
     skills: [],
     password: "",
-
+     english_level:"",
     highest_education: "",
     education_level: "",
     specialization: "",
     college_name: "",
     complete_years: "",
     school_medium: "",
+    preferred_job_titles: [],
+    preferred_locations: [],
+    state: "",
+    city: "",
 
     
   });
-  console.log(alldata);
+
+
   const [resume, setResume] = useState();
+ const [nextlen, setnextlen] = useState(1);
+const [errors, setErrors] = useState({}); // State to track validation errors
+  const [isStepValid, setIsStepValid] = useState(false); //
+
+  const validateStep = (step) => {
+    const newErrors = {};
+    let isValid = true;
+
+    console.log("Validating step:", step, "with data:", alldata);
+
+    if (step === 2) {
+      if (!alldata?.full_name?.trim()) {
+        newErrors.full_name = "Full name is required";
+        isValid = false;
+      }
+      if (!alldata?.dob) {
+        newErrors.dob = "Date of birth is required";
+        isValid = false;
+      }
+      if (!alldata?.gender) {
+        newErrors.gender = "Gender is required";
+        isValid = false;
+      }
+      if (!alldata?.number?.trim() || !/^\d{10}$/.test(alldata.number)) {
+        newErrors.number = "Valid 10-digit phone number is required";
+        isValid = false;
+      }
+
+      if (!alldata?.state) {
+        newErrors.state = "State is required";
+        isValid = false;
+      }
+
+      if (!alldata?.city) {
+        newErrors.city = "City is required";
+        isValid = false;
+      }
+
+
+
+      
+    } else if (step === 3) {
+      
+      if (!alldata?.highest_education) {
+        newErrors.highest_education = "Highest education is required";
+        isValid = false;
+      }
+    } else if (step === 4) {
+      
+    } else if (step === 5) {
+     
+    } else if (step === 6) {
+      
+      if (alldata?.skills?.length === 0) {
+        newErrors.skills = "At least one skill is required";
+        isValid = false;
+      }
+      if (!alldata?.password?.trim()) {
+        newErrors.password = "Password is required";
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    setIsStepValid(isValid);
+    return isValid;
+  };
+
+  // Re-validate step whenever alldata or resume changes
+ 
+  // useEffect(() => {
+  //   validateStep(nextlen);
+  // }, [nextlen]);
 
   const handelresume = (e) => {
     const file = e.target.files[0];
+    const maxSizeMB = 2;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
     if (file) {
-      setResume(file);
+      if (file.size > maxSizeBytes) {
+        setErrors((prev) => ({
+          ...prev,
+          resume: `File size exceeds ${maxSizeMB}MB limit`,
+        }));
+        setResume(null);
+        Swal.fire({
+          title: "File Too Large",
+          text: `Please upload a resume smaller than ${maxSizeMB}MB.`,
+          icon: "error",
+        });
+      } else {
+        setResume(file);
+        setErrors((prev) => {
+          const { resume, ...rest } = prev;
+          return rest;
+        });
+      }
     }
   };
 
-  const [nextlen, setnextlen] = useState(1);
+ 
 
   const handelinputs = (e) => {
     const { name, value } = e.target;
@@ -178,13 +276,28 @@ export default function Page() {
     }
   };
 
+  const nextFormlvl = async (nextlen) => {
+    const isValid = validateStep(nextlen);
+
+    console.log("Next Level:", nextlen, "Is Valid:", isValid);
+    if (isValid) {
+      setnextlen(nextlen);
+    } else {
+      Swal.fire({
+        title: "Validation Error",
+        text: "Please fill all required fields correctly.",
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-5 md:px-12 xl:px-24 py-10 lg:py-14">
-      <div className="w-full xl:h-[85vh] lg:w-[90%] mx-auto flex flex-col lg:flex-row gap-10">
+      <div className="w-full lg:w-[90%] mx-auto flex flex-col lg:flex-row gap-10">
         {/* Left Section - Visual Content */}
         <div className="w-full lg:w-1/2 flex flex-col gap-6">
           {/* Main Hero Image */}
-          <div className="relative rounded-3xl overflow-hidden h-64 md:h-80 lg:h-full group">
+          <div className="relative rounded-3xl overflow-hidden group">
             <img
               src="https://images.unsplash.com/photo-1521791055366-0d553872125f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
               alt="Professional workspace"
@@ -254,6 +367,7 @@ export default function Page() {
                 alldata={alldata}
                 handelinputs={handelinputs}
                 handelgender={handelgender}
+                errors={errors} 
               />
             )}
             {nextlen === 2 && (
@@ -261,6 +375,7 @@ export default function Page() {
                 alldata={alldata}
                 handelinputs={handelinputs}
                 handelgender={handelgender}
+                errors={errors} 
               />
             )}
             {nextlen === 3 && (
@@ -268,6 +383,7 @@ export default function Page() {
                 alldata={alldata}
                 handelinputs={handelinputs}
                 handelgender={handelgender}
+                errors={errors} 
               />
             )}
             {nextlen === 4 && (
@@ -275,6 +391,7 @@ export default function Page() {
                 alldata={alldata}
                 handelinputs={handelinputs}
                 handelcheckbox={handelcheckbox}
+                errors={errors} 
               />
             )}
             {nextlen === 5 && (
@@ -286,6 +403,7 @@ export default function Page() {
                 handelgender={handelgender}
                 addskilles={addskilles}
                 setalldata={setalldata}
+                errors={errors} 
               />
             )}
           </div>
@@ -307,7 +425,7 @@ export default function Page() {
 
             {nextlen < 5 ? (
               <button
-                onClick={() => setnextlen(nextlen + 1)}
+                onClick={() => nextFormlvl(nextlen + 1)}
                 className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
                 Next
