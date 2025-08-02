@@ -701,6 +701,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   const [jobRoleSearch, setJobRoleSearch] = useState("");
   const dropdownRef = useRef(null);
   const jobRoleDropdownRef = useRef(null);
+  const [citySuggestions, setCitySuggestions] = useState([]); // For city search results
+  const [areaSuggestions, setAreaSuggestions] = useState([]); // For area results
+  const [citySearch, setCitySearch] = useState(""); // For city input
 
   const fetchJobTitles = useCallback(
     debounce(async (query) => {
@@ -868,7 +871,37 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         localStorage.removeItem("jobPostingFormData");
       }
     }
-  }, [jobRoleOptions]); // Add jobRoleOptions as dependency to ensure filtering works
+  }, [jobRoleOptions]); 
+
+
+  const fetchCitySuggestions = useCallback(
+    debounce(async (query) => {
+      if (!query || query.length < 3) {
+        setCitySuggestions([]);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${baseurl}/cities/search`, {
+          params: { term: query },
+        });
+        if (response.data.status === "success" && response.data.data.length > 0) {
+          setCitySuggestions(response.data.data);
+        } else {
+          setCitySuggestions([]);
+        }
+      } catch (error) {
+        console.error("City search API error:", error);
+        setErrors((prev) => ({
+          ...prev,
+          selectedCity: "Failed to fetch city suggestions",
+        }));
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500),
+    []
+  );
 
   const handleInputChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -1339,6 +1372,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     return inputValue;
   };
 
+
+
+
   const educationLevelToCourseKey = {
     Graduated: "Undergraduate",
     Masters: "Postgraduate",
@@ -1417,6 +1453,100 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     setFilteredJobRoleOptions(filtered);
   };
 
+
+
+
+  // Fetch areas for selected city
+  const fetchAreaSuggestions = useCallback(
+    async (cityId) => {
+      if (!cityId) {
+        setAreaSuggestions([]);
+        return;
+      }
+      try {
+        const response = await axios.get(
+          `${baseurl}/cities/${cityId}/locations`
+        );
+        if (response.data.status === "success") {
+          setAreaSuggestions(response.data.data.locations);
+        } else {
+          setAreaSuggestions([]);
+        }
+      } catch (error) {
+        console.error("Area fetch API error:", error);
+        setErrors((prev) => ({
+          ...prev,
+          locations: "Failed to fetch areas for the selected city",
+        }));
+      }
+    },
+    []
+  );
+
+  // Handle city input change
+  const handleCityInputChange = (e) => {
+    const value = e.target.value;
+    setCitySearch(value);
+    fetchCitySuggestions(value);
+  };
+
+  // Handle city selection
+  const handleCitySelect = (city) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedCity: city.name,
+      city_id: city.city_id,
+      locations: [], // Reset locations when city changes
+    }));
+    setCitySearch(city.name);
+    setCitySuggestions([]);
+    fetchAreaSuggestions(city.city_id);
+    localStorage.setItem(
+      "jobPostingFormData",
+      JSON.stringify({
+        data: {
+          ...formData,
+          selectedCity: city.name,
+          city_id: city.city_id,
+          locations: [],
+        },
+        timestamp: new Date().getTime(),
+      })
+    );
+  };
+
+  // Handle area selection
+  const handleAreaSelect = (selected) => {
+    const values = selected
+      ? selected.map((option) => ({
+          city_id: formData.city_id,
+          city_name: formData.selectedCity,
+          area_id: option.id,
+          area_name: option.area_name,
+        }))
+      : [];
+    if (values.length <= 3) {
+      setFormData((prev) => ({
+        ...prev,
+        locations: values,
+      }));
+      localStorage.setItem(
+        "jobPostingFormData",
+        JSON.stringify({
+          data: {
+            ...formData,
+            locations: values,
+          },
+          timestamp: new Date().getTime(),
+        })
+      );
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        locations: "You can select up to 3 areas only",
+      }));
+    }
+  };
   // Handle job title selection
   const handleSelect = (jobTitle) => {
     setFormData((prev) => ({
@@ -1745,61 +1875,83 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.jobType}</p>
               )}
             </div>
+
             <div>
               <label className="block text-sm font-semibold text-gray-800">
-                Office Address / Landmark * (Select up to 3)
+                City *
               </label>
-              {[...Array(3)].map((_, index) => (
-                <div key={index} className="mt-2 relative">
-                  <input
-                    type="text"
-                    value={locationInputs[index]}
-                    onChange={(e) =>
-                      handleLocationInputChange(e.target.value, index)
-                    }
-                    placeholder={`Enter location ${index + 1}`}
-                    className={`w-full rounded-lg border ${
-                      errors.locations ? "border-red-500" : "border-gray-300"
-                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                  />
-                  {formData.locations[index]?.address && (
-                    <button
-                      type="button"
-                      onClick={() => removeLocation(index)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500 hover:text-red-600"
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
-                  {locationSuggestions[index]?.length > 0 && (
-                    <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-60 overflow-y-auto">
-                      {locationSuggestions[index].map((suggestion) => (
-                        <div
-                          key={suggestion.place_id}
-                          onClick={() =>
-                            handleLocationSelect(suggestion, index)
-                          }
-                          className="px-4 py-2 cursor-pointer hover:bg-blue-50 transition-all duration-200"
-                        >
-                          {suggestion.display_name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-              {errors.locations && (
-                <p className="mt-1 text-xs text-red-500">{errors.locations}</p>
+              <input
+                type="text"
+                value={citySearch}
+                onChange={handleCityInputChange}
+                placeholder="Search for a city..."
+                className={`mt-2 w-full rounded-lg border ${
+                  errors.selectedCity ? "border-red-500" : "border-gray-300"
+                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+              />
+              {isLoading && (
+                <p className="mt-1 text-xs text-gray-500">Loading cities...</p>
               )}
-              {formData.locations.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    Selected:{" "}
-                    {formData.locations.map((loc) => loc.address).join(", ")}
-                  </p>
-                </div>
+              {errors.selectedCity && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.selectedCity}
+                </p>
+              )}
+              {citySuggestions.length > 0 && (
+                <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                  {citySuggestions.map((city) => (
+                    <li
+                      key={city.city_id}
+                      onClick={() => handleCitySelect(city)}
+                      className="px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {city.name}
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
+            {formData.selectedCity && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-800">
+                  Areas * (Select up to 3)
+                </label>
+                <CreatableSelect
+                  isMulti
+                  options={areaSuggestions.map((area) => ({
+                    value: area.name,
+                    label: area.name,
+                    id: area.id,
+                    area_name: area.name,
+                  }))}
+                  value={formData.locations.map((loc) => ({
+                    value: loc.area_name,
+                    label: loc.area_name,
+                  }))}
+                  onChange={handleAreaSelect}
+                  className="mt-2 text-sm"
+                  classNamePrefix="select"
+                  placeholder="Select areas..."
+                  isDisabled={!formData.selectedCity}
+                  noOptionsMessage={() =>
+                    areaSuggestions.length === 0
+                      ? "No areas available for this city"
+                      : "Type to search areas"
+                  }
+                />
+                {errors.locations && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.locations}
+                  </p>
+                )}
+                {formData.locations.length > 0 && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    Selected: {formData.locations.map((loc) => loc.area_name).join(", ")}
+                  </p>
+                )}
+              </div>
+            )}
+          
             {/* <div>
               <label className="block text-sm font-semibold text-gray-800">
                 Industry *
