@@ -41,7 +41,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 // import Color from '@tiptap/extension-color';
 
 const MultiStepJobPostingForm = ({ userdata, companies }) => {
-  const skillsOptions = [
+ const skillsOptions = [
     { value: "HTML", label: "HTML" },
     { value: "CSS", label: "CSS" },
     { value: "JavaScript", label: "JavaScript" },
@@ -100,7 +100,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: "Bootstrap", label: "Bootstrap" },
     { value: "Figma", label: "Figma" },
     { value: "Adobe XD", label: "Adobe XD" },
-    { value: "Communication", label: "Communication" },
+    { value: "Good Communication", label: "Good Communication" },
     { value: "Teamwork", label: "Teamwork" },
     { value: "Problem Solving", label: "Problem Solving" },
     { value: "Leadership", label: "Leadership" },
@@ -110,7 +110,153 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     { value: "Web Security", label: "Web Security" },
     { value: "Agile Methodology", label: "Agile Methodology" },
     { value: "Scrum", label: "Scrum" },
-  ];
+    { value: "Blockchain", label: "Blockchain" },
+    { value: "Smart Contracts", label: "Smart Contracts" },
+    { value: "Cybersecurity", label: "Cybersecurity" },
+    { value: "Machine Learning", label: "Machine Learning" },
+    { value: "Deep Learning", label: "Deep Learning" },
+    { value: "Data Analysis", label: "Data Analysis" },
+    { value: "Data Visualization", label: "Data Visualization" },
+    { value: "Big Data", label: "Big Data" },
+    { value: "Cloud Computing", label: "Cloud Computing" },
+    { value: "DevOps", label: "DevOps" },
+    { value: "SEO", label: "SEO" },
+    { value: "Digital Marketing", label: "Digital Marketing" },
+    { value: "Content Creation", label: "Content Creation" },
+    { value: "Social Media Marketing", label: "Social Media Marketing" },
+    { value: "Graphic Design", label: "Graphic Design" },
+    { value: "UI/UX Design", label: "UI/UX Design" },
+    { value: "Video Editing", label: "Video Editing" },
+    { value: "Motion Graphics", label: "Motion Graphics" },
+    { value: "Project Management", label: "Project Management" },
+    { value: "Financial Analysis", label: "Financial Analysis" },
+    { value: "Accounting", label: "Accounting" },
+    { value: "Tally", label: "Tally" },
+    { value: "Taxation", label: "Taxation" },
+    { value: "Auditing", label: "Auditing" },
+    { value: "HR Management", label: "HR Management" },
+    { value: "Recruitment", label: "Recruitment" },
+    { value: "Payroll Management", label: "Payroll Management" },
+    { value: "Customer Relationship Management", label: "Customer Relationship Management" },
+    { value: "Sales", label: "Sales" },
+    { value: "Business Development", label: "Business Development" },
+    { value: "Market Research", label: "Market Research" },
+    { value: "Supply Chain Management", label: "Supply Chain Management" },
+    { value: "Logistics", label: "Logistics" },
+    { value: "Inventory Management", label: "Inventory Management" },
+    { value: "Quality Assurance", label: "Quality Assurance" },
+    { value: "Automation Testing", label: "Automation Testing" },
+    { value: "Network Administration", label: "Network Administration" },
+    { value: "System Administration", label: "System Administration" },
+    { value: "IT Support", label: "IT Support" },
+    { value: "Database Administration", label: "Database Administration" },
+    { value: "Mobile App Development", label: "Mobile App Development" },
+    { value: "Embedded Systems", label: "Embedded Systems" },
+    { value: "Robotics", label: "Robotics" },
+    { value: "IoT", label: "IoT" },
+    { value: "Augmented Reality", label: "Augmented Reality" },
+    { value: "Virtual Reality", label: "Virtual Reality" },
+    { value: "Game Development", label: "Game Development" },
+    { value: "3D Modeling", label: "3D Modeling" },
+    { value: "Animation", label: "Animation" },
+    { value: "Civil Engineering", label: "Civil Engineering" },
+    { value: "Mechanical Engineering", label: "Mechanical Engineering" },
+    { value: "Electrical Engineering", label: "Electrical Engineering" },
+    { value: "Geotechnical Engineering", label: "Geotechnical Engineering" },
+    { value: "Environmental Engineering", label: "Environmental Engineering" },
+    { value: "Medical Coding", label: "Medical Coding" },
+    { value: "Pharmacy", label: "Pharmacy" },
+    { value: "Pharmacovigilance", label: "Pharmacovigilance" },
+    { value: "Clinical Research", label: "Clinical Research" },
+    { value: "Regulatory Affairs", label: "Regulatory Affairs" },
+    { value: "Healthcare Management", label: "Healthcare Management" },
+    { value: "Patient Care", label: "Patient Care" },
+    { value: "Nursing", label: "Nursing" },
+    { value: "Physiotherapy", label: "Physiotherapy" },
+    { value: "Occupational Therapy", label: "Occupational Therapy" },
+    { value: "Medical Sales", label: "Medical Sales" },
+    { value: "Event Management", label: "Event Management" },
+    { value: "Public Relations", label: "Public Relations" },
+    { value: "Copywriting", label: "Copywriting" },
+    { value: "Content Strategy", label: "Content Strategy" },
+    { value: "Instructional Design", label: "Instructional Design" },
+    { value: "E-Learning Development", label: "E-Learning Development" },
+    { value: "Teaching", label: "Teaching" },
+    { value: "Curriculum Development", label: "Curriculum Development" },
+    { value: "Legal Research", label: "Legal Research" },
+    { value: "Corporate Law", label: "Corporate Law" },
+    { value: "Compliance", label: "Compliance" },
+    { value: "Risk Management", label: "Risk Management" },
+    { value: "Data Privacy", label: "Data Privacy" },
+    { value: "Forensic Accounting", label: "Forensic Accounting" },
+    { value: "Investment Analysis", label: "Investment Analysis" },
+    { value: "Portfolio Management", label: "Portfolio Management" },
+    { value: "Credit Analysis", label: "Credit Analysis" },
+    { value: "Customer Service", label: "Customer Service" },
+    { value: "Technical Writing", label: "Technical Writing" },
+    { value: "Grant Writing", label: "Grant Writing" },
+    { value: "Sustainability", label: "Sustainability" },
+    { value: "Green Building", label: "Green Building" },
+    { value: "Renewable Energy", label: "Renewable Energy" },
+    { value: "Climate Change Analysis", label: "Climate Change Analysis" },
+    { value: "Bioinformatics", label: "Bioinformatics" },
+    { value: "Genomics", label: "Genomics" },
+    { value: "Molecular Biology", label: "Molecular Biology" },
+    { value: "Microbiology", label: "Microbiology" },
+    { value: "Neuroscience", label: "Neuroscience" },
+    { value: "Biomedical Engineering", label: "Biomedical Engineering" },
+    { value: "Urban Planning", label: "Urban Planning" },
+    { value: "Interior Design", label: "Interior Design" },
+    { value: "Industrial Design", label: "Industrial Design" },
+    { value: "Fashion Design", label: "Fashion Design" },
+    { value: "Packaging Design", label: "Packaging Design" },
+    { value: "Supply Chain Optimization", label: "Supply Chain Optimization" },
+    { value: "Lean Six Sigma", label: "Lean Six Sigma" },
+    { value: "Process Improvement", label: "Process Improvement" },
+    { value: "Facilities Management", label: "Facilities Management" },
+    { value: "Warehouse Management", label: "Warehouse Management" },
+    { value: "Export/Import Operations", label: "Export/Import Operations" },
+    { value: "Freight Forwarding", label: "Freight Forwarding" },
+    { value: "Retail Management", label: "Retail Management" },
+    { value: "E-Commerce Management", label: "E-Commerce Management" },
+    { value: "Brand Management", label: "Brand Management" },
+    { value: "Advertising", label: "Advertising" },
+    { value: "Media Planning", label: "Media Planning" },
+    { value: "Influencer Marketing", label: "Influencer Marketing" },
+    { value: "Employee Engagement", label: "Employee Engagement" },
+    { value: "Diversity and Inclusion", label: "Diversity and Inclusion" },
+    { value: "Organizational Behavior", label: "Organizational Behavior" },
+    { value: "Change Management", label: "Change Management" },
+    { value: "Strategic Planning", label: "Strategic Planning" },
+    { value: "Business Analysis", label: "Business Analysis" },
+    { value: "Financial Modeling", label: "Financial Modeling" },
+    { value: "Cryptocurrency", label: "Cryptocurrency" },
+    { value: "NFT Strategy", label: "NFT Strategy" },
+    { value: "Metaverse Development", label: "Metaverse Development" },
+    { value: "Quantum Computing", label: "Quantum Computing" },
+    { value: "Ethical Hacking", label: "Ethical Hacking" },
+    { value: "Digital Forensics", label: "Digital Forensics" },
+    { value: "Penetration Testing", label: "Penetration Testing" },
+    { value: "3D Printing", label: "3D Printing" },
+    { value: "Agritech", label: "Agritech" },
+    { value: "Precision Agriculture", label: "Precision Agriculture" },
+    { value: "Hydroponics", label: "Hydroponics" },
+    { value: "Aquaponics", label: "Aquaponics" },
+    { value: "Regenerative Agriculture", label: "Regenerative Agriculture" },
+    { value: "Policy Analysis", label: "Policy Analysis" },
+    { value: "Health Informatics", label: "Health Informatics" },
+    { value: "Telemedicine", label: "Telemedicine" },
+    { value: "Epidemiology", label: "Epidemiology" },
+    { value: "Behavioral Economics", label: "Behavioral Economics" },
+    { value: "Gamification", label: "Gamification" },
+    { value: "Customer Experience Design", label: "Customer Experience Design" },
+    { value: "Remote Work Coordination", label: "Remote Work Coordination" },
+    { value: "Virtual Event Planning", label: "Virtual Event Planning" },
+    { value: "Podcast Production", label: "Podcast Production" },
+    { value: "Geospatial Analysis", label: "Geospatial Analysis" },
+    { value: "Smart City Planning", label: "Smart City Planning" },
+    { value: "Zero-Waste Strategies", label: "Zero-Waste Strategies" }
+];
 
   const editorStyles = `
   .tiptap-editor {
@@ -249,394 +395,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     }
   };
 
-  const courseOptions = {
-    Undergraduate: [
-      { value: "BA", label: "BA (Bachelor of Arts)" },
-      { value: "B.Arch", label: "B.Arch (Bachelor of Architecture)" },
-      { value: "BBA", label: "BBA (Bachelor of Business Administration)" },
-      { value: "BCA", label: "BCA (Bachelor of Computer Applications)" },
-      { value: "B.Com", label: "B.Com (Bachelor of Commerce)" },
-      { value: "B.Des", label: "B.Des (Bachelor of Design)" },
-      { value: "B.Ed", label: "B.Ed (Bachelor of Education)" },
-      { value: "B.Pharm", label: "B.Pharm (Bachelor of Pharmacy)" },
-      { value: "B.Sc", label: "B.Sc (Bachelor of Science)" },
-      { value: "B.Tech", label: "B.Tech (Bachelor of Technology)" },
-      { value: "BDS", label: "BDS (Bachelor of Dental Surgery)" },
-      { value: "BFA", label: "BFA (Bachelor of Fine Arts)" },
-      { value: "BHM", label: "BHM (Bachelor of Hotel Management)" },
-      {
-        value: "BJMC",
-        label: "BJMC (Bachelor of Journalism and Mass Communication)",
-      },
-      { value: "BPT", label: "BPT (Bachelor of Physiotherapy)" },
-      { value: "BUMS", label: "BUMS (Bachelor of Unani Medicine and Surgery)" },
-      { value: "BVC", label: "BVC (Bachelor of Visual Communication)" },
-      { value: "LLB", label: "LLB (Bachelor of Laws)" },
-      {
-        value: "MBBS",
-        label: "MBBS (Bachelor of Medicine, Bachelor of Surgery)",
-      },
-    ],
-    Postgraduate: [
-      { value: "MA", label: "MA (Master of Arts)" },
-      { value: "M.Arch", label: "M.Arch (Master of Architecture)" },
-      { value: "MBA", label: "MBA (Master of Business Administration)" },
-      { value: "MCA", label: "MCA (Master of Computer Applications)" },
-      { value: "M.Com", label: "M.Com (Master of Commerce)" },
-      { value: "M.Des", label: "M.Des (Master of Design)" },
-      { value: "M.Ed", label: "M.Ed (Master of Education)" },
-      { value: "M.Pharm", label: "M.Pharm (Master of Pharmacy)" },
-      { value: "M.Sc", label: "M.Sc (Master of Science)" },
-      { value: "M.Tech", label: "M.Tech (Master of Technology)" },
-      { value: "MDS", label: "MDS (Master of Dental Surgery)" },
-      { value: "MFA", label: "MFA (Master of Fine Arts)" },
-      {
-        value: "MJMC",
-        label: "MJMC (Master of Journalism and Mass Communication)",
-      },
-      { value: "MPT", label: "MPT (Master of Physiotherapy)" },
-      { value: "LLM", label: "LLM (Master of Laws)" },
-      { value: "MD", label: "MD (Doctor of Medicine)" },
-      { value: "MS", label: "MS (Master of Surgery)" },
-    ],
-    Diploma: [
-      { value: "DCA", label: "DCA (Diploma in Computer Applications)" },
-      { value: "D.Ed", label: "D.Ed (Diploma in Education)" },
-      {
-        value: "DMLT",
-        label: "DMLT (Diploma in Medical Laboratory Technology)",
-      },
-      { value: "D.Pharm", label: "D.Pharm (Diploma in Pharmacy)" },
-      {
-        value: "PGDCA",
-        label: "PGDCA (Post Graduate Diploma in Computer Applications)",
-      },
-      { value: "PGDM", label: "PGDM (Post Graduate Diploma in Management)" },
-      { value: "DCH", label: "DCH (Diploma in Child Health)" },
-      { value: "DHT", label: "DHT (Diploma in Hospitality and Tourism)" },
-    ],
-  };
-
-  const specializationOptions = {
-    // Undergraduate Specializations
-    BA: [
-      { value: "Economics", label: "Economics" },
-      { value: "English", label: "English" },
-      { value: "History", label: "History" },
-      { value: "Political Science", label: "Political Science" },
-      { value: "Sociology", label: "Sociology" },
-      { value: "Psychology", label: "Psychology" },
-      { value: "Geography", label: "Geography" },
-      { value: "Philosophy", label: "Philosophy" },
-      { value: "Hindi", label: "Hindi" },
-      { value: "Sanskrit", label: "Sanskrit" },
-    ],
-    "B.Arch": [
-      { value: "Architectural Design", label: "Architectural Design" },
-      { value: "Urban Planning", label: "Urban Planning" },
-      { value: "Sustainable Architecture", label: "Sustainable Architecture" },
-    ],
-    BBA: [
-      { value: "Marketing", label: "Marketing" },
-      { value: "Finance", label: "Finance" },
-      { value: "Human Resources", label: "Human Resources" },
-      { value: "International Business", label: "International Business" },
-      { value: "Entrepreneurship", label: "Entrepreneurship" },
-    ],
-    BCA: [
-      { value: "Computer Science", label: "Computer Science" },
-      { value: "Information Technology", label: "Information Technology" },
-      { value: "Data Science", label: "Data Science" },
-      { value: "Cloud Computing", label: "Cloud Computing" },
-      { value: "Cybersecurity", label: "Cybersecurity" },
-    ],
-    "B.Com": [
-      { value: "Accounting", label: "Accounting" },
-      { value: "Finance", label: "Finance" },
-      { value: "Taxation", label: "Taxation" },
-      { value: "Banking and Insurance", label: "Banking and Insurance" },
-    ],
-    "B.Des": [
-      { value: "Fashion Design", label: "Fashion Design" },
-      { value: "Graphic Design", label: "Graphic Design" },
-      { value: "Interior Design", label: "Interior Design" },
-      { value: "Product Design", label: "Product Design" },
-    ],
-    "B.Ed": [
-      { value: "Special Education", label: "Special Education" },
-      { value: "Mathematics Education", label: "Mathematics Education" },
-      { value: "Science Education", label: "Science Education" },
-      { value: "English Education", label: "English Education" },
-    ],
-    "B.Pharm": [
-      { value: "Pharmaceutical Chemistry", label: "Pharmaceutical Chemistry" },
-      { value: "Pharmacology", label: "Pharmacology" },
-      { value: "Pharmaceutics", label: "Pharmaceutics" },
-    ],
-    "B.Sc": [
-      { value: "Physics", label: "Physics" },
-      { value: "Chemistry", label: "Chemistry" },
-      { value: "Mathematics", label: "Mathematics" },
-      { value: "Biology", label: "Biology" },
-      { value: "Biotechnology", label: "Biotechnology" },
-      { value: "Microbiology", label: "Microbiology" },
-      { value: "Computer Science", label: "Computer Science" },
-      { value: "Environmental Science", label: "Environmental Science" },
-    ],
-    "B.Tech": [
-      { value: "Computer Science", label: "Computer Science" },
-      { value: "Mechanical Engineering", label: "Mechanical Engineering" },
-      { value: "Electrical Engineering", label: "Electrical Engineering" },
-      { value: "Civil Engineering", label: "Civil Engineering" },
-      { value: "Aerospace Engineering", label: "Aerospace Engineering" },
-      { value: "Chemical Engineering", label: "Chemical Engineering" },
-      {
-        value: "Electronics and Communication",
-        label: "Electronics and Communication",
-      },
-      { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-    ],
-    BDS: [
-      { value: "Orthodontics", label: "Orthodontics" },
-      { value: "Periodontics", label: "Periodontics" },
-      { value: "Oral Surgery", label: "Oral Surgery" },
-    ],
-    BFA: [
-      { value: "Painting", label: "Painting" },
-      { value: "Sculpture", label: "Sculpture" },
-      { value: "Applied Arts", label: "Applied Arts" },
-    ],
-    BHM: [
-      { value: "Hotel Operations", label: "Hotel Operations" },
-      {
-        value: "Food and Beverage Management",
-        label: "Food and Beverage Management",
-      },
-      { value: "Tourism Management", label: "Tourism Management" },
-    ],
-    BJMC: [
-      { value: "Journalism", label: "Journalism" },
-      { value: "Advertising", label: "Advertising" },
-      { value: "Public Relations", label: "Public Relations" },
-    ],
-    BPT: [
-      { value: "Orthopedic Physiotherapy", label: "Orthopedic Physiotherapy" },
-      {
-        value: "Neurological Physiotherapy",
-        label: "Neurological Physiotherapy",
-      },
-      { value: "Sports Physiotherapy", label: "Sports Physiotherapy" },
-    ],
-    BUMS: [
-      { value: "Unani Medicine", label: "Unani Medicine" },
-      { value: "Herbal Medicine", label: "Herbal Medicine" },
-    ],
-    BVC: [
-      { value: "Film Making", label: "Film Making" },
-      { value: "Animation", label: "Animation" },
-      { value: "Photography", label: "Photography" },
-    ],
-    LLB: [
-      { value: "Criminal Law", label: "Criminal Law" },
-      { value: "Corporate Law", label: "Corporate Law" },
-      { value: "Constitutional Law", label: "Constitutional Law" },
-    ],
-    MBBS: [
-      { value: "General Medicine", label: "General Medicine" },
-      { value: "Surgery", label: "Surgery" },
-      { value: "Pediatrics", label: "Pediatrics" },
-    ],
-    // Postgraduate Specializations
-    MA: [
-      { value: "English", label: "English" },
-      { value: "History", label: "History" },
-      { value: "Sociology", label: "Sociology" },
-      { value: "Economics", label: "Economics" },
-      { value: "Political Science", label: "Political Science" },
-      { value: "Psychology", label: "Psychology" },
-      { value: "Public Administration", label: "Public Administration" },
-    ],
-    "M.Arch": [
-      { value: "Urban Design", label: "Urban Design" },
-      { value: "Landscape Architecture", label: "Landscape Architecture" },
-      { value: "Sustainable Architecture", label: "Sustainable Architecture" },
-    ],
-    MBA: [
-      { value: "Marketing", label: "Marketing" },
-      { value: "Finance", label: "Finance" },
-      { value: "Operations", label: "Operations" },
-      { value: "Human Resources", label: "Human Resources" },
-      { value: "Business Analytics", label: "Business Analytics" },
-      { value: "International Business", label: "International Business" },
-    ],
-    MCA: [
-      { value: "Software Development", label: "Software Development" },
-      { value: "Data Science", label: "Data Science" },
-      { value: "Cybersecurity", label: "Cybersecurity" },
-      { value: "Artificial Intelligence", label: "Artificial Intelligence" },
-      { value: "Cloud Computing", label: "Cloud Computing" },
-    ],
-    "M.Com": [
-      { value: "Accounting and Finance", label: "Accounting and Finance" },
-      { value: "Business Policy", label: "Business Policy" },
-      { value: "Taxation", label: "Taxation" },
-    ],
-    "M.Des": [
-      { value: "Fashion Design", label: "Fashion Design" },
-      { value: "Graphic Design", label: "Graphic Design" },
-      { value: "Industrial Design", label: "Industrial Design" },
-    ],
-    "M.Ed": [
-      { value: "Educational Technology", label: "Educational Technology" },
-      { value: "Curriculum Development", label: "Curriculum Development" },
-      { value: "Special Education", label: "Special Education" },
-    ],
-    "M.Pharm": [
-      { value: "Pharmacology", label: "Pharmacology" },
-      { value: "Pharmaceutical Analysis", label: "Pharmaceutical Analysis" },
-      { value: "Pharmacy Practice", label: "Pharmacy Practice" },
-    ],
-    "M.Sc": [
-      { value: "Physics", label: "Physics" },
-      { value: "Chemistry", label: "Chemistry" },
-      { value: "Mathematics", label: "Mathematics" },
-      { value: "Biotechnology", label: "Biotechnology" },
-      { value: "Microbiology", label: "Microbiology" },
-      { value: "Data Science", label: "Data Science" },
-      { value: "Environmental Science", label: "Environmental Science" },
-    ],
-    "M.Tech": [
-      { value: "Computer Science", label: "Computer Science" },
-      { value: "Mechanical Engineering", label: "Mechanical Engineering" },
-      { value: "Electrical Engineering", label: "Electrical Engineering" },
-      { value: "VLSI Design", label: "VLSI Design" },
-      { value: "Robotics", label: "Robotics" },
-      { value: "Structural Engineering", label: "Structural Engineering" },
-    ],
-    MDS: [
-      { value: "Prosthodontics", label: "Prosthodontics" },
-      { value: "Endodontics", label: "Endodontics" },
-      { value: "Oral Pathology", label: "Oral Pathology" },
-    ],
-    MFA: [
-      { value: "Painting", label: "Painting" },
-      { value: "Applied Arts", label: "Applied Arts" },
-      { value: "Sculpture", label: "Sculpture" },
-    ],
-    MJMC: [
-      { value: "Digital Media", label: "Digital Media" },
-      { value: "Broadcast Journalism", label: "Broadcast Journalism" },
-      { value: "Public Relations", label: "Public Relations" },
-    ],
-    MPT: [
-      { value: "Orthopedic Physiotherapy", label: "Orthopedic Physiotherapy" },
-      {
-        value: "Cardiopulmonary Physiotherapy",
-        label: "Cardiopulmonary Physiotherapy",
-      },
-      {
-        value: "Neurological Physiotherapy",
-        label: "Neurological Physiotherapy",
-      },
-    ],
-    LLM: [
-      { value: "International Law", label: "International Law" },
-      { value: "Corporate Law", label: "Corporate Law" },
-      {
-        value: "Intellectual Property Law",
-        label: "Intellectual Property Law",
-      },
-    ],
-    MD: [
-      { value: "General Medicine", label: "General Medicine" },
-      { value: "Pediatrics", label: "Pediatrics" },
-      { value: "Radiology", label: "Radiology" },
-    ],
-    MS: [
-      { value: "General Surgery", label: "General Surgery" },
-      { value: "Orthopedics", label: "Orthopedics" },
-      { value: "Ophthalmology", label: "Ophthalmology" },
-    ],
-
-    DCA: [
-      { value: "Programming", label: "Programming" },
-      { value: "Database Management", label: "Database Management" },
-      { value: "Networking", label: "Networking" },
-    ],
-    "D.Ed": [
-      {
-        value: "Early Childhood Education",
-        label: "Early Childhood Education",
-      },
-      { value: "Special Education", label: "Special Education" },
-    ],
-    DMLT: [
-      { value: "Clinical Pathology", label: "Clinical Pathology" },
-      { value: "Microbiology", label: "Microbiology" },
-      { value: "Biochemistry", label: "Biochemistry" },
-    ],
-    "D.Pharm": [
-      { value: "Pharmacy Practice", label: "Pharmacy Practice" },
-      { value: "Pharmaceutical Marketing", label: "Pharmaceutical Marketing" },
-    ],
-    PGDCA: [
-      { value: "Software Development", label: "Software Development" },
-      { value: "Data Analytics", label: "Data Analytics" },
-    ],
-    PGDM: [
-      { value: "Marketing Management", label: "Marketing Management" },
-      { value: "Financial Management", label: "Financial Management" },
-      { value: "Operations Management", label: "Operations Management" },
-    ],
-    DCH: [
-      { value: "Pediatric Care", label: "Pediatric Care" },
-      { value: "Neonatology", label: "Neonatology" },
-    ],
-    DHT: [
-      { value: "Tourism Management", label: "Tourism Management" },
-      { value: "Hospitality Operations", label: "Hospitality Operations" },
-    ],
-    // Vocational Specializations
-    VIT: [
-      { value: "Web Development", label: "Web Development" },
-      { value: "Cybersecurity", label: "Cybersecurity" },
-      { value: "Mobile App Development", label: "Mobile App Development" },
-    ],
-    VHM: [
-      { value: "Culinary Arts", label: "Culinary Arts" },
-      { value: "Housekeeping", label: "Housekeeping" },
-      { value: "Front Office Management", label: "Front Office Management" },
-    ],
-    VFT: [
-      { value: "Fashion Design", label: "Fashion Design" },
-      { value: "Textile Design", label: "Textile Design" },
-    ],
-    VAG: [
-      { value: "Organic Farming", label: "Organic Farming" },
-      { value: "Horticulture", label: "Horticulture" },
-    ],
-  };
-
-  const industryOptions = [
-    { value: "Technology", label: "Technology" },
-    { value: "Finance", label: "Finance" },
-    { value: "Healthcare", label: "Healthcare" },
-    { value: "Education", label: "Education" },
-    { value: "Manufacturing", label: "Manufacturing" },
-    { value: "Retail", label: "Retail" },
-    { value: "Marketing", label: "Marketing" },
-  ];
-
-  const departmentOptions = [
-    { value: "Engineering", label: "Engineering" },
-    { value: "Human Resources", label: "Human Resources" },
-    { value: "Marketing", label: "Marketing" },
-    { value: "Sales", label: "Sales" },
-    { value: "Finance", label: "Finance" },
-    { value: "Operations", label: "Operations" },
-    { value: "Customer Service", label: "Customer Service" },
-  ];
-
   const [allSkillsOptions, setAllSkillsOptions] = useState(skillsOptions);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -646,6 +404,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     gstCertificate: null,
     jobTitle: "",
     jobType: "",
+    selectedCity:"",
     locations: [],
     payType: "",
     minSalary: "",
@@ -681,6 +440,13 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     joiningFeeRequired: "",
     totalExperienceRequired: "",
   });
+  const [educationLevels, setEducationLevels] = useState([
+    { value: "Graduated", label: "Graduated" },
+    { value: "Graduate Not Required", label: "Graduate Not Required" },
+    { value: "Masters", label: "Masters" },
+    { value: "ITI", label: "ITI" },
+    { value: "Diploma", label: "Diploma" },
+  ]);
   const [errors, setErrors] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -704,7 +470,13 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   const [citySuggestions, setCitySuggestions] = useState([]); // For city search results
   const [areaSuggestions, setAreaSuggestions] = useState([]); // For area results
   const [citySearch, setCitySearch] = useState(""); // For city input
-
+  const [specializations, setSpecializations] = useState([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [isLoadingSpecializations, setIsLoadingSpecializations] =
+    useState(false);
+  const [apiErrorCourses, setApiErrorCourses] = useState(null);
+  const [apiErrorSpecializations, setApiErrorSpecializations] = useState(null);
   const fetchJobTitles = useCallback(
     debounce(async (query) => {
       if (!query || query.length < 2) {
@@ -745,6 +517,40 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     }, 300),
     []
   );
+
+  const fetchEducationLevels = useCallback(async () => {
+    setIsLoadingCourses(true);
+    setApiErrorCourses(null);
+    try {
+      const response = await axios.get(
+        `${baseurl}/qualifications/education-level/1`, // Graduate level
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === "success") {
+        // Filter for cohort_id: 2
+        const filteredLevels = response.data.data.filter(
+          (level) => level.cohort_id === 2
+        );
+        setEducationLevels(
+          filteredLevels.map((level) => ({
+            value: level.title,
+            label: level.title,
+          }))
+        );
+      } else {
+        setApiErrorCourses("No education levels found");
+      }
+    } catch (error) {
+      setApiErrorCourses("Failed to fetch education levels");
+      console.error("Education Levels API Error:", error);
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -839,6 +645,56 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     checkLogin();
   }, []);
 
+  const fetchCourses = useCallback(async (educationLevel) => {
+    if (!educationLevel) {
+      setCourses([]);
+      return;
+    }
+    setIsLoadingCourses(true);
+    setApiErrorCourses(null);
+    try {
+      let endpoint;
+      console.log("educationLevel", educationLevel); // Replace with your actual base URL
+      if (educationLevel === "Graduated") {
+        endpoint = `${baseurl}/qualifications/education-level/1`; // Graduate
+      } else if (educationLevel === "Masters") {
+        endpoint = `${baseurl}/qualifications/education-level/2`; // Postgraduate
+      } else if (educationLevel === "ITI") {
+        endpoint = `${baseurl}/qualifications/education-level/3`; // Diploma
+      } else if (educationLevel === "Diploma") {
+        endpoint = `${baseurl}/qualifications/education-level/7`; // Diploma
+      } else {
+        setCourses([]);
+        return;
+      }
+      const response = await axios.get(endpoint, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === "success") {
+        // Filter for cohort_id: 2
+        const transformedCourses = response.data.data.map((course) => ({
+          label: course.title, // Displayed in the dropdown
+          value: course.id, // Stored value
+        }));
+        // Optionally filter for cohort_id: 2
+        // const filteredCourses = transformedCourses.filter(
+        //   (course) => course.cohort_id === 2 // Note: cohort_id is not in transformedCourses; adjust if needed
+        // );
+        setCourses(transformedCourses);
+        console.log("Courses fetched:", response.data.data);
+      } else {
+        setApiErrorCourses("No courses found");
+      }
+    } catch (error) {
+      setApiErrorCourses("Failed to fetch courses");
+      console.error("Courses API Error:", error);
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, []);
+
   useEffect(() => {
     const savedData = localStorage.getItem("jobPostingFormData");
     if (savedData) {
@@ -871,8 +727,68 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         localStorage.removeItem("jobPostingFormData");
       }
     }
-  }, [jobRoleOptions]); 
+  }, [jobRoleOptions]);
 
+const fetchSpecializations = useCallback(async (courseName) => {
+  if (!courseName) {
+    setSpecializations([]);
+    return;
+  }
+  const selectedCourse = courses.find(
+    (course) => course.label === courseName
+  );
+  const courseId = selectedCourse ? selectedCourse.value : courseName; // Fallback to courseName for custom courses
+  setIsLoadingSpecializations(true);
+  setApiErrorSpecializations(null);
+  try {
+    const response = await axios.get(
+      `${baseurl}/qualifications/${courseId}/specializations`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.data.status === "success") {
+      setSpecializations(
+        response.data.data.specializations.map((spec) => ({
+          value: spec.title,
+          label: spec.title,
+        }))
+      );
+    } else {
+      setApiErrorSpecializations("No specializations found");
+    }
+  } catch (error) {
+    setApiErrorSpecializations("Failed to fetch specializations");
+    console.error("Specializations API Error:", error);
+  } finally {
+    setIsLoadingSpecializations(false);
+  }
+}, [courses]);
+
+  useEffect(() => {
+    fetchCourses(formData.educationLevel);
+    setFormData((prev) => ({ ...prev, course: "", specialization: "" }));
+  }, [formData.educationLevel, fetchCourses]);
+
+  useEffect(() => {
+  const selectedCourse = courses.find(
+    (course) => course.label === formData.course
+  );
+  if (selectedCourse && selectedCourse.value !== formData.course) {
+    // Only fetch specializations for non-custom courses
+    fetchSpecializations(formData.course);
+  } else {
+    setSpecializations([]);
+    setFormData((prev) => ({ ...prev, specialization: "" }));
+  }
+}, [formData.course, fetchSpecializations, courses]);
+
+  useEffect(() => {
+    fetchSpecializations(formData.course);
+    setFormData((prev) => ({ ...prev, specialization: "" }));
+  }, [formData.course, fetchSpecializations]);
 
   const fetchCitySuggestions = useCallback(
     debounce(async (query) => {
@@ -885,7 +801,10 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         const response = await axios.get(`${baseurl}/cities/search`, {
           params: { term: query },
         });
-        if (response.data.status === "success" && response.data.data.length > 0) {
+        if (
+          response.data.status === "success" &&
+          response.data.data.length > 0
+        ) {
           setCitySuggestions(response.data.data);
         } else {
           setCitySuggestions([]);
@@ -1134,7 +1053,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      if (currentStep < 4) {
+      if (currentStep < 5) {
         setCurrentStep((prev) => prev + 1);
       } else {
         setShowConfirmation(true);
@@ -1225,12 +1144,17 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
       "number_of_candidates_required",
       parseInt(formData.numberOfCandidatesRequired) || 1
     );
-    apiData.append("latitude", formData.locations[0]?.lat || null);
-    apiData.append("longitude", formData.locations[0]?.lon || null);
-    apiData.append(
-      "location",
-      formData.locations.map((loc) => loc.address).join("; ")
-    );
+    
+     apiData.append(
+  "location",
+  formData.locations.length > 0
+    ? `${formData.selectedCity}, ${formData.locations
+        .map((loc) => loc.area_name)
+        .join(", ")}`
+    : formData.selectedCity
+);
+  
+
     apiData.append("min_salary", parseINR(formData.minSalary) || null);
     apiData.append("max_salary", parseINR(formData.maxSalary) || null);
     apiData.append("incentive", parseINR(formData.incentive) || 0);
@@ -1372,9 +1296,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     return inputValue;
   };
 
-
-
-
   const educationLevelToCourseKey = {
     Graduated: "Undergraduate",
     Masters: "Postgraduate",
@@ -1453,35 +1374,27 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     setFilteredJobRoleOptions(filtered);
   };
 
-
-
-
   // Fetch areas for selected city
-  const fetchAreaSuggestions = useCallback(
-    async (cityId) => {
-      if (!cityId) {
+  const fetchAreaSuggestions = useCallback(async (cityId) => {
+    if (!cityId) {
+      setAreaSuggestions([]);
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseurl}/cities/${cityId}/locations`);
+      if (response.data.status === "success") {
+        setAreaSuggestions(response.data.data.locations);
+      } else {
         setAreaSuggestions([]);
-        return;
       }
-      try {
-        const response = await axios.get(
-          `${baseurl}/cities/${cityId}/locations`
-        );
-        if (response.data.status === "success") {
-          setAreaSuggestions(response.data.data.locations);
-        } else {
-          setAreaSuggestions([]);
-        }
-      } catch (error) {
-        console.error("Area fetch API error:", error);
-        setErrors((prev) => ({
-          ...prev,
-          locations: "Failed to fetch areas for the selected city",
-        }));
-      }
-    },
-    []
-  );
+    } catch (error) {
+      console.error("Area fetch API error:", error);
+      setErrors((prev) => ({
+        ...prev,
+        locations: "Failed to fetch areas for the selected city",
+      }));
+    }
+  }, []);
 
   // Handle city input change
   const handleCityInputChange = (e) => {
@@ -1518,34 +1431,30 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
   // Handle area selection
   const handleAreaSelect = (selected) => {
     const values = selected
-      ? selected.map((option) => ({
-          city_id: formData.city_id,
-          city_name: formData.selectedCity,
-          area_id: option.id,
-          area_name: option.area_name,
-        }))
-      : [];
-    if (values.length <= 3) {
-      setFormData((prev) => ({
-        ...prev,
-        locations: values,
-      }));
-      localStorage.setItem(
-        "jobPostingFormData",
-        JSON.stringify({
-          data: {
-            ...formData,
-            locations: values,
+      ? [
+          {
+            city_id: formData.city_id,
+            city_name: formData.selectedCity,
+            area_id: selected.id,
+            area_name: selected.area_name,
           },
-          timestamp: new Date().getTime(),
-        })
-      );
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        locations: "You can select up to 3 areas only",
-      }));
-    }
+        ]
+      : [];
+
+    setFormData((prev) => ({
+      ...prev,
+      locations: values,
+    }));
+    localStorage.setItem(
+      "jobPostingFormData",
+      JSON.stringify({
+        data: {
+          ...formData,
+          locations: values,
+        },
+        timestamp: new Date().getTime(),
+      })
+    );
   };
   // Handle job title selection
   const handleSelect = (jobTitle) => {
@@ -1601,7 +1510,17 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
     );
   };
 
-  const renderStepContent = () => {
+  const generateExperienceOptions = () => {
+    const options = [];
+    for (let years = 0.5; years <= 30; years += 0.5) {
+      const label = `${years} year${years === 1 ? "" : "s"}`;
+      options.push({ label, value: years });
+    }
+    return options;
+  };
+  const experienceOptions = generateExperienceOptions();
+
+const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
@@ -1723,27 +1642,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                       </p>
                     )}
                   </div>
-                  {/* <div>
-                    <label className="block text-sm font-semibold text-gray-800">
-                      GST Certificate *
-                    </label>
-                    <input
-                      type="file"
-                      name="gstCertificate"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={handleInputChange}
-                      className={`mt-2 w-full rounded-lg border ${
-                        errors.gstCertificate
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                    />
-                    {errors.gstCertificate && (
-                      <p className="mt-1 text-xs text-red-500">
-                        {errors.gstCertificate}
-                      </p>
-                    )}
-                  </div> */}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1826,7 +1724,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               {showJobRoleDropdown && (
                 <ul
                   ref={jobRoleDropdownRef}
-                  className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                  className="absolute  z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
                 >
                   {filteredJobRoleOptions.length > 0
                     ? filteredJobRoleOptions.map((result) => (
@@ -1898,7 +1796,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 </p>
               )}
               {citySuggestions.length > 0 && (
-                <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                <ul className="absolute w-[52%] z-10 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
                   {citySuggestions.map((city) => (
                     <li
                       key={city.city_id}
@@ -1914,10 +1812,9 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
             {formData.selectedCity && (
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
-                  Areas * (Select up to 3)
+                  Areas *
                 </label>
                 <CreatableSelect
-                  isMulti
                   options={areaSuggestions.map((area) => ({
                     value: area.name,
                     label: area.name,
@@ -1946,58 +1843,12 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 )}
                 {formData.locations.length > 0 && (
                   <p className="mt-2 text-sm text-gray-600">
-                    Selected: {formData.locations.map((loc) => loc.area_name).join(", ")}
+                    Selected:{" "}
+                    {formData.locations.map((loc) => loc.area_name).join(", ")}
                   </p>
                 )}
               </div>
             )}
-          
-            {/* <div>
-              <label className="block text-sm font-semibold text-gray-800">
-                Industry *
-              </label>
-              <select
-                name="industry"
-                value={formData.industry}
-                onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${
-                  errors.industry ? "border-red-500" : "border-gray-300"
-                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-              >
-                <option value="">Select Industry</option>
-                {industryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.industry && (
-                <p className="mt-1 text-xs text-red-500">{errors.industry}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-800">
-                Department *
-              </label>
-              <select
-                name="department"
-                value={formData.department}
-                onChange={handleInputChange}
-                className={`mt-2 w-full rounded-lg border ${
-                  errors.department ? "border-red-500" : "border-gray-300"
-                } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-              >
-                <option value="">Select Department</option>
-                {departmentOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.department && (
-                <p className="mt-1 text-xs text-red-500">{errors.department}</p>
-              )}
-            </div> */}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -2186,123 +2037,253 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
               >
                 <option value="">Select Education Level</option>
-                <option value="Graduation Not Required">
-                  Graduation Not Required
-                </option>
-                <option value="Graduated">Graduated</option>
-                <option value="Masters">Masters</option>
-                <option value="Others">Others</option>
+                {isLoadingCourses ? (
+                  <option disabled>Loading...</option>
+                ) : (
+                  educationLevels.map((level) => (
+                    <option key={level.value} value={level.value}>
+                      {level.label}
+                    </option>
+                  ))
+                )}
               </select>
               {errors.educationLevel && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.educationLevel}
                 </p>
               )}
+              {apiErrorCourses && (
+                <p className="mt-1 text-xs text-red-500">{apiErrorCourses}</p>
+              )}
             </div>
-            <AnimatePresence>
-              {["Graduated", "Masters"].includes(formData.educationLevel) && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800">
-                      Course *
-                    </label>
-                    <CreatableSelect
-                      name="course"
-                      options={
-                        courseOptions[
-                          educationLevelToCourseKey[formData.educationLevel]
-                        ] || []
-                      }
-                      className="mt-2 text-sm"
-                      classNamePrefix="select"
-                      value={
-                        formData.course
-                          ? {
-                              value: formData.course,
-                              label:
-                                courseOptions[
-                                  educationLevelToCourseKey[
-                                    formData.educationLevel
-                                  ]
-                                ]?.find(
-                                  (option) => option.value === formData.course
-                                )?.label || formData.course,
-                            }
-                          : null
-                      }
-                      onChange={(selected) => {
-                        const value = selected ? selected.value : "";
+
+            {["Graduated", "Masters", "ITI", "Diploma", "others"].includes(
+              formData.educationLevel
+            ) && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800">
+                    Course *
+                  </label>
+                  <CreatableSelect
+                    name="course"
+                    options={courses}
+                    className="mt-2 text-sm"
+                    classNamePrefix="select"
+                    value={
+                      formData.course
+                        ? courses.find(
+                            (option) => option.label === formData.course
+                          ) || {
+                            label: formData.course,
+                            value: formData.course,
+                          } // Handle custom course
+                        : null
+                    }
+                    onChange={(selected) => {
+                      const courseName = selected ? selected.label : "";
+                      setFormData((prev) => ({
+                        ...prev,
+                        course: courseName,
+                        specialization: "",
+                      }));
+                      localStorage.setItem(
+                        "jobPostingFormData",
+                        JSON.stringify({
+                          data: {
+                            ...formData,
+                            course: courseName,
+                            specialization: "",
+                          },
+                          timestamp: new Date().getTime(),
+                        })
+                      );
+                    }}
+                    onCreateOption={(inputValue) => {
+                      const newCourse = inputValue.trim();
+                      if (newCourse) {
+                        const newOption = {
+                          value: newCourse,
+                          label: newCourse,
+                        };
+                        setCourses((prev) => [...prev, newOption]);
                         setFormData((prev) => ({
                           ...prev,
-                          course: value,
-                          specialization: "", // Reset specialization when course changes
+                          course: newCourse,
+                          specialization: "",
                         }));
                         localStorage.setItem(
                           "jobPostingFormData",
                           JSON.stringify({
                             data: {
                               ...formData,
-                              course: value,
+                              course: newCourse,
                               specialization: "",
                             },
                             timestamp: new Date().getTime(),
                           })
                         );
-                      }}
-                      placeholder="Search or select a course..."
-                      isClearable
-                      isSearchable
-                      isDisabled={!formData.educationLevel}
-                      noOptionsMessage={() => "No courses available"}
-                      // Disable creating new options
-                      onCreateOption={null}
-                    />
-                    {errors.course && (
-                      <p className="mt-1 text-xs text-red-500">
-                        {errors.course}
-                      </p>
-                    )}
-                  </div>
-                  {formData.course && (
+                      }
+                    }}
+                    placeholder="Search or select a course..."
+                    isClearable
+                    isSearchable
+                    isDisabled={!formData.educationLevel || isLoadingCourses}
+                    noOptionsMessage={() =>
+                      isLoadingCourses
+                        ? "Loading courses..."
+                        : "No courses available"
+                    }
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        borderColor: errors.course
+                          ? "#ef4444" // Tailwind red-500
+                          : state.isFocused
+                          ? "#3b82f6" // Tailwind blue-500
+                          : "#d1d5db", // Tailwind gray-300
+                        borderWidth: "1px",
+                        borderRadius: "0.5rem", // Tailwind rounded-lg
+                        padding: "0.5rem 0.75rem", // Match px-4 py-3
+                        boxShadow: state.isFocused
+                          ? "0 0 0 2px #3b82f6"
+                          : "none", // focus:ring-2
+                        "&:hover": {
+                          borderColor: errors.course
+                            ? "#ef4444"
+                            : state.isFocused
+                            ? "#3b82f6"
+                            : "#d1d5db",
+                        },
+                        transition: "all 300ms",
+                      }),
+                      input: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                    }}
+                  />
+                  {errors.course && (
+                    <p className="mt-1 text-xs text-red-500">{errors.course}</p>
+                  )}
+                </div>
+                {formData.course && (
+                  <div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800">
                         Specialization *
                       </label>
-                      <select
+                      <CreatableSelect
                         name="specialization"
-                        value={formData.specialization}
-                        onChange={handleInputChange}
-                        className={`mt-2 w-full rounded-lg border ${
-                          errors.specialization
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                      >
-                        <option value="">Select Specialization</option>
-                        {specializationOptions[formData.course]?.map(
-                          (option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          )
-                        )}
-                      </select>
+                        options={specializations}
+                        className={`mt-2 text-sm ${
+                          errors.specialization ? "border-red-500" : ""
+                        }`}
+                        classNamePrefix="select"
+                        value={
+                          formData.specialization
+                            ? specializations.find(
+                                (spec) => spec.value === formData.specialization
+                              ) || {
+                                label: formData.specialization,
+                                value: formData.specialization,
+                              }
+                            : null
+                        }
+                        onChange={(selected) => {
+                          const value = selected ? selected.value : "";
+                          handleInputChange({
+                            target: { name: "specialization", value },
+                          });
+                        }}
+                        onCreateOption={(inputValue) => {
+                          const newOption = {
+                            label: inputValue,
+                            value: inputValue,
+                          };
+                          // Optionally add the new option to specializations
+                          setSpecializations((prev) => [...prev, newOption]);
+                          // Update formData with the new value
+                          handleInputChange({
+                            target: {
+                              name: "specialization",
+                              value: inputValue,
+                            },
+                          });
+                        }}
+                        placeholder="Search or select a specialization..."
+                        isClearable
+                        isSearchable
+                        isDisabled={isLoadingSpecializations}
+                        noOptionsMessage={() =>
+                          isLoadingSpecializations
+                            ? "Loading specializations..."
+                            : "No specializations available"
+                        }
+                        styles={{
+                          control: (base, state) => ({
+                            ...base,
+                            borderColor: errors.specialization
+                              ? "#ef4444" // Tailwind red-500
+                              : state.isFocused
+                              ? "#3b82f6" // Tailwind blue-500
+                              : "#d1d5db", // Tailwind gray-300
+                            borderWidth: "1px",
+                            borderRadius: "0.5rem", // Tailwind rounded-lg
+                            padding: "0.5rem 0.75rem", // Match px-4 py-3
+                            boxShadow: state.isFocused
+                              ? "0 0 0 2px #3b82f6"
+                              : "none", // focus:ring-2
+                            "&:hover": {
+                              borderColor: errors.specialization
+                                ? "#ef4444"
+                                : state.isFocused
+                                ? "#3b82f6"
+                                : "#d1d5db",
+                            },
+                            transition: "all 300ms",
+                          }),
+                          input: (base) => ({
+                            ...base,
+                            fontSize: "0.875rem", // Tailwind text-sm
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            fontSize: "0.875rem", // Tailwind text-sm
+                          }),
+                        }}
+                      />
                       {errors.specialization && (
                         <p className="mt-1 text-xs text-red-500">
                           {errors.specialization}
                         </p>
                       )}
                     </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    {errors.specialization && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.specialization}
+                      </p>
+                    )}
+                    {apiErrorSpecializations && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {apiErrorSpecializations}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
             <div>
               <label className="block text-sm font-semibold text-gray-800">
                 English Level Required *
@@ -2363,19 +2344,74 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-800">
-                    Minimum Experience (Years) *
+                    Minimum Experience *
                   </label>
-                  <input
-                    type="number"
+                  <CreatableSelect
                     name="experienceLevel"
-                    value={formData.experienceLevel}
-                    onChange={handleInputChange}
-                    className={`mt-2 w-full rounded-lg border ${
-                      errors.experienceLevel
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                    min="0"
+                    options={experienceOptions}
+                    className={`mt-2 text-sm ${
+                      errors.experienceLevel ? "border-red-500" : ""
+                    }`}
+                    classNamePrefix="select"
+                    value={
+                      formData.experienceLevel
+                        ? experienceOptions.find(
+                            (opt) =>
+                              opt.value === parseFloat(formData.experienceLevel)
+                          ) || null
+                        : null
+                    }
+                    onChange={(selected) => {
+                      const value = selected ? selected.value : "";
+                      handleInputChange({
+                        target: { name: "experienceLevel", value },
+                      });
+                      // Reset experienceMax if it's less than the new experienceLevel
+                      if (
+                        formData.experienceMax &&
+                        parseFloat(formData.experienceMax) < parseFloat(value)
+                      ) {
+                        handleInputChange({
+                          target: { name: "experienceMax", value: "" },
+                        });
+                      }
+                    }}
+                    placeholder="Select minimum experience..."
+                    isClearable
+                    isSearchable
+                    onCreateOption={null} // Disable creating new options
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        borderColor: errors.experienceLevel
+                          ? "#ef4444" // Tailwind red-500
+                          : state.isFocused
+                          ? "#3b82f6" // Tailwind blue-500
+                          : "#d1d5db", // Tailwind gray-300
+                        borderWidth: "1px",
+                        borderRadius: "0.5rem", // Tailwind rounded-lg
+                        padding: "0.5rem 0.75rem", // Match px-4 py-3
+                        boxShadow: state.isFocused
+                          ? "0 0 0 2px #3b82f6"
+                          : "none", // focus:ring-2
+                        "&:hover": {
+                          borderColor: errors.experienceLevel
+                            ? "#ef4444"
+                            : state.isFocused
+                            ? "#3b82f6"
+                            : "#d1d5db",
+                        },
+                        transition: "all 300ms",
+                      }),
+                      input: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                    }}
                   />
                   {errors.experienceLevel && (
                     <p className="mt-1 text-xs text-red-500">
@@ -2385,19 +2421,69 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-800">
-                    Maximum Experience (Years)
+                    Maximum Experience
                   </label>
-                  <input
-                    type="number"
+                  <CreatableSelect
                     name="experienceMax"
-                    value={formData.experienceMax}
-                    onChange={handleInputChange}
-                    className={`mt-2 w-full rounded-lg border ${
-                      errors.experienceMax
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
-                    min={formData.experienceLevel || 0}
+                    options={experienceOptions.filter(
+                      (opt) =>
+                        !formData.experienceLevel ||
+                        opt.value > parseFloat(formData.experienceLevel)
+                    )}
+                    className={`mt-2 text-sm ${
+                      errors.experienceMax ? "border-red-500" : ""
+                    }`}
+                    classNamePrefix="select"
+                    value={
+                      formData.experienceMax
+                        ? experienceOptions.find(
+                            (opt) =>
+                              opt.value === parseFloat(formData.experienceMax)
+                          ) || null
+                        : null
+                    }
+                    onChange={(selected) => {
+                      const value = selected ? selected.value : "";
+                      handleInputChange({
+                        target: { name: "experienceMax", value },
+                      });
+                    }}
+                    placeholder="Select maximum experience..."
+                    isClearable
+                    isSearchable
+                    onCreateOption={null} // Disable creating new options
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        borderColor: errors.experienceMax
+                          ? "#ef4444" // Tailwind red-500
+                          : state.isFocused
+                          ? "#3b82f6" // Tailwind blue-500
+                          : "#d1d5db", // Tailwind gray-300
+                        borderWidth: "1px",
+                        borderRadius: "0.5rem", // Tailwind rounded-lg
+                        padding: "0.5rem 0.75rem", // Match px-4 py-3
+                        boxShadow: state.isFocused
+                          ? "0 0 0 2px #3b82f6"
+                          : "none", // focus:ring-2
+                        "&:hover": {
+                          borderColor: errors.experienceMax
+                            ? "#ef4444"
+                            : state.isFocused
+                            ? "#3b82f6"
+                            : "#d1d5db",
+                        },
+                        transition: "all 300ms",
+                      }),
+                      input: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        fontSize: "0.875rem", // Tailwind text-sm
+                      }),
+                    }}
                   />
                   {errors.experienceMax && (
                     <p className="mt-1 text-xs text-red-500">
@@ -2712,7 +2798,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               </div>
             </div>
 
-                {formData.interviewMode !== "Online" && (
+            {formData.interviewMode !== "Online" && (
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
                   Interview Location *
@@ -2735,7 +2821,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 )}
               </div>
             )}
-
 
             <div>
               <label className="block text-sm font-semibold text-gray-800">
@@ -2774,7 +2859,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
               )}
             </div>
-        
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
@@ -2790,18 +2875,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                   placeholder="Enter contact email"
                 />
-                <div className="mt-2">
-                  {/* <label className="flex items-center text-sm text-gray-800">
-                    <input
-                      type="checkbox"
-                      name="notEmail"
-                      checked={formData.notEmail}
-                      onChange={handleInputChange}
-                      className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-                    />
-                    Do not use email
-                  </label> */}
-                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-800">
@@ -2817,48 +2890,97 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                   } px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                   placeholder="Enter contact phone"
                 />
-                {/* <div className="mt-2">
-                  <label className="flex items-center text-sm text-gray-800">
-                    <input
-                      type="checkbox"
-                      name="viewedNumber"
-                      checked={formData.viewedNumber}
-                      onChange={handleInputChange}
-                      className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-                    />
-                    Allow phone number to be viewed
-                  </label>
-                </div> */}
               </div>
             </div>
             {errors.contact && (
               <p className="mt-1 text-xs text-red-500">{errors.contact}</p>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* <div>
-                <label className="block text-sm font-semibold text-gray-800">
-                  Interview Date
-                </label>
-                <input
-                  type="date"
-                  name="interviewDate"
-                  value={formData.interviewDate}
-                  onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                />
-              </div> */}
-              {/* <div>
-                <label className="block text-sm font-semibold text-gray-800">
-                  Interview Time
-                </label>
-                <input
-                  type="time"
-                  name="interviewTime"
-                  value={formData.interviewTime}
-                  onChange={handleInputChange}
-                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                />
-              </div> */}
+          </motion.div>
+        );
+      case 5:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-8 bg-gray-50 p-6 rounded-lg shadow-lg"
+          >
+            <h2 className="text-2xl font-bold text-gray-800">Job Posting Preview</h2>
+            <div className="space-y-6">
+              {/* Company Details */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2">Company Details</h3>
+                <div className="mt-4 space-y-2">
+                  <p><span className="font-medium text-gray-600">Company Name:</span> {formData.companyName || formData.newCompanyName || "Not specified"}</p>
+                  {formData.newCompanyName && formData.panCard && (
+                    <p><span className="font-medium text-gray-600">Document:</span> {formData.panCard.name || "Document uploaded"}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Job Details */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2">Job Details</h3>
+                <div className="mt-4 space-y-2">
+                  <p><span className="font-medium text-gray-600">Job Title:</span> {formData.jobTitle || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Job Role:</span> {formData.jobRole || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Job Type:</span> {formData.jobType || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">City:</span> {formData.selectedCity?.name || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Areas:</span> {formData.locations.length > 0 ? formData.locations.map(loc => loc.area_name).join(", ") : "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Pay Type:</span> {formData.payType || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Salary Range:</span> {formData.minSalary ? `₹${formatINR(formData.minSalary)}` : "Not specified"} {formData.maxSalary ? `- ₹${formatINR(formData.maxSalary)}` : ""}</p>
+                  {formData.payType === "Salary + Incentive" && (
+                    <p><span className="font-medium text-gray-600">Incentive Up To:</span> {formData.incentive ? `₹${formatINR(formData.incentive)}` : "Not specified"}</p>
+                  )}
+                  <p><span className="font-medium text-gray-600">Joining Fee Required:</span> {formData.joiningFeeRequired || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Number of Vacancies:</span> {formData.numberOfCandidatesRequired || "Not specified"}</p>
+                </div>
+              </div>
+
+              {/* Candidate Requirements */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2">Candidate Requirements</h3>
+                <div className="mt-4 space-y-2">
+                  <p><span className="font-medium text-gray-600">Education Level:</span> {formData.educationLevel || "Not specified"}</p>
+                  {formData.course && <p><span className="font-medium text-gray-600">Course:</span> {formData.course}</p>}
+                  {formData.specialization && <p><span className="font-medium text-gray-600">Specialization:</span> {formData.specialization}</p>}
+                  <p><span className="font-medium text-gray-600">English Level:</span> {formData.englishLevel || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Experience Required:</span> {formData.totalExperienceRequired || "Not specified"}</p>
+                  {formData.totalExperienceRequired === "Experienced" && (
+                    <>
+                      <p><span className="font-medium text-gray-600">Minimum Experience:</span> {formData.experienceLevel ? `${formData.experienceLevel} years` : "Not specified"}</p>
+                      <p><span className="font-medium text-gray-600">Maximum Experience:</span> {formData.experienceMax ? `${formData.experienceMax} years` : "Not specified"}</p>
+                    </>
+                  )}
+                  <p><span className="font-medium text-gray-600">Gender Preference:</span> {formData.genderPreference || "Not specified"}</p>
+                </div>
+              </div>
+
+              {/* Job Description and Skills */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2">Job Description and Skills</h3>
+                <div className="mt-4 space-y-2">
+                  <p><span className="font-medium text-gray-600">Job Overview:</span></p>
+                  <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: formData.jobOverview || "Not specified" }} />
+                  <p><span className="font-medium text-gray-600">Required Skills:</span> {formData.requiredSkills.length > 0 ? formData.requiredSkills.join(", ") : "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Optional Perks:</span> {formData.perks.length > 0 ? formData.perks.join(", ") : "None"}</p>
+                </div>
+              </div>
+
+              {/* Interview Details */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 border-b border-gray-300 pb-2">Interview Details</h3>
+                <div className="mt-4 space-y-2">
+                  <p><span className="font-medium text-gray-600">Interview Mode:</span> {formData.interviewMode || "Not specified"}</p>
+                  {formData.interviewMode !== "Online" && (
+                    <p><span className="font-medium text-gray-600">Interview Location:</span> {formData.interviewLocation || "Not specified"}</p>
+                  )}
+                  <p><span className="font-medium text-gray-600">Contact Preference:</span> {formData.contactPreference || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Contact Email:</span> {formData.contactEmail || "Not specified"}</p>
+                  <p><span className="font-medium text-gray-600">Contact Phone:</span> {formData.contactPhone || "Not specified"}</p>
+                </div>
+              </div>
             </div>
           </motion.div>
         );
@@ -2866,7 +2988,6 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
         return null;
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -2887,14 +3008,14 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                 Post a New Job
               </h2>
               <span className="text-sm text-gray-500 font-medium">
-                Step {currentStep} of 4
+                Step {currentStep} of 5
               </span>
             </div>
             <div className="mt-6">
               <div className="relative">
                 <div className="overflow-hidden h-2 rounded-full bg-gray-200">
                   <motion.div
-                    animate={{ width: `${(currentStep / 4) * 100}%` }}
+                    animate={{ width: `${(currentStep / 5) * 100}%` }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                     className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
                   />
@@ -2905,6 +3026,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
                     "Qualifications",
                     "Description",
                     "Interview",
+                     "Preview",
                   ].map((label, index) => (
                     <div key={index} className="text-center">
                       <div
@@ -2957,7 +3079,7 @@ const MultiStepJobPostingForm = ({ userdata, companies }) => {
               >
                 {isSubmitting
                   ? "Submitting..."
-                  : currentStep === 4
+                  : currentStep === 5
                   ? "Review"
                   : "Next"}
                 {!isSubmitting && <FaChevronRight className="ml-2" />}
