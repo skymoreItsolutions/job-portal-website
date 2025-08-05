@@ -11,12 +11,12 @@ import {
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import * as XLSX from 'xlsx';
+
 import { BiMedal } from "react-icons/bi";
 import { MdWorkHistory } from 'react-icons/md';
 import { baseurl } from '@/app/components/common';
 import { FaMapMarkerAlt, FaGlobe, FaPhone, FaCoins, FaFileAlt, FaKey, FaBan, FaUser, FaGraduationCap, FaLanguage, FaCity, FaBriefcase, FaClock } from 'react-icons/fa';
-
+  const ageRange = Array.from({ length: 33 }, (_, i) => 18 + i); // 18 to 50
 const ProfileDetails = ({ icon, label, value }) => (
   <div className="flex items-center gap-3">
     <div className="text-[#02325a]">{icon}</div>
@@ -455,33 +455,43 @@ const CandidateList = () => {
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <FaUser className="mr-2 text-[#02325a]" /> Min Age
-                    </label>
-                    <input
-                      type="number"
-                      name="min_age"
-                      placeholder="e.g., 18"
-                      value={filters.min_age}
-                      onChange={handleFilterChange}
-                      className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 bg-white/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <FaUser className="mr-2 text-[#02325a]" /> Max Age
-                    </label>
-                    <input
-                      type="number"
-                      name="max_age"
-                      placeholder="e.g., 60"
-                      value={filters.max_age}
-                      onChange={handleFilterChange}
-                      className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 bg-white/50"
-                    />
-                  </div>
-                </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 flex items-center">
+          <FaUser className="mr-2 text-[#02325a]" /> Min Age
+        </label>
+        <select
+          name="min_age"
+          value={filters.min_age}
+          onChange={handleFilterChange}
+          className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 bg-white/50"
+        >
+          <option value="" disabled>Select Min Age</option>
+          {ageRange
+            .filter(age => !filters.max_age || age <= filters.max_age)
+            .map(age => (
+              <option key={age} value={age}>{age}</option>
+            ))}
+        </select>
+      </div>
+      <div>
+        <label className="text-sm font-medium text-gray-700 flex items-center">
+          <FaUser className="mr-2 text-[#02325a]" /> Max Age
+        </label>
+        <select
+          name="max_age"
+          value={filters.max_age}
+          onChange={handleFilterChange}
+          className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 bg-white/50"
+        >
+          <option value="" disabled>Select Max Age</option>
+          {ageRange
+            .filter(age => !filters.min_age || age >= filters.min_age)
+            .map(age => (
+              <option key={age} value={age}>{age}</option>
+            ))}
+        </select>
+      </div>
+    </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 flex items-center">
                     <FaUser className="mr-2 text-[#02325a]" /> Gender

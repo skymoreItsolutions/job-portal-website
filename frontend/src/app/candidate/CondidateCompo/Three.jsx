@@ -515,7 +515,7 @@ const fetchLocations = useCallback(
 
         {(alldata.experience_level === "Both" || alldata.experience_level === "Fresher") && (
           <div className="animate-fade-in">
-            <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+            <label className=" text-sm font-medium text-gray-700 mb-3 flex items-center">
               <FiMapPin className="mr-2 text-emerald-500" />
               Preferred Locations
             </label>
